@@ -25,7 +25,7 @@ async fn main() {
             command::report_get_all,
             command::report_create,
             command::report_update,
-            command::report_delete,
+            command::report_remove,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

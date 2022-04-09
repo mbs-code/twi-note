@@ -1,20 +1,22 @@
 <template>
-  <ReportCreatePanel @change="fetchData"></ReportCreatePanel>
+  <n-card>
+    <ReportCreateBox @change="fetchData"></ReportCreateBox>
+  </n-card>
 
-  <pre>
-    {{ reports }}
-  </pre>
+  <template v-for="report in reports">
+    <ReportPanel :report="report" @change="fetchData"></ReportPanel>
+  </template>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Report, useReport } from '../composables/useReport'
+import { Report, useReportAPI } from '../composables/useReportAPI'
 
-const reportRepo = useReport()
+const reoirtAPI = useReportAPI()
 const reports = ref<Report[]>([])
 
 const fetchData = async () => {
-  const data = await reportRepo.getAll()
+  const data = await reoirtAPI.getAll()
   reports.value = data
 }
 

@@ -80,7 +80,7 @@ pub async fn report_update(id: i64, title: Option<String>, body: Option<String>)
 }
 
 #[tauri::command]
-pub async fn report_delete(id: i64) -> Report {
+pub async fn report_remove(id: i64) -> Report {
     let pool = DB_CONN.get().unwrap();
     let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
 
