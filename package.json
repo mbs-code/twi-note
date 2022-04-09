@@ -21,6 +21,7 @@
     "unplugin-vue-components": "^0.18.5",
     "vfonts": "^0.0.3",
     "vite": "^2.9.0",
+    "vue-router": "^4.0.14",
     "vue-tsc": "^0.29.8"
   }
 }
