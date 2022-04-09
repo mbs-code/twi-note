@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+use chrono::Local;
 use sqlx::{migrate::Migrator, SqlitePool};
 use std::path::Path;
 
@@ -18,6 +19,22 @@ async fn main() {
 
     let _ = m.run(&pool).await.unwrap();
     println!("{}", "OK");
+
+    // insert
+    let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let res = sqlx::query!(
+        r#"INSERT INTO reports ( title, body, created_at, updated_at )
+        VALUES ( ?, ?, ?, ? )
+        RETURNING *"#,
+        "たいとる",
+        "ぼでー",
+        now,
+        now,
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    println!("{:?}", res);
 
     // tauri::Builder::default()
     //   .run(tauri::generate_context!())
