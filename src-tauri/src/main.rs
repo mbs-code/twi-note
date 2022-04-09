@@ -3,9 +3,14 @@
     windows_subsystem = "windows"
 )]
 
-use chrono::Local;
-use sqlx::{migrate::Migrator, SqlitePool};
-use std::path::Path;
+use once_cell::sync::OnceCell;
+use sqlx::{Pool, Sqlite, SqlitePool};
+
+mod command;
+use command::report_create;
+use command::run_migration;
+
+static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
 
 #[async_std::main]
 async fn main() {
@@ -13,28 +18,12 @@ async fn main() {
     let pool = SqlitePool::connect("sqlite:storage.db?mode=rwc")
         .await
         .unwrap();
-
-    let m = Migrator::new(Path::new("./migrations")).await.unwrap();
-    println!("{:?}", m);
-
-    let _ = m.run(&pool).await.unwrap();
-    println!("{}", "OK");
+    let _ = DB_CONN.set(pool);
+    let _ = run_migration();
 
     // insert
-    let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
-    let res = sqlx::query!(
-        r#"INSERT INTO reports ( title, body, created_at, updated_at )
-        VALUES ( ?, ?, ?, ? )
-        RETURNING *"#,
-        "たいとる",
-        "ぼでー",
-        now,
-        now,
-    )
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    println!("{:?}", res);
+    let report = report_create("タイトル".to_string(), "新規ぼでー".to_string()).await;
+    println!("{:?}", report);
 
     // tauri::Builder::default()
     //   .run(tauri::generate_context!())
