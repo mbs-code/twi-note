@@ -1,4 +1,6 @@
 <template>
+  <ReportCreatePanel @change="fetchData"></ReportCreatePanel>
+
   <pre>
     {{ reports }}
   </pre>
@@ -11,8 +13,12 @@ import { Report, useReport } from '../composables/useReport'
 const reportRepo = useReport()
 const reports = ref<Report[]>([])
 
-onMounted(async () => {
+const fetchData = async () => {
   const data = await reportRepo.getAll()
   reports.value = data
+}
+
+onMounted(async () => {
+  await fetchData()
 })
 </script>
