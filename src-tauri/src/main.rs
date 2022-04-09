@@ -5,27 +5,28 @@
 
 use once_cell::sync::OnceCell;
 use sqlx::{Pool, Sqlite, SqlitePool};
+use tauri::generate_handler;
 
 mod command;
-use command::report_create;
-use command::run_migration;
-
 static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
 
-#[async_std::main]
+#[tokio::main]
 async fn main() {
-    // DB connection
+    // init database
     let pool = SqlitePool::connect("sqlite:storage.db?mode=rwc")
         .await
         .unwrap();
     let _ = DB_CONN.set(pool);
-    let _ = run_migration();
+    let _ = command::run_migration();
 
-    // insert
-    let report = report_create("タイトル".to_string(), "新規ぼでー".to_string()).await;
-    println!("{:?}", report);
-
-    // tauri::Builder::default()
-    //   .run(tauri::generate_context!())
-    //   .expect("error while running tauri application");
+    // run tauri apptaur
+    tauri::Builder::default()
+        .invoke_handler(generate_handler![
+            command::report_get_all,
+            command::report_create,
+            command::report_update,
+            command::report_delete,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
