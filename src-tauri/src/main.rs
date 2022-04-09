@@ -17,7 +17,7 @@ async fn main() {
         .await
         .unwrap();
     let _ = DB_CONN.set(pool);
-    let _ = command::run_migration();
+    let _ = command::run_migration().await;
 
     // run tauri apptaur
     tauri::Builder::default()

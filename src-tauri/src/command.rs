@@ -1,7 +1,5 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use sqlx::migrate::Migrator;
-use std::path::Path;
 
 use crate::DB_CONN;
 
@@ -16,10 +14,9 @@ pub struct Report {
 }
 
 pub async fn run_migration() {
-    let m = Migrator::new(Path::new("./migrations")).await.unwrap();
-
     let npool = DB_CONN.get().unwrap();
-    let _ = m.run(npool).await.unwrap();
+    let _ = sqlx::migrate!("./migrations").run(npool).await.unwrap();
+    println!("migration");
 }
 
 #[tauri::command]
