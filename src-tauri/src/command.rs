@@ -1,4 +1,4 @@
-use chrono::Local;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 use crate::DB_CONN;
@@ -43,7 +43,7 @@ pub async fn report_get_all(page: i64, count: i64, latest: bool) -> Vec<Report> 
 #[tauri::command]
 pub async fn report_create(title: Option<String>, body: Option<String>) -> Report {
     let pool = DB_CONN.get().unwrap();
-    let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
 
     let report = sqlx::query_as!(
         Report,
@@ -65,7 +65,7 @@ pub async fn report_create(title: Option<String>, body: Option<String>) -> Repor
 #[tauri::command]
 pub async fn report_update(id: i64, title: Option<String>, body: Option<String>) -> Report {
     let pool = DB_CONN.get().unwrap();
-    let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
 
     let report = sqlx::query_as!(
         Report,
@@ -87,7 +87,7 @@ pub async fn report_update(id: i64, title: Option<String>, body: Option<String>)
 #[tauri::command]
 pub async fn report_remove(id: i64) -> Report {
     let pool = DB_CONN.get().unwrap();
-    let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
 
     let report = sqlx::query_as!(
         Report,

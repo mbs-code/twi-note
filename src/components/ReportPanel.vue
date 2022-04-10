@@ -1,6 +1,6 @@
 <template>
   <n-card>
-    <n-space class="extend-first">
+    <n-space class="expand-first">
       <div>
         <template v-if="isEdit">
           <ReportEditBox :report="report" @onChanged="onUpdated"></ReportEditBox>
@@ -25,13 +25,11 @@
         </n-button>
       </n-space>
     </n-space>
-
-    <div>{{ report.created_at }}</div>
-    <div>{{ report.updated_at }}</div>
   </n-card>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useDialog } from 'naive-ui'
 import { Report, useReportAPI } from '../composables/useReportAPI'
 import {
@@ -39,7 +37,6 @@ import {
   Trash as DeleteIcon,
   Close as CloseIcon,
 } from '@vicons/ionicons5'
-import { ref } from 'vue';
 
 const props = defineProps<{ report: Report }>()
 const emit = defineEmits<{
