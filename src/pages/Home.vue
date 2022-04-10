@@ -7,7 +7,25 @@
     <ReportPanel :report="report" @change="onUpdated"></ReportPanel>
   </template>
 
-  <VueEternalLoading :load="onInfinite"></VueEternalLoading>
+  <VueEternalLoading :load="onInfinite">
+    <template #loading>
+      <n-space justify="center">
+        <n-spin></n-spin>
+      </n-space>
+    </template>
+
+    <template #no-more>
+      <div></div>
+    </template>
+
+    <template #error="{ retry }">
+      <n-alert title="内部エラーが発生しました。" type="error">
+        <n-button strong secondary type="error" @click="retry">
+          再試行
+        </n-button>
+      </n-alert>
+    </template>
+  </VueEternalLoading>
 </template>
 
 <script setup lang="ts">
