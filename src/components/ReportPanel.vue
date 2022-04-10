@@ -18,6 +18,9 @@
         <n-icon><PencilIcon /></n-icon>
       </template>
     </n-button>
+
+    <div>{{ report.created_at }}</div>
+    <div>{{ report.updated_at }}</div>
   </n-card>
 </template>
 

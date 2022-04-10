@@ -14,9 +14,13 @@ export type FormReport = {
   body?: string
 }
 
+export type SearchReport = {
+  latest?: boolean
+}
+
 export const useReportAPI = () => {
-  const getAll = async () => {
-    const reports: Report[] = (await invoke('report_get_all')) as []
+  const getAll = async (search: SearchReport = {}) => {
+    const reports: Report[] = (await invoke('report_get_all', search)) as []
     return reports
   }
 

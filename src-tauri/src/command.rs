@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::DB_CONN;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Report {
     pub id: i64,
     pub title: Option<String>,
@@ -20,17 +20,24 @@ pub async fn run_migration() {
 }
 
 #[tauri::command]
-pub async fn report_get_all() -> Vec<Report> {
+pub async fn report_get_all(latest: Option<bool>) -> Vec<Report> {
     let pool = DB_CONN.get().unwrap();
 
-    let reports = sqlx::query_as!(
-        Report,
-        r#"SELECT * from reports
-        where deleted_at is null"#,
-    )
-    .fetch_all(pool)
-    .await
-    .unwrap();
+    // ソート方向
+    let mut order = "ASC";
+    if let Some(v) = latest {
+        if v {
+            order = "DESC";
+        }
+    }
+
+    // NOTE: dynamic query は型付きバインドできないため、手動で作成する。
+    // インジェクションに注意
+    let query = "SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY id ";
+    let reports = sqlx::query_as::<_, Report>(&(query.to_string() + &order))
+        .fetch_all(pool)
+        .await
+        .unwrap();
 
     return reports;
 }

@@ -12,11 +12,13 @@
 import { onMounted, ref } from 'vue'
 import { Report, useReportAPI } from '../composables/useReportAPI'
 
-const reoirtAPI = useReportAPI()
+const reportAPI = useReportAPI()
 const reports = ref<Report[]>([])
 
 const fetchData = async () => {
-  const data = await reoirtAPI.getAll()
+  const data = await reportAPI.getAll({
+    latest: true,
+  })
   reports.value = data
 }
 
