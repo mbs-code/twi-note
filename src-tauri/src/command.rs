@@ -27,7 +27,7 @@ pub async fn report_get_all(page: i64, count: i64, latest: bool) -> Vec<Report> 
     // インジェクションに注意
     let mut query = String::new();
     query.push_str("SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY id ");
-    query.push_str(if latest { "ASC" } else { "DESC" });
+    query.push_str(if latest { "DESC" } else { "ASC" });
     query.push_str(" LIMIT ");
     query.push_str(&count.to_string());
     query.push_str(" OFFSET ");
