@@ -1,6 +1,6 @@
 <template>
   <n-card>
-    <ReportCreateBox @onChanged="onCreated"></ReportCreateBox>
+    <ReportEditBox @onChanged="onCreated"></ReportEditBox>
   </n-card>
 
   <template v-for="report in reports">

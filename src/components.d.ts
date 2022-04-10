@@ -4,7 +4,7 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ReportCreateBox: typeof import('./components/ReportCreateBox.vue')['default']
+    ReportEditBox: typeof import('./components/ReportEditBox.vue')['default']
     ReportPanel: typeof import('./components/ReportPanel.vue')['default']
     ReportShowBox: typeof import('./components/ReportShowBox.vue')['default']
   }

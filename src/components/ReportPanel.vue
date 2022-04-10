@@ -1,7 +1,7 @@
 <template>
   <n-card>
     <template v-if="isEdit">
-      <ReportCreateBox :report="report" @onChanged="onUpdated"></ReportCreateBox>
+      <ReportEditBox :report="report" @onChanged="onUpdated"></ReportEditBox>
     </template>
     <template v-else>
       <ReportShowBox :report="report"></ReportShowBox>
