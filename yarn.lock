@@ -155,6 +155,11 @@
     "@tauri-apps/cli-win32-ia32-msvc" "1.0.0-rc.8"
     "@tauri-apps/cli-win32-x64-msvc" "1.0.0-rc.8"
 
+"@ts-pro/vue-eternal-loading@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@ts-pro/vue-eternal-loading/-/vue-eternal-loading-1.2.0.tgz#c7cce935ac090cc2b1f2961105aab89b9831813c"
+  integrity sha512-SSN+hJ4izg09IZmm5PbuEv3etFXtf1G5Oc71e9Ipi4+dsRYotSmuj0CzZ6wODz1mMgk5XF944GMMOxZ2Ucjr3w==
+
 "@types/jest@^27.0.1":
   version "27.4.1"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.4.1.tgz#185cbe2926eaaf9662d340cc02e548ce9e11ab6d"

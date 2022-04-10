@@ -20,21 +20,19 @@ pub async fn run_migration() {
 }
 
 #[tauri::command]
-pub async fn report_get_all(latest: Option<bool>) -> Vec<Report> {
+pub async fn report_get_all(page: i64, count: i64, latest: bool) -> Vec<Report> {
     let pool = DB_CONN.get().unwrap();
-
-    // ソート方向
-    let mut order = "ASC";
-    if let Some(v) = latest {
-        if v {
-            order = "DESC";
-        }
-    }
 
     // NOTE: dynamic query は型付きバインドできないため、手動で作成する。
     // インジェクションに注意
-    let query = "SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY id ";
-    let reports = sqlx::query_as::<_, Report>(&(query.to_string() + &order))
+    let mut query = String::new();
+    query.push_str("SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY id ");
+    query.push_str(if latest { "ASC" } else { "DESC" });
+    query.push_str(" LIMIT ");
+    query.push_str(&count.to_string());
+    query.push_str(" OFFSET ");
+    query.push_str(&((page - 1) * count).to_string());
+    let reports = sqlx::query_as::<_, Report>(&query)
         .fetch_all(pool)
         .await
         .unwrap();

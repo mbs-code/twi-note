@@ -27,7 +27,7 @@ import { onMounted, ref } from 'vue'
 import { Report, FormReport, useReportAPI } from '../composables/useReportAPI'
 
 const props = defineProps<{ report?: Report }>()
-const emit = defineEmits<{ (e: 'change'): void }>()
+const emit = defineEmits<{ (e: 'change', report: Report): void }>()
 
 // 初期化処理
 const form = ref<FormReport>({})
@@ -45,13 +45,11 @@ const onSave = async () => {
   if (!item.title && !item.body) return
 
   const id = props.report?.id
-  if (id) {
-    await reportAPI.update(id, item)
-  } else {
-    await reportAPI.create(item)
-  }
+  const newReport = id
+    ? await reportAPI.update(id, item)
+    : await reportAPI.create(item)
 
   init()
-  emit('change')
+  emit('change', newReport)
 }
 </script>

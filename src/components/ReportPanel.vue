@@ -1,7 +1,7 @@
 <template>
   <n-card>
     <template v-if="isEdit">
-      <ReportCreateBox :report="report" @change="onSave"></ReportCreateBox>
+      <ReportCreateBox :report="report" @change="onUpdated"></ReportCreateBox>
     </template>
     <template v-else>
       <ReportShowBox :report="report"></ReportShowBox>
@@ -34,14 +34,14 @@ import {
 import { ref } from 'vue';
 
 const props = defineProps<{ report: Report }>()
-const emit = defineEmits<{ (e: 'change'): void }>()
+const emit = defineEmits<{ (e: 'change', reports: Report): void }>()
 
 // 編集・保存処理
 const isEdit = ref(false)
 const onEdit = () => { isEdit.value = !isEdit.value }
-const onSave = () => {
+const onUpdated = (report: Report) => {
   isEdit.value = false
-  emit("change")
+  emit('change', report)
 }
 
 // 削除ダイアログ
