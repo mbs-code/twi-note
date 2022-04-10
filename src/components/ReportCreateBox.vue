@@ -1,14 +1,17 @@
 <template>
-  <n-input v-model:value="form.title" placeholder="Title" />
+  <n-input
+    v-model:value="form.title"
+    placeholder="Title"
+    @keyup.enter.exact="onTitleEnter"
+  />
 
   <n-input
     v-model:value="form.body"
     type="textarea"
     placeholder="Body"
-    :autosize="{
-      minRows: 3,
-      maxRows: 5
-    }"
+    ref="bodyRef"
+    @keydown.ctrl.enter.exact="onSave"
+    :autosize="{ minRows: 3 }"
   />
 
   <n-space>
@@ -28,6 +31,12 @@ import { Report, FormReport, useReportAPI } from '../composables/useReportAPI'
 
 const props = defineProps<{ report?: Report }>()
 const emit = defineEmits<{ (e: 'onChanged', report: Report): void }>()
+const bodyRef = ref<HTMLTextAreaElement | null>(null)
+
+// フォーカス処理
+const onTitleEnter = () => {
+  bodyRef.value?.focus()
+}
 
 // 初期化処理
 const form = ref<FormReport>({})
