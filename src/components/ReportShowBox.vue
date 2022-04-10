@@ -1,6 +1,6 @@
 <template>
   <div>{{ report.title }}</div>
-  <div>{{ report.body }}</div>
+  <div style="white-space: pre-wrap">{{ report.body }}</div>
 </template>
 
 <script setup lang="ts">

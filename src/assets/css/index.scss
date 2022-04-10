@@ -11,3 +11,8 @@
   border-radius: 10px;
   box-shadow: inset 0 0 0 2px #fff;
 }
+
+// n-space の先頭拡大
+.n-space.extend-first > div:first-child {
+  flex-grow: 1;
+}

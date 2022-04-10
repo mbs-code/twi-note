@@ -1,23 +1,30 @@
 <template>
   <n-card>
-    <template v-if="isEdit">
-      <ReportEditBox :report="report" @onChanged="onUpdated"></ReportEditBox>
-    </template>
-    <template v-else>
-      <ReportShowBox :report="report"></ReportShowBox>
-    </template>
+    <n-space class="extend-first">
+      <div>
+        <template v-if="isEdit">
+          <ReportEditBox :report="report" @onChanged="onUpdated"></ReportEditBox>
+        </template>
+        <template v-else>
+          <ReportShowBox :report="report"></ReportShowBox>
+        </template>
+      </div>
 
-    <n-button quaternary circle type="primary" @click="onDelete">
-      <template #icon>
-        <n-icon><TrashIcon /></n-icon>
-      </template>
-    </n-button>
+      <n-space vertical justify="space-between" style="height: 100%">
+        <n-button quaternary circle type="primary" @click="onEdit">
+          <template #icon>
+            <n-icon v-if="isEdit"><CloseIcon /></n-icon>
+            <n-icon v-else><EditIcon /></n-icon>
+          </template>
+        </n-button>
 
-    <n-button quaternary circle type="primary" @click="onEdit">
-      <template #icon>
-        <n-icon><PencilIcon /></n-icon>
-      </template>
-    </n-button>
+        <n-button v-if="isEdit" circle type="error" @click="onDelete">
+          <template #icon>
+            <n-icon><DeleteIcon /></n-icon>
+          </template>
+        </n-button>
+      </n-space>
+    </n-space>
 
     <div>{{ report.created_at }}</div>
     <div>{{ report.updated_at }}</div>
@@ -28,8 +35,9 @@
 import { useDialog } from 'naive-ui'
 import { Report, useReportAPI } from '../composables/useReportAPI'
 import {
-  TrashBinOutline as TrashIcon,
-  PencilSharp as PencilIcon,
+  CreateOutline as EditIcon,
+  Trash as DeleteIcon,
+  Close as CloseIcon,
 } from '@vicons/ionicons5'
 import { ref } from 'vue';
 
@@ -58,7 +66,10 @@ const onDelete = () => {
     negativeText: 'いいえ',
     onPositiveClick: () => {
       return reportAPI.remove(props.report.id)
-        .then(report => emit('deleted', report))
+        .then(report => {
+          isEdit.value = false
+          emit('deleted', report)
+        })
     },
     onNegativeClick: () => {}
   })

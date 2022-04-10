@@ -3,8 +3,12 @@
     <ReportEditBox @onChanged="onCreated"></ReportEditBox>
   </n-card>
 
-  <template v-for="report in reports">
-    <ReportPanel :report="report" @updated="onUpdated" @deleted="onDeleted"></ReportPanel>
+  <template v-for="report in reports"  :key="report.id">
+    <ReportPanel
+      :report="report"
+      @updated="onUpdated"
+      @deleted="onDeleted"
+    ></ReportPanel>
   </template>
 
   <VueEternalLoading :load="onInfinite">
@@ -80,6 +84,7 @@ const onUpdated = (report: Report) => {
 }
 const onDeleted = (report: Report) => {
   const index = reports.value.findIndex((rp) => rp.id === report.id)
+  console.log(index)
   if (index >= 0) {
     reports.value.splice(index, 1)
   }
