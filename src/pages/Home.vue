@@ -1,10 +1,10 @@
 <template>
   <n-card>
-    <ReportCreateBox @change="onCreated"></ReportCreateBox>
+    <ReportCreateBox @onChanged="onCreated"></ReportCreateBox>
   </n-card>
 
   <template v-for="report in reports">
-    <ReportPanel :report="report" @change="onUpdated"></ReportPanel>
+    <ReportPanel :report="report" @updated="onUpdated" @deleted="onDeleted"></ReportPanel>
   </template>
 
   <VueEternalLoading :load="onInfinite">
@@ -65,7 +65,7 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
   }
 }
 
-// 更新処理
+// 保持リスト更新処理
 const onCreated = (report: Report) => {
   reports.value.unshift(report)
 }
@@ -76,6 +76,12 @@ const onUpdated = (report: Report) => {
   } else {
     // 無いはず
     reports.value.unshift(report)
+  }
+}
+const onDeleted = (report: Report) => {
+  const index = reports.value.findIndex((rp) => rp.id === report.id)
+  if (index >= 0) {
+    reports.value.splice(index, 1)
   }
 }
 </script>
