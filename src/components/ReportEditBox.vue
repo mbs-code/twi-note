@@ -1,27 +1,31 @@
 <template>
-  <n-input
-    v-model:value="form.title"
-    placeholder="Title"
-    @keyup.enter.exact="onTitleEnter"
-  />
+  <n-space vertical>
+    <n-input
+      v-model:value="form.title"
+      placeholder="Title"
+      clearable
+      @keyup.enter.exact="onTitleEnter"
+    />
 
-  <n-input
-    v-model:value="form.body"
-    type="textarea"
-    placeholder="Body"
-    ref="bodyRef"
-    @keydown.ctrl.enter.exact="onSave"
-    :autosize="{ minRows: 3 }"
-  />
+    <n-input
+      v-model:value="form.body"
+      ref="bodyRef"
+      type="textarea"
+      placeholder="Body"
+      clearable
+      @keydown.ctrl.enter.exact="onSave"
+      :autosize="{ minRows: 3 }"
+    />
 
-  <n-space>
-    <n-button round type="primary" @click="onSave">
-      保存
-    </n-button>
+    <n-space>
+      <n-button round type="primary" @click="onSave">
+        保存
+      </n-button>
 
-    <n-button round type="default" @click="onReset">
-      リセット
-    </n-button>
+      <n-button round type="default" @click="onReset">
+        リセット
+      </n-button>
+    </n-space>
   </n-space>
 </template>
 

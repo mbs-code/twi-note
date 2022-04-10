@@ -1,35 +1,39 @@
 <template>
-  <n-card>
-    <ReportEditBox @onChanged="onCreated"></ReportEditBox>
-  </n-card>
+  <n-space vertical>
+    <n-card>
+      <ReportEditBox @onChanged="onCreated"></ReportEditBox>
+    </n-card>
 
-  <template v-for="report in reports"  :key="report.id">
-    <ReportPanel
-      :report="report"
-      @updated="onUpdated"
-      @deleted="onDeleted"
-    ></ReportPanel>
-  </template>
-
-  <VueEternalLoading :load="onInfinite">
-    <template #loading>
-      <n-space justify="center">
-        <n-spin></n-spin>
-      </n-space>
+    <template v-for="report in reports"  :key="report.id">
+      <ReportPanel
+        :report="report"
+        @updated="onUpdated"
+        @deleted="onDeleted"
+      ></ReportPanel>
     </template>
 
-    <template #no-more>
-      <div></div>
-    </template>
+    <VueEternalLoading :load="onInfinite">
+      <template #loading>
+        <n-space justify="center">
+          <n-spin></n-spin>
+        </n-space>
+      </template>
 
-    <template #error="{ retry }">
-      <n-alert title="内部エラーが発生しました。" type="error">
-        <n-button strong secondary type="error" @click="retry">
-          再試行
-        </n-button>
-      </n-alert>
-    </template>
-  </VueEternalLoading>
+      <template #no-more>
+        <n-space justify="center">
+          ～ココマデ～
+        </n-space>
+      </template>
+
+      <template #error="{ retry }">
+        <n-alert title="内部エラーが発生しました。" type="error">
+          <n-button strong secondary type="error" @click="retry">
+            再試行
+          </n-button>
+        </n-alert>
+      </template>
+    </VueEternalLoading>
+  </n-space>
 </template>
 
 <script setup lang="ts">
