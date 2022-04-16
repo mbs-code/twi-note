@@ -4,7 +4,9 @@
     <div style="white-space: pre-wrap">{{ report.report.body }}</div>
 
     <n-space class="expand-first">
-      <div>タグ：{{ report.tags.map(tag => tag.name).join(', ') }}</div>
+      <n-space>
+        <n-tag v-for="tag of report.tags">{{ tag.name }}</n-tag>
+      </n-space>
 
       <n-tooltip trigger="hover">
         <template #trigger>
