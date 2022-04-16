@@ -18,15 +18,22 @@ use diesel::query_dsl::*;
 
 fn main() {
     let conn = app::establish_connection();
-    let results = reports
-        .limit(5)
-        .load::<Report>(&conn)
-        .expect("Error loading posts");
+
+    let create = app::create_report(&conn, Some("たいとる2".to_string()), "からだ".to_string());
+    println!("{:?}", create);
+
+    let update = app::update_report(
+        &conn,
+        create.id,
+        Some("変えたよ".to_string()),
+        "こちらも".to_string(),
+    );
+    println!("{:?}", update);
+
+    let results = reports.load::<Report>(&conn).expect("Error loading posts");
 
     println!("Displaying {} posts", results.len());
-    for post in results {
-        println!("{:?}", post.title);
-        println!("----------\n");
-        println!("{}", post.body);
+    for report in results {
+        println!("{:?}", report);
     }
 }
