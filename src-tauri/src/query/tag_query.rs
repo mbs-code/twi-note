@@ -1,4 +1,4 @@
-use crate::models::{NewTag, Tag};
+use crate::models::{NewTag, ReportTag, Tag};
 use crate::schema;
 use chrono::Utc;
 use diesel::dsl::sql;
@@ -14,6 +14,26 @@ pub fn convert_tag_name_to_tag(conn: &SqliteConnection, tag_names: Vec<String>) 
     }
 
     return tags;
+}
+
+pub fn convert_report_tag_to_tag(conn: &SqliteConnection, report_tags: Vec<ReportTag>) -> Vec<Tag> {
+    let mut tags: Vec<Tag> = Vec::new();
+
+    for report_tag in report_tags {
+        let tag = fetch_tag_by_id(conn, &report_tag.tag_id);
+        tags.push(tag);
+    }
+
+    return tags;
+}
+
+///
+
+fn fetch_tag_by_id(conn: &SqliteConnection, tag_id: &i32) -> Tag {
+    use crate::schema::tags::dsl::tags;
+
+    let new_tag = tags.find(tag_id).first::<Tag>(conn).unwrap();
+    return new_tag;
 }
 
 fn fetch_tag_by_tag_name(conn: &SqliteConnection, tag_name: &String) -> Tag {

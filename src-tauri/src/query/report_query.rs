@@ -1,4 +1,6 @@
-use crate::models::{NewReport, Report};
+use crate::models::{NewReport, Report, ReportTag, ReportTagRecord};
+use crate::query::report_tag_query::fetch_report_tag_by_report_id;
+use crate::query::tag_query::convert_report_tag_to_tag;
 use crate::schema;
 use chrono::Utc;
 use diesel::dsl::sql;

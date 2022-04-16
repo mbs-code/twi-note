@@ -35,9 +35,7 @@ pub fn associate_report_tag(conn: &SqliteConnection, report: &Report, tags: &Vec
     }
 }
 
-///
-
-fn fetch_report_tag_by_report_id(conn: &SqliteConnection, rid: i32) -> Vec<ReportTag> {
+pub fn fetch_report_tag_by_report_id(conn: &SqliteConnection, rid: i32) -> Vec<ReportTag> {
     use crate::schema::report_tags::dsl::report_id;
     use crate::schema::report_tags::dsl::report_tags;
 
@@ -48,6 +46,8 @@ fn fetch_report_tag_by_report_id(conn: &SqliteConnection, rid: i32) -> Vec<Repor
 
     return db_report_tags;
 }
+
+///
 
 fn attach_report_tag(conn: &SqliteConnection, report: &Report, tag: &Tag) {
     let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();

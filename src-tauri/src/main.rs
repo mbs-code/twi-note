@@ -40,6 +40,11 @@ fn main() {
     );
     println!("{:?}", update);
 
+    println!("-----------");
+
+    let all = app::find_all_reports(&conn);
+    println!("{:?}", all);
+
     // let results = reports.load::<Report>(&conn).expect("Error loading posts");
 
     // println!("Displaying {} posts", results.len());

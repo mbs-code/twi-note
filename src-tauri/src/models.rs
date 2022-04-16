@@ -2,7 +2,7 @@ use super::schema::report_tags;
 use super::schema::reports;
 use super::schema::tags;
 
-#[derive(Debug, Queryable)]
+#[derive(Identifiable, Debug, Queryable)]
 pub struct Report {
     pub id: i32,
     pub title: Option<String>,
@@ -23,7 +23,7 @@ pub struct NewReport {
 
 //
 
-#[derive(Debug, Queryable)]
+#[derive(Identifiable, Debug, Queryable)]
 pub struct Tag {
     pub id: i32,
     pub name: String,
@@ -43,7 +43,7 @@ pub struct NewTag {
 
 //
 
-#[derive(Debug, Queryable, Associations)]
+#[derive(Identifiable, Debug, Queryable, Associations)]
 #[belongs_to(Report)]
 #[belongs_to(Tag)]
 pub struct ReportTag {
