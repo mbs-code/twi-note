@@ -1,6 +1,4 @@
-use crate::models::{NewReport, Report, ReportTag, ReportTagRecord};
-use crate::query::report_tag_query::fetch_report_tag_by_report_id;
-use crate::query::tag_query::convert_report_tag_to_tag;
+use crate::models::{NewReport, Report};
 use crate::schema;
 use chrono::Utc;
 use diesel::dsl::sql;
@@ -49,6 +47,22 @@ pub fn update_report_returning(
 
     diesel::update(reports.find(rid))
         .set((title.eq(title_val), body.eq(body_val), updated_at.eq(now)))
+        .execute(conn)
+        .unwrap();
+
+    let report = reports.find(rid).first::<Report>(conn).unwrap();
+    return report;
+}
+
+pub fn delete_report_returning(conn: &SqliteConnection, rid: i32) -> Report {
+    use crate::schema::reports::dsl::deleted_at;
+    use crate::schema::reports::dsl::reports;
+    use crate::schema::reports::dsl::updated_at;
+
+    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+
+    diesel::update(reports.find(rid))
+        .set((updated_at.eq(now.clone()), deleted_at.eq(now)))
         .execute(conn)
         .unwrap();
 

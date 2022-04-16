@@ -11,10 +11,6 @@
 // static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
 
 use app;
-use app::models::Report;
-use app::schema::reports::dsl::reports;
-
-use diesel::query_dsl::*;
 
 fn main() {
     let conn = app::establish_connection();
