@@ -3,15 +3,19 @@ extern crate diesel;
 extern crate dotenv;
 
 pub mod models;
+pub mod query;
 pub mod schema;
 
 use chrono::Utc;
 use diesel::sqlite::SqliteConnection;
 use diesel::{dsl::sql, prelude::*};
 use dotenv::dotenv;
+use query::tag_query::convert_tag_name_to_tag;
 use std::env;
 
-use crate::models::{NewReport, Report};
+use crate::models::{Report, ReportTagRecord};
+use query::report_query::{craete_report_returning, update_report_returning};
+use query::report_tag_query::associate_report_tag;
 
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
@@ -21,51 +25,39 @@ pub fn establish_connection() -> SqliteConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn create_report(conn: &SqliteConnection, title: Option<String>, body: String) -> Report {
-    use crate::schema::reports::dsl;
+pub fn create_report(
+    conn: &SqliteConnection,
+    title: Option<String>,
+    body: String,
+    tag_names: Vec<String>,
+) -> ReportTagRecord {
+    // レポートを作成
+    let report = craete_report_returning(conn, title, body);
 
-    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
-    let new_report = NewReport {
-        title,
-        body,
-        created_at: now.clone(),
-        updated_at: now,
-    };
+    // タグ名を tag 配列に変換する
+    let tags = convert_tag_name_to_tag(conn, tag_names);
 
-    diesel::insert_into(schema::reports::table)
-        .values(&new_report)
-        .execute(conn)
-        .expect("Error saving new post");
+    // タグを紐づける
+    associate_report_tag(conn, &report, &tags);
 
-    let result = dsl::reports
-        .find(sql("last_insert_rowid()"))
-        .first::<Report>(conn)
-        .unwrap();
-    return result;
+    return ReportTagRecord { report, tags };
 }
 
 pub fn update_report(
     conn: &SqliteConnection,
-    id: i32,
+    report_id: i32,
     title: Option<String>,
     body: String,
-) -> Report {
-    use crate::schema::reports::dsl;
+    tag_names: Vec<String>,
+) -> ReportTagRecord {
+    // レポートを作成
+    let report = update_report_returning(conn, report_id, title, body);
 
-    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    // タグ名を tag 配列に変換する
+    let tags = convert_tag_name_to_tag(conn, tag_names);
 
-    diesel::update(dsl::reports.find(id))
-        .set((
-            dsl::title.eq(title),
-            dsl::body.eq(body),
-            dsl::updated_at.eq(now),
-        ))
-        .execute(conn)
-        .unwrap_or_else(|_| panic!("Unable to find post {}", id));
+    // タグを紐づける
+    associate_report_tag(conn, &report, &tags);
 
-    let result = dsl::reports
-        .find(sql("last_insert_rowid()"))
-        .first::<Report>(conn)
-        .unwrap();
-    return result;
+    return ReportTagRecord { report, tags };
 }

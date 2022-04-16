@@ -1,5 +1,5 @@
 table! {
-    report_tag (id) {
+    report_tags (id) {
         id -> Integer,
         report_id -> Integer,
         tag_id -> Integer,
@@ -28,8 +28,4 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(
-    report_tag,
-    reports,
-    tags,
-);
+allow_tables_to_appear_in_same_query!(report_tags, reports, tags,);
