@@ -1,14 +1,14 @@
 <template>
   <n-space vertical>
     <n-input
-      v-model:value="form.title"
+      v-model:value="formTitle"
       placeholder="Title"
       clearable
       @keyup.enter.exact="onTitleEnter"
     />
 
     <n-input
-      v-model:value="form.body"
+      v-model:value="formBody"
       ref="bodyRef"
       type="textarea"
       placeholder="Body"
@@ -16,6 +16,8 @@
       @keydown.ctrl.enter.exact="onSave"
       :autosize="{ minRows: 3 }"
     />
+
+    <n-dynamic-tags v-model:value="formTagNames" />
 
     <n-space>
       <n-button round type="primary" @click="onSave">
@@ -31,10 +33,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Report, FormReport, useReportAPI } from '../composables/useReportAPI'
+import { ReportWithTag, FormReport, useReportAPI } from '../composables/useReportAPI'
 
-const props = defineProps<{ report?: Report }>()
-const emit = defineEmits<{ (e: 'onChanged', report: Report): void }>()
+const props = defineProps<{ report?: ReportWithTag }>()
+const emit = defineEmits<{ (e: 'onChanged', report: ReportWithTag): void }>()
 const bodyRef = ref<HTMLTextAreaElement | null>(null)
 
 // フォーカス処理
@@ -43,10 +45,14 @@ const onTitleEnter = () => {
 }
 
 // 初期化処理
-const form = ref<FormReport>({})
+const formTitle = ref<string>()
+const formBody = ref<string>()
+const formTagNames = ref<string[]>([])
+
 const init = () => {
-  form.value.title = props.report?.title ?? ''
-  form.value.body = props.report?.body ?? ''
+  formTitle.value = props.report?.report.title ?? ''
+  formBody.value = props.report?.report.body ?? ''
+  formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? []
 }
 onMounted(() => init())
 const onReset = () => init()
@@ -54,10 +60,17 @@ const onReset = () => init()
 // 保存処理
 const reportAPI = useReportAPI()
 const onSave = async () => {
-  const item = form.value
-  if (!item.title && !item.body) return
+  if (!formBody.value) return // body は必須
 
-  const id = props.report?.id
+  // データ成形
+  const id = props.report?.report.id
+  const item: FormReport = {
+    title: formTitle.value,
+    body: formBody.value,
+    tagNames: formTagNames.value,
+  }
+
+  // 実行
   const newReport = id
     ? await reportAPI.update(id, item)
     : await reportAPI.create(item)

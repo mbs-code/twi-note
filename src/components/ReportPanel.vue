@@ -31,23 +31,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useDialog } from 'naive-ui'
-import { Report, useReportAPI } from '../composables/useReportAPI'
+import { ReportWithTag, useReportAPI } from '../composables/useReportAPI'
 import {
   CreateOutline as EditIcon,
   Trash as DeleteIcon,
   Close as CloseIcon,
 } from '@vicons/ionicons5'
 
-const props = defineProps<{ report: Report }>()
+const props = defineProps<{ report: ReportWithTag }>()
 const emit = defineEmits<{
-  (e: 'updated', reports: Report): void,
-  (e: 'deleted', reports: Report): void,
+  (e: 'updated', reports: ReportWithTag): void,
+  (e: 'deleted', reports: ReportWithTag): void,
 }>()
 
 // 編集・保存処理
 const isEdit = ref(false)
 const onEdit = () => { isEdit.value = !isEdit.value }
-const onUpdated = (report: Report) => {
+const onUpdated = (report: ReportWithTag) => {
   isEdit.value = false
   emit('updated', report)
 }
@@ -62,10 +62,10 @@ const onDelete = () => {
     positiveText: 'はい',
     negativeText: 'いいえ',
     onPositiveClick: () => {
-      return reportAPI.remove(props.report.id)
-        .then(report => {
+      return reportAPI.remove(props.report.report.id)
+        .then(report_id => {
           isEdit.value = false
-          emit('deleted', report)
+          emit('deleted', props.report)
         })
     },
     onNegativeClick: () => {}

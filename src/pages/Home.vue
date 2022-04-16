@@ -38,11 +38,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Report, useReportAPI } from '../composables/useReportAPI'
+import { ReportWithTag, useReportAPI } from '../composables/useReportAPI'
 import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
 
 const reportAPI = useReportAPI()
-const reports = ref<Report[]>([])
+const reports = ref<ReportWithTag[]>([])
 
 // 検索処理
 let page = 1;
@@ -74,11 +74,11 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
 }
 
 // 保持リスト更新処理
-const onCreated = (report: Report) => {
+const onCreated = (report: ReportWithTag) => {
   reports.value.unshift(report)
 }
-const onUpdated = (report: Report) => {
-  const index = reports.value.findIndex((rp) => rp.id === report.id)
+const onUpdated = (report: ReportWithTag) => {
+  const index = reports.value.findIndex((rp) => rp.report.id === report.report.id)
   if (index >= 0) {
     reports.value.splice(index, 1, report)
   } else {
@@ -86,8 +86,8 @@ const onUpdated = (report: Report) => {
     reports.value.unshift(report)
   }
 }
-const onDeleted = (report: Report) => {
-  const index = reports.value.findIndex((rp) => rp.id === report.id)
+const onDeleted = (report: ReportWithTag) => {
+  const index = reports.value.findIndex((rp) => rp.report.id === report.report.id)
   console.log(index)
   if (index >= 0) {
     reports.value.splice(index, 1)

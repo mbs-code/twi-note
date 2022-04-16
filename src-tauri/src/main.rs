@@ -3,21 +3,14 @@
     windows_subsystem = "windows"
 )]
 
-use once_cell::sync::OnceCell;
-use sqlx::{Pool, Sqlite, SqlitePool};
+use app::{command, DB_CONN};
+use std::sync::Mutex;
 use tauri::generate_handler;
 
-mod command;
-static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
-
-#[tokio::main]
-async fn main() {
+fn main() {
     // init database
-    let pool = SqlitePool::connect("sqlite:storage.db?mode=rwc")
-        .await
-        .unwrap();
-    let _ = DB_CONN.set(pool);
-    let _ = command::run_migration().await;
+    let conn = app::establish_connection();
+    let _ = DB_CONN.set(Mutex::new(conn));
 
     // run tauri apptaur
     tauri::Builder::default()
