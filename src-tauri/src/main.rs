@@ -3,30 +3,30 @@
     windows_subsystem = "windows"
 )]
 
-use once_cell::sync::OnceCell;
-use sqlx::{Pool, Sqlite, SqlitePool};
-use tauri::generate_handler;
+// use once_cell::sync::OnceCell;
+// use sqlx::{Pool, Sqlite, SqlitePool};
+// use tauri::generate_handler;
 
-mod command;
-static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
+// mod command;
+// static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
 
-#[tokio::main]
-async fn main() {
-    // init database
-    let pool = SqlitePool::connect("sqlite:storage.db?mode=rwc")
-        .await
-        .unwrap();
-    let _ = DB_CONN.set(pool);
-    let _ = command::run_migration().await;
+use app;
+use app::models::Report;
+use app::schema::reports::dsl::reports;
 
-    // run tauri apptaur
-    tauri::Builder::default()
-        .invoke_handler(generate_handler![
-            command::report_get_all,
-            command::report_create,
-            command::report_update,
-            command::report_remove,
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+use diesel::query_dsl::*;
+
+fn main() {
+    let conn = app::establish_connection();
+    let results = reports
+        .limit(5)
+        .load::<Report>(&conn)
+        .expect("Error loading posts");
+
+    println!("Displaying {} posts", results.len());
+    for post in results {
+        println!("{:?}", post.title);
+        println!("----------\n");
+        println!("{}", post.body);
+    }
 }
