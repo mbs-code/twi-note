@@ -3,48 +3,23 @@
     windows_subsystem = "windows"
 )]
 
-// use once_cell::sync::OnceCell;
-// use sqlx::{Pool, Sqlite, SqlitePool};
-// use tauri::generate_handler;
-
-// mod command;
-// static DB_CONN: OnceCell<Pool<Sqlite>> = OnceCell::new();
-
-use app;
+use app::{command, DB_CONN};
+use std::sync::Mutex;
+use tauri::generate_handler;
 
 fn main() {
+    // init database
     let conn = app::establish_connection();
+    let _ = DB_CONN.set(Mutex::new(conn));
 
-    let create = app::create_report(
-        &conn,
-        Some("たいとる2".to_string()),
-        "からだ".to_string(),
-        vec![
-            "タグ".to_string(),
-            "新しい".to_string(),
-            "などなど".to_string(),
-        ],
-    );
-    println!("{:?}", create);
-
-    let update = app::update_report(
-        &conn,
-        create.report.id,
-        Some("変えたよ".to_string()),
-        "こちらも".to_string(),
-        vec!["変えたぞ".to_string(), "タグ".to_string()],
-    );
-    println!("{:?}", update);
-
-    println!("-----------");
-
-    let all = app::find_all_reports(&conn);
-    println!("{:?}", all);
-
-    // let results = reports.load::<Report>(&conn).expect("Error loading posts");
-
-    // println!("Displaying {} posts", results.len());
-    // for report in results {
-    //     println!("{:?}", report);
-    // }
+    // run tauri apptaur
+    tauri::Builder::default()
+        .invoke_handler(generate_handler![
+            command::report_get_all,
+            command::report_create,
+            command::report_update,
+            command::report_remove,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

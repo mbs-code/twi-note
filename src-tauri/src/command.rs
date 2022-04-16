@@ -1,17 +1,9 @@
-// use chrono::Utc;
-// use serde::{Deserialize, Serialize};
+use chrono::Utc;
+use serde::{Deserialize, Serialize};
 
-// use crate::DB_CONN;
+use crate::models::ReportWithTag;
 
-// #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-// pub struct Report {
-//     pub id: i64,
-//     pub title: Option<String>,
-//     pub body: Option<String>,
-//     pub created_at: String,
-//     pub updated_at: String,
-//     pub deleted_at: Option<String>,
-// }
+use crate::DB_CONN;
 
 // pub async fn run_migration() {
 //     let npool = DB_CONN.get().unwrap();
@@ -19,88 +11,39 @@
 //     println!("migration");
 // }
 
-// #[tauri::command]
-// pub async fn report_get_all(page: i64, count: i64, latest: bool) -> Vec<Report> {
-//     let pool = DB_CONN.get().unwrap();
+#[tauri::command]
+pub fn report_get_all(page: i32, count: i32, latest: bool) -> Vec<ReportWithTag> {
+    let conn = DB_CONN.get().unwrap().lock().unwrap();
 
-//     // NOTE: dynamic query は型付きバインドできないため、手動で作成する。
-//     // インジェクションに注意
-//     let mut query = String::new();
-//     query.push_str("SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY id ");
-//     query.push_str(if latest { "DESC" } else { "ASC" });
-//     query.push_str(" LIMIT ");
-//     query.push_str(&count.to_string());
-//     query.push_str(" OFFSET ");
-//     query.push_str(&((page - 1) * count).to_string());
-//     let reports = sqlx::query_as::<_, Report>(&query)
-//         .fetch_all(pool)
-//         .await
-//         .unwrap();
+    let reports = crate::find_all_reports(&conn, page, count, latest);
+    return reports;
+}
 
-//     return reports;
-// }
+#[tauri::command]
+pub fn report_create(title: Option<String>, body: String, tag_names: Vec<String>) -> ReportWithTag {
+    let conn = DB_CONN.get().unwrap().lock().unwrap();
 
-// #[tauri::command]
-// pub async fn report_create(title: Option<String>, body: Option<String>) -> Report {
-//     let pool = DB_CONN.get().unwrap();
-//     let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let reports = crate::create_report(&conn, title, body, tag_names);
+    return reports;
+}
 
-//     let report = sqlx::query_as!(
-//         Report,
-//         r#"INSERT INTO reports ( title, body, created_at, updated_at )
-//         VALUES ( ?, ?, ?, ? )
-//         RETURNING *"#,
-//         title,
-//         body,
-//         now,
-//         now,
-//     )
-//     .fetch_one(pool)
-//     .await
-//     .unwrap();
+#[tauri::command]
+pub fn report_update(
+    id: i32,
+    title: Option<String>,
+    body: String,
+    tag_names: Vec<String>,
+) -> ReportWithTag {
+    let conn = DB_CONN.get().unwrap().lock().unwrap();
 
-//     return report;
-// }
+    let reports = crate::update_report(&conn, id, title, body, tag_names);
+    return reports;
+}
 
-// #[tauri::command]
-// pub async fn report_update(id: i64, title: Option<String>, body: Option<String>) -> Report {
-//     let pool = DB_CONN.get().unwrap();
-//     let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+#[tauri::command]
+pub fn report_remove(id: i32) -> i32 {
+    let conn = DB_CONN.get().unwrap().lock().unwrap();
 
-//     let report = sqlx::query_as!(
-//         Report,
-//         r#"UPDATE reports SET title=?, body=?, updated_at=?
-//         WHERE id=?
-//         RETURNING *"#,
-//         title,
-//         body,
-//         now,
-//         id,
-//     )
-//     .fetch_one(pool)
-//     .await
-//     .unwrap();
-
-//     return report;
-// }
-
-// #[tauri::command]
-// pub async fn report_remove(id: i64) -> Report {
-//     let pool = DB_CONN.get().unwrap();
-//     let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
-
-//     let report = sqlx::query_as!(
-//         Report,
-//         r#"UPDATE reports SET updated_at=?, deleted_at=?
-//         WHERE id=?
-//         RETURNING *"#,
-//         now,
-//         now,
-//         id,
-//     )
-//     .fetch_one(pool)
-//     .await
-//     .unwrap();
-
-//     return report;
-// }
+    let _ = crate::delete_report(&conn, id);
+    return id;
+}

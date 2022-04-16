@@ -1,8 +1,9 @@
 use super::schema::report_tags;
 use super::schema::reports;
 use super::schema::tags;
+use serde::{Deserialize, Serialize};
 
-#[derive(Identifiable, Debug, Queryable)]
+#[derive(Identifiable, Debug, Queryable, Serialize, Deserialize)]
 pub struct Report {
     pub id: i32,
     pub title: Option<String>,
@@ -23,7 +24,7 @@ pub struct NewReport {
 
 //
 
-#[derive(Identifiable, Debug, Queryable)]
+#[derive(Identifiable, Debug, Queryable, Serialize, Deserialize)]
 pub struct Tag {
     pub id: i32,
     pub name: String,
@@ -63,8 +64,8 @@ pub struct NewReportTag {
 
 ///
 
-#[derive(Debug)]
-pub struct ReportTagRecord {
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ReportWithTag {
     pub report: Report,
     pub tags: Vec<Tag>,
 }
