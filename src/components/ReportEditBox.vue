@@ -17,7 +17,7 @@
       :autosize="{ minRows: 3 }"
     />
 
-    <n-dynamic-tags v-model:value="formTagNames" />
+    <ArrayTagForm v-model:value="formTagNames" />
 
     <n-space>
       <n-button round type="primary" @click="onSave">
