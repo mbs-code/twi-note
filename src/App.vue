@@ -1,11 +1,3 @@
-<!-- <template>
-  <n-dialog-provider>
-    <n-layout content-style="padding: 8px;">
-      <router-view />
-    </n-layout>
-  </n-dialog-provider>
-</template> -->
-
 <template>
   <n-config-provider :theme="isDark ? darkTheme : lightTheme">
     <n-dialog-provider>
@@ -18,7 +10,7 @@
         </n-layout-header>
 
         <n-layout has-sider position="absolute" style="top: 22px;">
-          <n-layout content-style="padding: 8px;">
+          <n-layout content-style="padding: 8px;" :native-scrollbar="false">
             <router-view />
           </n-layout>
         </n-layout>
