@@ -12,6 +12,7 @@
         <n-layout has-sider position="absolute" style="top: 22px;">
           <n-layout content-style="padding: 8px;" :native-scrollbar="false">
             <router-view />
+            <n-back-top bottom="20" right="20" />
           </n-layout>
         </n-layout>
       </n-layout>
