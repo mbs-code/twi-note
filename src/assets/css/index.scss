@@ -1,0 +1,4 @@
+// n-space の先頭拡大
+.n-space.expand-first > div:first-child {
+  flex-grow: 1;
+}

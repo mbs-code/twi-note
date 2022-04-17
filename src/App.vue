@@ -1,21 +1,28 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <n-config-provider :theme="isDark ? darkTheme : lightTheme">
+    <n-dialog-provider>
+      <n-layout position="absolute">
+        <n-layout-header position="absolute" bordered style="height: 22px;">
+          <n-space>
+            <div>div</div>
+            <n-switch v-model:value="isDark" />
+          </n-space>
+        </n-layout-header>
+
+        <n-layout has-sider position="absolute" style="top: 22px;">
+          <n-layout content-style="padding: 8px;" :native-scrollbar="false">
+            <router-view />
+            <n-back-top bottom="20" right="20" />
+          </n-layout>
+        </n-layout>
+      </n-layout>
+    </n-dialog-provider>
+  </n-config-provider>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { lightTheme, darkTheme } from 'naive-ui'
+
+const isDark = ref<boolean>(true)
+</script>
