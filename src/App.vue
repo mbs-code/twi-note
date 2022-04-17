@@ -6,6 +6,8 @@
           <n-space>
             <div>div</div>
             <n-switch v-model:value="isDark" />
+            <router-link to="/"><n-button size="small">ホーム</n-button></router-link>
+            <router-link to="/tag"><n-button size="small">タグ</n-button></router-link>
           </n-space>
         </n-layout-header>
 
