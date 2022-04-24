@@ -33,6 +33,22 @@ const columns = reactive<DataTableColumns<Tag>>([
     title: 'Color',
     key: 'color',
     sorter: 'default',
+    render: (row: Tag) => {
+      return h(
+        'div',
+        {},
+        {
+          default: () => [
+            row.color ? h(
+              'span',
+              { style: `color: ${row.color}; padding-right: 4px; user-select: 'none';`},
+              { default: () => '●'},
+            ) : '',
+            row.color,
+          ],
+        },
+      )
+    }
   },
   {
     title: 'is_pinned',

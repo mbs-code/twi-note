@@ -5,7 +5,10 @@
 
     <n-space class="expand-first">
       <n-space>
-        <n-tag v-for="tag of report.tags">{{ tag.name }}</n-tag>
+        <n-tag v-for="tag of report.tags">
+          <span v-if="tag.color" :style="{ color: tag.color, userSelect: 'none' }">●</span>
+          {{ tag.name }}
+        </n-tag>
       </n-space>
 
       <n-tooltip trigger="hover">

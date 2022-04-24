@@ -1,11 +1,11 @@
 <template>
   <TagTable :tags="tags" @onEdit="onEdit"></TagTable>
 
-  <TagDialog
+  <TagEditDialog
     v-model:show="showTagModal"
     :tag="selectedTag"
     @onChanged="onUpdated"
-  ></TagDialog>
+  ></TagEditDialog>
 </template>
 
 <script setup lang="ts">
