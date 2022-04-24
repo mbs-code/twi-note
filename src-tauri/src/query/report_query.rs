@@ -6,7 +6,7 @@ use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
 pub fn craete_report_returning(
-    conn: &SqliteConnection,
+    conn: &mut SqliteConnection,
     title_val: Option<String>,
     body_val: String,
 ) -> Report {
@@ -33,7 +33,7 @@ pub fn craete_report_returning(
 }
 
 pub fn update_report_returning(
-    conn: &SqliteConnection,
+    conn: &mut SqliteConnection,
     rid: i32,
     title_val: Option<String>,
     body_val: String,
@@ -54,7 +54,7 @@ pub fn update_report_returning(
     return report;
 }
 
-pub fn delete_report_returning(conn: &SqliteConnection, rid: i32) -> Report {
+pub fn delete_report_returning(conn: &mut SqliteConnection, rid: i32) -> Report {
     use crate::schema::reports::dsl::deleted_at;
     use crate::schema::reports::dsl::reports;
     use crate::schema::reports::dsl::updated_at;

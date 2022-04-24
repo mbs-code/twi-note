@@ -5,7 +5,7 @@ use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
-pub fn convert_tag_name_to_tag(conn: &SqliteConnection, tag_names: Vec<String>) -> Vec<Tag> {
+pub fn convert_tag_name_to_tag(conn: &mut SqliteConnection, tag_names: Vec<String>) -> Vec<Tag> {
     let mut tags: Vec<Tag> = Vec::new();
 
     for tag_name in tag_names {
@@ -16,7 +16,10 @@ pub fn convert_tag_name_to_tag(conn: &SqliteConnection, tag_names: Vec<String>) 
     return tags;
 }
 
-pub fn convert_report_tag_to_tag(conn: &SqliteConnection, report_tags: Vec<ReportTag>) -> Vec<Tag> {
+pub fn convert_report_tag_to_tag(
+    conn: &mut SqliteConnection,
+    report_tags: Vec<ReportTag>,
+) -> Vec<Tag> {
     let mut tags: Vec<Tag> = Vec::new();
 
     for report_tag in report_tags {
@@ -29,14 +32,14 @@ pub fn convert_report_tag_to_tag(conn: &SqliteConnection, report_tags: Vec<Repor
 
 ///
 
-fn fetch_tag_by_id(conn: &SqliteConnection, tag_id: &i32) -> Tag {
+fn fetch_tag_by_id(conn: &mut SqliteConnection, tag_id: &i32) -> Tag {
     use crate::schema::tags::dsl::tags;
 
     let new_tag = tags.find(tag_id).first::<Tag>(conn).unwrap();
     return new_tag;
 }
 
-fn fetch_tag_by_tag_name(conn: &SqliteConnection, tag_name: &String) -> Tag {
+fn fetch_tag_by_tag_name(conn: &mut SqliteConnection, tag_name: &String) -> Tag {
     use crate::schema::tags::dsl::name;
     use crate::schema::tags::dsl::tags;
 

@@ -4,7 +4,7 @@ use chrono::Utc;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
-pub fn associate_report_tag(conn: &SqliteConnection, report: &Report, tags: &Vec<Tag>) {
+pub fn associate_report_tag(conn: &mut SqliteConnection, report: &Report, tags: &Vec<Tag>) {
     // レポートに紐づいているタグを取得する
     let report_tags = fetch_report_tag_by_report_id(conn, report.id);
 
@@ -35,7 +35,7 @@ pub fn associate_report_tag(conn: &SqliteConnection, report: &Report, tags: &Vec
     }
 }
 
-pub fn fetch_report_tag_by_report_id(conn: &SqliteConnection, rid: i32) -> Vec<ReportTag> {
+pub fn fetch_report_tag_by_report_id(conn: &mut SqliteConnection, rid: i32) -> Vec<ReportTag> {
     use crate::schema::report_tags::dsl::report_id;
     use crate::schema::report_tags::dsl::report_tags;
 
@@ -49,7 +49,7 @@ pub fn fetch_report_tag_by_report_id(conn: &SqliteConnection, rid: i32) -> Vec<R
 
 ///
 
-fn attach_report_tag(conn: &SqliteConnection, report: &Report, tag: &Tag) {
+fn attach_report_tag(conn: &mut SqliteConnection, report: &Report, tag: &Tag) {
     let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
     let new_report_tag = NewReportTag {
         report_id: report.id,
@@ -63,7 +63,7 @@ fn attach_report_tag(conn: &SqliteConnection, report: &Report, tag: &Tag) {
         .unwrap();
 }
 
-fn detach_report_tag(conn: &SqliteConnection, report_tag: &ReportTag) {
+fn detach_report_tag(conn: &mut SqliteConnection, report_tag: &ReportTag) {
     use crate::schema::report_tags::dsl::report_tags;
 
     diesel::delete(report_tags.find(report_tag.id))

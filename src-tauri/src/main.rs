@@ -11,6 +11,7 @@ fn main() {
     // init database
     let conn = app::establish_connection();
     let _ = DB_CONN.set(Mutex::new(conn));
+    command::run_migration();
 
     // run tauri apptaur
     tauri::Builder::default()

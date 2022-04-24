@@ -34,7 +34,7 @@ pub fn establish_connection() -> SqliteConnection {
 }
 
 pub fn find_all_reports(
-    conn: &SqliteConnection,
+    conn: &mut SqliteConnection,
     page: i32,
     count: i32,
     latest: bool,
@@ -67,7 +67,7 @@ pub fn find_all_reports(
 }
 
 pub fn create_report(
-    conn: &SqliteConnection,
+    conn: &mut SqliteConnection,
     title: Option<String>,
     body: String,
     tag_names: Vec<String>,
@@ -85,7 +85,7 @@ pub fn create_report(
 }
 
 pub fn update_report(
-    conn: &SqliteConnection,
+    conn: &mut SqliteConnection,
     report_id: i32,
     title: Option<String>,
     body: String,
@@ -103,7 +103,7 @@ pub fn update_report(
     return ReportWithTag { report, tags };
 }
 
-pub fn delete_report(conn: &SqliteConnection, report_id: i32) -> bool {
+pub fn delete_report(conn: &mut SqliteConnection, report_id: i32) -> bool {
     // レポートを論理削除する
     let _ = delete_report_returning(conn, report_id);
 
