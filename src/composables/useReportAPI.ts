@@ -24,7 +24,7 @@ export type FormReport = {
 export type SearchReport = {
   page?: number
   count?: number
-  latest?: boolean
+  // latest?: boolean
 }
 
 export const useReportAPI = () => {
@@ -32,7 +32,7 @@ export const useReportAPI = () => {
     const reports: ReportWithTag[] = (await invoke('report_get_all', {
       page: search.page ?? 1,
       count: search.count ?? 20,
-      latest: search.latest ?? false,
+      // latest: search.latest ?? false,
     })) as []
     return reports
   }

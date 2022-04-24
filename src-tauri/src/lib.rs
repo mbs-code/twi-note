@@ -37,7 +37,6 @@ pub fn find_all_reports(
     conn: &mut SqliteConnection,
     page: i32,
     count: i32,
-    latest: bool,
 ) -> Vec<ReportWithTag> {
     use crate::schema::reports::dsl::id;
     use crate::schema::reports::dsl::reports;

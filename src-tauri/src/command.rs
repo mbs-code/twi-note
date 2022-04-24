@@ -15,10 +15,10 @@ pub fn run_migration() {
 /// ////////////////////////////////////////////////////////////
 
 #[tauri::command]
-pub fn report_get_all(page: i32, count: i32, latest: bool) -> Vec<ReportWithTag> {
+pub fn report_get_all(page: i32, count: i32) -> Vec<ReportWithTag> {
     let mut conn = DB_CONN.get().unwrap().lock().unwrap();
 
-    let reports = crate::find_all_reports(&mut conn, page, count, latest);
+    let reports = crate::find_all_reports(&mut conn, page, count);
     return reports;
 }
 
