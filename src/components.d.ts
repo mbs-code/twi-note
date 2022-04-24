@@ -8,6 +8,8 @@ declare module 'vue' {
     ReportEditBox: typeof import('./components/ReportEditBox.vue')['default']
     ReportPanel: typeof import('./components/ReportPanel.vue')['default']
     ReportShowBox: typeof import('./components/ReportShowBox.vue')['default']
+    TagDialog: typeof import('./components/tags/TagDialog.vue')['default']
+    TagTable: typeof import('./components/tags/TagTable.vue')['default']
   }
 }
 

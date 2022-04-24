@@ -23,6 +23,8 @@ table! {
         id -> Integer,
         name -> Text,
         color -> Nullable<Text>,
+        is_pinned -> Integer,
+        priority -> Integer,
         created_at -> Text,
         updated_at -> Text,
     }

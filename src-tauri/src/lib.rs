@@ -11,11 +11,11 @@ use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
-use query::tag_query::convert_tag_name_to_tag;
+use query::tag_query::{convert_tag_name_to_tag, update_tag_returning};
 use std::env;
 use std::sync::Mutex;
 
-use crate::models::{Report, ReportWithTag};
+use crate::models::{Report, ReportWithTag, Tag};
 use crate::query::report_tag_query::fetch_report_tag_by_report_id;
 use crate::query::tag_query::convert_report_tag_to_tag;
 use query::report_query::{
@@ -86,7 +86,7 @@ pub fn create_report(
 
 pub fn update_report(
     conn: &mut SqliteConnection,
-    report_id: i32,
+    report_id: &i32,
     title: Option<String>,
     body: String,
     tag_names: Vec<String>,
@@ -103,9 +103,33 @@ pub fn update_report(
     return ReportWithTag { report, tags };
 }
 
-pub fn delete_report(conn: &mut SqliteConnection, report_id: i32) -> bool {
+pub fn delete_report(conn: &mut SqliteConnection, report_id: &i32) -> bool {
     // レポートを論理削除する
     let _ = delete_report_returning(conn, report_id);
 
     return true;
+}
+
+/// ////////////////////////////////////////////////////////////
+
+pub fn find_all_tags(conn: &mut SqliteConnection) -> Vec<Tag> {
+    use crate::schema::tags::dsl::id;
+    use crate::schema::tags::dsl::tags;
+
+    let db_tags = tags.order_by(id.asc()).load::<Tag>(conn).unwrap();
+    return db_tags;
+}
+
+pub fn update_tag(
+    conn: &mut SqliteConnection,
+    tag_id: &i32,
+    name: String,
+    color: Option<String>,
+    is_pinned: i32,
+    priority: i32,
+) -> Tag {
+    // レポートを更新
+    let tag = update_tag_returning(conn, tag_id, name, color, is_pinned, priority);
+
+    return tag;
 }

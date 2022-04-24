@@ -25,10 +25,13 @@ pub struct NewReport {
 //
 
 #[derive(Identifiable, Debug, Queryable, Serialize, Deserialize)]
+#[table_name = "tags"]
 pub struct Tag {
     pub id: i32,
     pub name: String,
     pub color: Option<String>,
+    pub is_pinned: i32,
+    pub priority: i32,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -38,6 +41,8 @@ pub struct Tag {
 pub struct NewTag {
     pub name: String,
     pub color: Option<String>,
+    pub is_pinned: Option<i32>,
+    pub priority: Option<i32>,
     pub created_at: String,
     pub updated_at: String,
 }

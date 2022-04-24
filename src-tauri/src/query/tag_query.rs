@@ -30,6 +30,39 @@ pub fn convert_report_tag_to_tag(
     return tags;
 }
 
+pub fn update_tag_returning(
+    conn: &mut SqliteConnection,
+    tag_id: &i32,
+    name_val: String,
+    color_val: Option<String>,
+    is_pinned_val: i32,
+    priority_val: i32,
+) -> Tag {
+    use crate::schema::tags::dsl::color;
+    use crate::schema::tags::dsl::is_pinned;
+    use crate::schema::tags::dsl::name;
+    use crate::schema::tags::dsl::priority;
+    use crate::schema::tags::dsl::tags;
+    use crate::schema::tags::dsl::updated_at;
+
+    let now = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+
+    // FIXME: 何故か self が要求される
+    diesel::update(tags::find(tags, tag_id))
+        .set((
+            name.eq(name_val),
+            color.eq(color_val),
+            is_pinned.eq(is_pinned_val),
+            priority.eq(priority_val),
+            updated_at.eq(now),
+        ))
+        .execute(conn)
+        .unwrap();
+
+    let tag = tags.find(tag_id).first::<Tag>(conn).unwrap();
+    return tag;
+}
+
 ///
 
 fn fetch_tag_by_id(conn: &mut SqliteConnection, tag_id: &i32) -> Tag {
@@ -58,6 +91,8 @@ fn fetch_tag_by_tag_name(conn: &mut SqliteConnection, tag_name: &String) -> Tag 
     let new_tag = NewTag {
         name: tag_name.clone(),
         color: None,
+        is_pinned: None,
+        priority: None,
         created_at: now.clone(),
         updated_at: now,
     };

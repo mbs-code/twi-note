@@ -20,6 +20,8 @@ fn main() {
             command::report_create,
             command::report_update,
             command::report_remove,
+            command::tag_get_all,
+            command::tag_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

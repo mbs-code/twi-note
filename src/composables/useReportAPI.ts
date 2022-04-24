@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri'
+import { Tag } from './useTagAPI'
 
 export type Report = {
   id: number
@@ -7,14 +8,6 @@ export type Report = {
   created_at: string
   updated_at: string
   deleted_at?: string
-}
-
-export type Tag = {
-  id: number
-  name: string
-  color?: string
-  created_at: string
-  updated_at: string
 }
 
 export type ReportWithTag = {

@@ -39,14 +39,39 @@ pub fn report_update(
 ) -> ReportWithTag {
     let mut conn = DB_CONN.get().unwrap().lock().unwrap();
 
-    let reports = crate::update_report(&mut conn, id, title, body, tag_names);
-    return reports;
+    let report = crate::update_report(&mut conn, &id, title, body, tag_names);
+    return report;
 }
 
 #[tauri::command]
 pub fn report_remove(id: i32) -> i32 {
     let mut conn = DB_CONN.get().unwrap().lock().unwrap();
 
-    let _ = crate::delete_report(&mut conn, id);
+    let _ = crate::delete_report(&mut conn, &id);
     return id;
+}
+
+/// ////////////////////////////////////////////////////////////
+
+#[tauri::command]
+pub fn tag_get_all() -> Vec<Tag> {
+    let mut conn = DB_CONN.get().unwrap().lock().unwrap();
+
+    let db_tags = crate::find_all_tags(&mut conn);
+    return db_tags;
+}
+
+#[tauri::command]
+pub fn tag_update(
+    id: i32,
+    name: String,
+    color: Option<String>,
+    is_pinned: bool,
+    priority: i32,
+) -> Tag {
+    let mut conn = DB_CONN.get().unwrap().lock().unwrap();
+
+    let is_pinned_num = if is_pinned { 1 } else { 0 };
+    let tag = crate::update_tag(&mut conn, &id, name, color, is_pinned_num, priority);
+    return tag;
 }
