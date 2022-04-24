@@ -3,7 +3,7 @@
     <n-space class="expand-first">
       <div>
         <template v-if="isEdit">
-          <ReportEditBox :report="report" @onChanged="onUpdated"></ReportEditBox>
+          <ReportEditBox :report="report" @saved="handleUpdated"></ReportEditBox>
         </template>
         <template v-else>
           <ReportShowBox :report="report"></ReportShowBox>
@@ -47,7 +47,7 @@ const emit = defineEmits<{
 // 編集・保存処理
 const isEdit = ref(false)
 const onEdit = () => { isEdit.value = !isEdit.value }
-const onUpdated = (report: ReportWithTag) => {
+const handleUpdated = (report: ReportWithTag) => {
   isEdit.value = false
   emit('updated', report)
 }

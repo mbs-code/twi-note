@@ -1,14 +1,14 @@
 <template>
   <n-space vertical>
     <n-card>
-      <ReportEditBox @onChanged="onCreated"></ReportEditBox>
+      <ReportEditBox @saved="handleCreated"></ReportEditBox>
     </n-card>
 
     <template v-for="report in reports"  :key="report.id">
       <ReportPanel
         :report="report"
-        @updated="onUpdated"
-        @deleted="onDeleted"
+        @update="handleUpdated"
+        @delete="handleDeleted"
       ></ReportPanel>
     </template>
 
@@ -74,10 +74,10 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
 }
 
 // 保持リスト更新処理
-const onCreated = (report: ReportWithTag) => {
+const handleCreated = (report: ReportWithTag) => {
   reports.value.unshift(report)
 }
-const onUpdated = (report: ReportWithTag) => {
+const handleUpdated = (report: ReportWithTag) => {
   const index = reports.value.findIndex((rp) => rp.report.id === report.report.id)
   if (index >= 0) {
     reports.value.splice(index, 1, report)
@@ -86,7 +86,7 @@ const onUpdated = (report: ReportWithTag) => {
     reports.value.unshift(report)
   }
 }
-const onDeleted = (report: ReportWithTag) => {
+const handleDeleted = (report: ReportWithTag) => {
   const index = reports.value.findIndex((rp) => rp.report.id === report.report.id)
   console.log(index)
   if (index >= 0) {

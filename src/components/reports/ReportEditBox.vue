@@ -1,30 +1,29 @@
 <template>
-  <n-space vertical>
+  <n-space vertical @keydown.ctrl.enter.exact="onSave">
     <n-input
       v-model:value="formTitle"
-      placeholder="Title"
+      placeholder="(Title)"
       clearable
       @keyup.enter.exact="onTitleEnter"
     />
 
     <n-input
       v-model:value="formBody"
-      ref="bodyRef"
+      ref="inputBodyRef"
       type="textarea"
       placeholder="Body"
       clearable
-      @keydown.ctrl.enter.exact="onSave"
       :autosize="{ minRows: 3 }"
     />
 
     <ArrayTagForm v-model:value="formTagNames" />
 
     <n-space>
-      <n-button round type="primary" @click="onSave">
-        保存
+      <n-button round type="primary" :disabled="!validate" @click="onSave">
+        保存(Ctrl+Enter)
       </n-button>
 
-      <n-button round type="default" @click="onReset">
+      <n-button round type="default" @click="reset">
         リセット
       </n-button>
     </n-space>
@@ -32,42 +31,52 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { useMessage } from 'naive-ui'
+import { nextTick, onMounted, ref } from 'vue'
 import { ReportWithTag, FormReport, useReportAPI } from '../../composables/useReportAPI'
 
 const props = defineProps<{ report?: ReportWithTag }>()
-const emit = defineEmits<{ (e: 'onChanged', report: ReportWithTag): void }>()
-const bodyRef = ref<HTMLTextAreaElement | null>(null)
+const emit = defineEmits<{ (e: 'saved', report: ReportWithTag): void }>()
+const message = useMessage()
 
 // フォーカス処理
+const inputBodyRef = ref<HTMLTextAreaElement | null>(null)
 const onTitleEnter = () => {
-  bodyRef.value?.focus()
+  nextTick(() => { inputBodyRef.value?.focus() })
 }
 
 // 初期化処理
 const formTitle = ref<string>()
 const formBody = ref<string>()
 const formTagNames = ref<string[]>([])
-
-const init = () => {
+const reset = () => {
   formTitle.value = props.report?.report.title ?? ''
   formBody.value = props.report?.report.body ?? ''
   formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? []
 }
-onMounted(() => init())
-const onReset = () => init()
+onMounted(() => reset())
+
+// バリデーション
+const validate = () => {
+  if (!formBody.value)  return false // body は必須
+  return true
+}
 
 // 保存処理
 const reportAPI = useReportAPI()
 const onSave = async () => {
-  if (!formBody.value) return // body は必須
+  // バリデーション
+  if (!validate()) {
+    message.error('入力値エラー')
+    return
+  }
 
   // データ成形
   const id = props.report?.report.id
   const item: FormReport = {
     title: formTitle.value,
-    body: formBody.value,
-    tagNames: formTagNames.value,
+    body: formBody.value ?? '',
+    tagNames: formTagNames.value ?? [],
   }
 
   // 実行
@@ -75,7 +84,7 @@ const onSave = async () => {
     ? await reportAPI.update(id, item)
     : await reportAPI.create(item)
 
-  init()
-  emit('onChanged', newReport)
+  emit('saved', newReport)
+  reset()
 }
 </script>
