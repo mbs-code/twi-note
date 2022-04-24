@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useDialog } from 'naive-ui'
-import { ReportWithTag, useReportAPI } from '../composables/useReportAPI'
+import { ReportWithTag, useReportAPI } from '../../composables/useReportAPI'
 import {
   CreateOutline as EditIcon,
   Trash as DeleteIcon,

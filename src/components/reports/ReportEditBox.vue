@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { ReportWithTag, FormReport, useReportAPI } from '../composables/useReportAPI'
+import { ReportWithTag, FormReport, useReportAPI } from '../../composables/useReportAPI'
 
 const props = defineProps<{ report?: ReportWithTag }>()
 const emit = defineEmits<{ (e: 'onChanged', report: ReportWithTag): void }>()

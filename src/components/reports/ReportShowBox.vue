@@ -28,8 +28,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { TimeOutline as ClockIcon } from '@vicons/ionicons5'
-import { ReportWithTag } from '../composables/useReportAPI'
-import { parseLocal, formatString, formatDistance } from '../utils/DateUtil'
+import { ReportWithTag } from '../../composables/useReportAPI'
+import { parseLocal, formatString, formatDistance } from '../../utils/DateUtil'
 
 const props = defineProps<{ report: ReportWithTag }>()
 
