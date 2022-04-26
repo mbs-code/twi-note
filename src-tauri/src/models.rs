@@ -1,16 +1,71 @@
+use rusqlite::{Error, Row};
+
 #[derive(Debug)]
 pub struct Report {
-    pub id: i32,
+    pub id: i64,
     pub title: Option<String>,
     pub body: String,
     pub created_at: String,
     pub updated_at: String,
     pub deleted_at: Option<String>,
 }
+impl Report {
+    pub fn by_row(row: &Row) -> Result<Report, Error> {
+        Ok(Report {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            body: row.get(2)?,
+            created_at: row.get(3)?,
+            updated_at: row.get(4)?,
+            deleted_at: row.get(5)?,
+        })
+    }
+}
+
+#[derive(Debug)]
+pub struct Tag {
+    pub id: i64,
+    pub name: String,
+    pub color: Option<String>,
+    pub is_pinned: i64,
+    pub priority: i64,
+    pub created_at: String,
+    pub updated_at: String,
+}
+impl Tag {
+    pub fn by_row(row: &Row) -> Result<Tag, Error> {
+        Ok(Tag {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            color: row.get(2)?,
+            is_pinned: row.get(3)?,
+            priority: row.get(4)?,
+            created_at: row.get(5)?,
+            updated_at: row.get(6)?,
+        })
+    }
+}
+
+#[derive(Debug)]
+pub struct ReportTag {
+    pub id: i64,
+    pub report_id: i64,
+    pub tag_id: i64,
+    pub created_at: String,
+}
+
+/// ////////////////////////////////////////
+
+#[derive(Debug)]
+pub struct ReportWithTagParams {
+    pub title: Option<String>,
+    pub body: String,
+    pub tag_names: Vec<String>,
+}
 
 #[derive(Debug)]
 pub struct ReportWithTag {
-    pub id: i32,
+    pub id: i64,
     pub title: Option<String>,
     pub body: String,
     pub created_at: String,
@@ -30,25 +85,4 @@ impl ReportWithTag {
             tags,
         }
     }
-}
-
-///
-
-#[derive(Debug)]
-pub struct Tag {
-    pub id: i32,
-    pub name: String,
-    pub color: Option<String>,
-    pub is_pinned: i32,
-    pub priority: i32,
-    pub created_at: String,
-    pub updated_at: String,
-}
-
-#[derive(Debug)]
-pub struct ReportTag {
-    pub id: i32,
-    pub report_id: i32,
-    pub tag_id: i32,
-    pub created_at: String,
 }

@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use app::{find_all_reports, DB_CONN};
+use app::{create_report, find_all_reports, models::ReportWithTagParams, DB_CONN};
 use std::sync::Mutex;
 // use tauri::generate_handler;
 
@@ -12,8 +12,15 @@ fn main() {
     let conn = app::establish_connection();
     // let _ = DB_CONN.set(Mutex::new(conn));
 
-    let res = find_all_reports(&conn, Some("ふぁふぁ".to_string()), 1, 10, true);
-    println!("{:?}", res);
+    let rcparams = ReportWithTagParams {
+        title: Some("新規タイトル".to_string()),
+        body: "新規タグ".to_string(),
+        tag_names: vec!["テスト".to_string(), "タグ".to_string()],
+    };
+    let add = create_report(&conn, &rcparams);
+
+    // let res = find_all_reports(&conn, Some("ふぁふぁ".to_string()), 1, 10, true);
+    // println!("{:?}", res);
     // 取得
 
     // command::run_migration();

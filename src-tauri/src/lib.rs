@@ -2,9 +2,11 @@ pub mod command;
 pub mod models;
 pub mod query;
 
-use models::Report;
+use chrono::Utc;
+use models::{Report, ReportWithTagParams};
 use once_cell::sync::OnceCell;
-use rusqlite::Connection;
+use query::{report_query::fetch_report_with_tag_by_report_id, tag_query::fetch_tags_by_report};
+use rusqlite::{params, Connection};
 use std::sync::Mutex;
 
 use crate::models::{ReportWithTag, Tag};
@@ -15,6 +17,12 @@ pub fn establish_connection() -> Connection {
     let conn = Connection::open("storage.db").unwrap();
     return conn;
 }
+
+pub fn get_time_of_now() -> String {
+    return Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+}
+
+///
 
 pub fn find_all_reports(
     conn: &Connection,
@@ -46,28 +54,19 @@ pub fn find_all_reports(
     query.push("OFFSET".to_string());
     query.push(((page - 1) * count).to_string());
 
-    // 実行
+    // レポート配列の取得
     let mut stmt = conn.prepare(&query.join(" ")).unwrap();
     let reports = stmt
-        .query_map([], |row| {
-            Ok(Report {
-                id: row.get(0)?,
-                title: row.get(1)?,
-                body: row.get(2)?,
-                created_at: row.get(3)?,
-                updated_at: row.get(4)?,
-                deleted_at: row.get(5)?,
-            })
-        })
+        .query_map([], |row| Report::by_row(row))
         .unwrap()
         .map(|r| r.unwrap())
         .collect::<Vec<Report>>();
 
-    // それぞれtagsをバインドする
+    // 各レポートにタグを紐づける
     let report_with_tags = reports
         .into_iter()
         .map(|report| {
-            let tags = fetch_tags_by_report(conn, &report);
+            let tags = fetch_tags_by_report(conn, &report.id);
             return ReportWithTag::new(report, tags);
         })
         .collect::<Vec<ReportWithTag>>();
@@ -75,78 +74,24 @@ pub fn find_all_reports(
     return report_with_tags;
 }
 
-fn fetch_tags_by_report(conn: &Connection, report: &Report) -> Vec<Tag> {
-    let mut query: Vec<String> = Vec::new();
-    query.push("SELECT t.* from tags t".to_string());
-    query.push("LEFT JOIN report_tags rt ON t.id = rt.tag_id".to_string());
-    query.push("WHERE rt.reporT_id =".to_string());
-    query.push(report.id.to_string());
-    query.push("ORDER BY priority DESC, id ASC".to_string());
+pub fn create_report(conn: &Connection, params: &ReportWithTagParams) -> ReportWithTag {
+    let now = get_time_of_now();
 
-    // 実行
-    let mut stmt = conn.prepare(&query.join(" ")).unwrap();
-    let tags = stmt
-        .query_map([], |row| {
-            Ok(Tag {
-                id: row.get(0)?,
-                name: row.get(1)?,
-                color: row.get(2)?,
-                is_pinned: row.get(3)?,
-                priority: row.get(4)?,
-                created_at: row.get(5)?,
-                updated_at: row.get(6)?,
-            })
-        })
-        .unwrap()
-        .map(|t| t.unwrap())
-        .collect::<Vec<Tag>>();
+    // レポート作成
+    let _ = conn.execute(
+        "
+            INSERT INTO reports (title, body, created_at, updated_at)
+            VALUES (?1, ?2, ?3, ?4)
+        ",
+        params![params.title, params.body, now.clone(), now],
+    );
 
-    return tags;
+    // タグのバインド
+
+    // 更新したレコードを取得
+    let new_report = fetch_report_with_tag_by_report_id(conn, &conn.last_insert_rowid());
+    return new_report;
 }
-
-// pub fn find_all_reports(
-//     conn: &mut Connection,
-//     tag_name: Option<String>,
-//     page: i32,
-//     count: i32,
-// ) -> Vec<ReportWithTag> {
-//     let mut query = "SELECT r.* FROM reports r".to_string();
-
-//     // タグ抽出
-//     if let Some(name) = tag_name {
-//         // タグをIDに変換
-//         let tag = fetch_tag_by_tag_name(conn, &name);
-
-//         // 結合して検索
-//         query.push_str(" LEFT JOIN report_tags rt ON r.id = rt.report_id WHERE rt.tag_id = ");
-//         query.push_str(&tag.id.to_string());
-//     }
-
-//     // 検索条件
-//     query.push_str(" LIMIT ");
-//     query.push_str(&count.to_string());
-//     query.push_str(" OFFSET ");
-//     query.push_str(&((page - 1) * count).to_string());
-//     query.push_str(" ORDER BY id DESC;");
-
-//     let db_reports: Vec<Report> = sql_query(query).load(conn).unwrap();
-
-//     let mut records: Vec<ReportWithTag> = Vec::new();
-//     for db_report in db_reports {
-//         // report tag を取得
-//         let db_report_tags = fetch_report_tag_by_report_id(conn, db_report.id);
-
-//         // tag に変換する
-//         let db_tags = convert_report_tag_to_tag(conn, db_report_tags);
-
-//         records.push(ReportWithTag {
-//             report: db_report,
-//             tags: db_tags,
-//         });
-//     }
-
-//     return records;
-// }
 
 // pub fn create_report(
 //     conn: &mut SqliteConnection,

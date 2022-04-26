@@ -1,3 +1,27 @@
+use rusqlite::Connection;
+
+use crate::models::Tag;
+
+/** レポートIDを基準に、タグ配列を取得 */
+pub fn fetch_tags_by_report(conn: &Connection, report_id: &i64) -> Vec<Tag> {
+    let mut query: Vec<String> = Vec::new();
+    query.push("SELECT t.* from tags t".to_string());
+    query.push("LEFT JOIN report_tags rt ON t.id = rt.tag_id".to_string());
+    query.push("WHERE rt.reporT_id =".to_string());
+    query.push(report_id.to_string());
+    query.push("ORDER BY priority DESC, id ASC".to_string());
+
+    // タグ配列取得
+    let mut stmt = conn.prepare(&query.join(" ")).unwrap();
+    let tags = stmt
+        .query_map([], |row| Tag::by_row(row))
+        .unwrap()
+        .map(|t| t.unwrap())
+        .collect::<Vec<Tag>>();
+
+    return tags;
+}
+
 // pub fn convert_tag_name_to_tag(conn: &mut SqliteConnection, tag_names: Vec<String>) -> Vec<Tag> {
 //     let mut tags: Vec<Tag> = Vec::new();
 
