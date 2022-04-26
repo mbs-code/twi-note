@@ -4,7 +4,7 @@ export type Tag = {
   id: number
   name: string
   color?: string
-  isPinned: number
+  is_pinned: number
   priority: number
   created_at: string
   updated_at: string
@@ -17,15 +17,15 @@ export type FormTag = {
   priority?: number
 }
 
-// export type SearchReport = {
-//   page?: number
-//   count?: number
-//   latest?: boolean
-// }
+export type SearchTag = {
+  hasPinned?: boolean
+}
 
 export const useTagAPI = () => {
-  const getAll = async () => {
-    const tags: Tag[] = (await invoke('tag_get_all')) as []
+  const getAll = async (search: SearchTag = {}) => {
+    const tags: Tag[] = (await invoke('tag_get_all', {
+      hasPinned: search.hasPinned ?? false,
+    })) as []
     return tags
   }
 

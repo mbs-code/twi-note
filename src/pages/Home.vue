@@ -40,17 +40,21 @@
 import { ref } from 'vue'
 import { ReportWithTag, useReportAPI } from '../composables/useReportAPI'
 import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
 const reportAPI = useReportAPI()
 const reports = ref<ReportWithTag[]>([])
 
 // 検索処理
 let page = 1;
 const fetchReports = async () => {
+  const tag = route.query?.tag as string
+
   const data = await reportAPI.getAll({
+    tagName: tag ?? undefined,
     page: page,
     count: 20,
-    latest: true,
   })
   return data
 }

@@ -7,8 +7,8 @@ pub mod models;
 pub mod query;
 pub mod schema;
 
-use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
+use diesel::{prelude::*, sql_query};
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
 use query::tag_query::{convert_tag_name_to_tag, update_tag_returning};
@@ -17,7 +17,7 @@ use std::sync::Mutex;
 
 use crate::models::{Report, ReportWithTag, Tag};
 use crate::query::report_tag_query::fetch_report_tag_by_report_id;
-use crate::query::tag_query::convert_report_tag_to_tag;
+use crate::query::tag_query::{convert_report_tag_to_tag, fetch_tag_by_tag_name};
 use query::report_query::{
     craete_report_returning, delete_report_returning, update_report_returning,
 };
@@ -35,18 +35,30 @@ pub fn establish_connection() -> SqliteConnection {
 
 pub fn find_all_reports(
     conn: &mut SqliteConnection,
+    tag_name: Option<String>,
     page: i32,
     count: i32,
 ) -> Vec<ReportWithTag> {
-    use crate::schema::reports::dsl::id;
-    use crate::schema::reports::dsl::reports;
+    let mut query = "SELECT r.* FROM reports r".to_string();
 
-    let db_reports = reports
-        .limit(count.into())
-        .offset(((page - 1) * count).into())
-        .order_by(id.desc())
-        .load::<Report>(conn)
-        .unwrap();
+    // タグ抽出
+    if let Some(name) = tag_name {
+        // タグをIDに変換
+        let tag = fetch_tag_by_tag_name(conn, &name);
+
+        // 結合して検索
+        query.push_str(" LEFT JOIN report_tags rt ON r.id = rt.report_id WHERE rt.tag_id = ");
+        query.push_str(&tag.id.to_string());
+    }
+
+    // 検索条件
+    query.push_str(" LIMIT ");
+    query.push_str(&count.to_string());
+    query.push_str(" OFFSET ");
+    query.push_str(&((page - 1) * count).to_string());
+    query.push_str(" ORDER BY id DESC;");
+
+    let db_reports: Vec<Report> = sql_query(query).load(conn).unwrap();
 
     let mut records: Vec<ReportWithTag> = Vec::new();
     for db_report in db_reports {
@@ -111,11 +123,18 @@ pub fn delete_report(conn: &mut SqliteConnection, report_id: &i32) -> bool {
 
 /// ////////////////////////////////////////////////////////////
 
-pub fn find_all_tags(conn: &mut SqliteConnection) -> Vec<Tag> {
+pub fn find_all_tags(conn: &mut SqliteConnection, has_pinned: bool) -> Vec<Tag> {
+    use crate::schema::tags as tag_schema;
     use crate::schema::tags::dsl::id;
+    use crate::schema::tags::dsl::is_pinned;
     use crate::schema::tags::dsl::tags;
 
-    let db_tags = tags.order_by(id.asc()).load::<Tag>(conn).unwrap();
+    let mut query = tags.into_boxed();
+    if has_pinned {
+        query = query.filter(tag_schema::is_pinned::eq(is_pinned, 1));
+    }
+
+    let db_tags = query.order_by(id.asc()).load::<Tag>(conn).unwrap();
     return db_tags;
 }
 

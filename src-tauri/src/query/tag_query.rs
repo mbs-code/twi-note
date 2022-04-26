@@ -65,14 +65,14 @@ pub fn update_tag_returning(
 
 ///
 
-fn fetch_tag_by_id(conn: &mut SqliteConnection, tag_id: &i32) -> Tag {
+pub fn fetch_tag_by_id(conn: &mut SqliteConnection, tag_id: &i32) -> Tag {
     use crate::schema::tags::dsl::tags;
 
     let new_tag = tags.find(tag_id).first::<Tag>(conn).unwrap();
     return new_tag;
 }
 
-fn fetch_tag_by_tag_name(conn: &mut SqliteConnection, tag_name: &String) -> Tag {
+pub fn fetch_tag_by_tag_name(conn: &mut SqliteConnection, tag_name: &String) -> Tag {
     use crate::schema::tags::dsl::name;
     use crate::schema::tags::dsl::tags;
 

@@ -1,9 +1,10 @@
 use super::schema::report_tags;
 use super::schema::reports;
 use super::schema::tags;
+use diesel::QueryableByName;
 use serde::{Deserialize, Serialize};
 
-#[derive(Identifiable, Debug, Queryable, Serialize, Deserialize)]
+#[derive(Identifiable, Debug, Queryable, Serialize, Deserialize, QueryableByName, FromSqlRow)]
 pub struct Report {
     pub id: i32,
     pub title: Option<String>,

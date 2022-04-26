@@ -67,7 +67,7 @@ const formPriority = ref<number>()
 const init = () => {
   formName.value = props.tag?.name ?? ''
   formColor.value = props.tag?.color ?? ''
-  formIsPinned.value = props.tag?.isPinned ? true : false
+  formIsPinned.value = props.tag?.is_pinned ? true : false
   formPriority.value = props.tag?.priority ?? 0
 }
 onMounted(() => init())

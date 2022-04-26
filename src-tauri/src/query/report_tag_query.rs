@@ -47,6 +47,18 @@ pub fn fetch_report_tag_by_report_id(conn: &mut SqliteConnection, rid: i32) -> V
     return db_report_tags;
 }
 
+pub fn fetch_report_tag_by_tag_id(conn: &mut SqliteConnection, tid: i32) -> Vec<ReportTag> {
+    use crate::schema::report_tags::dsl::report_tags;
+    use crate::schema::report_tags::dsl::tag_id;
+
+    let db_report_tags = report_tags
+        .filter(tag_id.eq(tid))
+        .load::<ReportTag>(conn)
+        .unwrap();
+
+    return db_report_tags;
+}
+
 ///
 
 fn attach_report_tag(conn: &mut SqliteConnection, report: &Report, tag: &Tag) {

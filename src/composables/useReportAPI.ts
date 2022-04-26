@@ -22,6 +22,7 @@ export type FormReport = {
 }
 
 export type SearchReport = {
+  tagName?: string
   page?: number
   count?: number
   // latest?: boolean
@@ -30,6 +31,7 @@ export type SearchReport = {
 export const useReportAPI = () => {
   const getAll = async (search: SearchReport = {}) => {
     const reports: ReportWithTag[] = (await invoke('report_get_all', {
+      tagName: search.tagName ?? null,
       page: search.page ?? 1,
       count: search.count ?? 20,
       // latest: search.latest ?? false,
