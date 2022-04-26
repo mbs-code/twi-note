@@ -2,7 +2,7 @@ use rusqlite::Connection;
 
 use crate::models::{Report, ReportWithTag};
 
-use super::tag_query::fetch_tags_by_report;
+use super::tag_query::fetch_tags_by_report_id;
 
 /** レポートIDを基準に、レポートを取得する */
 pub fn fetch_report_with_tag_by_report_id(conn: &Connection, report_id: &i64) -> ReportWithTag {
@@ -18,7 +18,7 @@ pub fn fetch_report_with_tag_by_report_id(conn: &Connection, report_id: &i64) ->
     let report = stmt.query_row([], |row| Report::by_row(row)).unwrap();
 
     // レポートに紐づくタグを取得
-    let tags = fetch_tags_by_report(conn, &report_id);
+    let tags = fetch_tags_by_report_id(conn, &report_id);
     let report_with_tag = ReportWithTag::new(report, tags);
 
     return report_with_tag;

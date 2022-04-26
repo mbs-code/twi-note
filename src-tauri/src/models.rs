@@ -86,3 +86,24 @@ impl ReportWithTag {
         }
     }
 }
+
+/// ////////////////////////////////////////
+
+pub struct ReportTagJoinTag {
+    pub id: i64,
+    pub report_id: i64,
+    pub tag_id: i64,
+    pub created_at: String,
+    pub tag_name: String,
+}
+impl ReportTagJoinTag {
+    pub fn by_row(row: &Row) -> Result<ReportTagJoinTag, Error> {
+        Ok(ReportTagJoinTag {
+            id: row.get(0)?,
+            report_id: row.get(1)?,
+            tag_id: row.get(2)?,
+            created_at: row.get(3)?,
+            tag_name: row.get(4)?,
+        })
+    }
+}

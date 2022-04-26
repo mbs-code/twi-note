@@ -5,7 +5,10 @@ pub mod query;
 use chrono::Utc;
 use models::{Report, ReportWithTagParams};
 use once_cell::sync::OnceCell;
-use query::{report_query::fetch_report_with_tag_by_report_id, tag_query::fetch_tags_by_report};
+use query::{
+    report_query::fetch_report_with_tag_by_report_id, report_tag_query::associate_report_tag,
+    tag_query::fetch_tags_by_report_id,
+};
 use rusqlite::{params, Connection};
 use std::sync::Mutex;
 
@@ -66,7 +69,7 @@ pub fn find_all_reports(
     let report_with_tags = reports
         .into_iter()
         .map(|report| {
-            let tags = fetch_tags_by_report(conn, &report.id);
+            let tags = fetch_tags_by_report_id(conn, &report.id);
             return ReportWithTag::new(report, tags);
         })
         .collect::<Vec<ReportWithTag>>();
@@ -75,9 +78,8 @@ pub fn find_all_reports(
 }
 
 pub fn create_report(conn: &Connection, params: &ReportWithTagParams) -> ReportWithTag {
-    let now = get_time_of_now();
-
     // レポート作成
+    let now = get_time_of_now();
     let _ = conn.execute(
         "
             INSERT INTO reports (title, body, created_at, updated_at)
@@ -87,9 +89,11 @@ pub fn create_report(conn: &Connection, params: &ReportWithTagParams) -> ReportW
     );
 
     // タグのバインド
+    let report_id = &conn.last_insert_rowid();
+    associate_report_tag(conn, &report_id, &params.tag_names);
 
     // 更新したレコードを取得
-    let new_report = fetch_report_with_tag_by_report_id(conn, &conn.last_insert_rowid());
+    let new_report = fetch_report_with_tag_by_report_id(conn, &report_id);
     return new_report;
 }
 
