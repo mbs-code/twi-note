@@ -1,4 +1,5 @@
 use rusqlite::params;
+use tauri::Window;
 
 use crate::models::{Report, ReportWithTagParams, TagParams};
 use crate::models::{ReportWithTag, Tag};
@@ -7,7 +8,7 @@ use crate::query::{
     report_query::fetch_report_with_tag_by_report_id, report_tag_query::associate_report_tag,
     tag_query::fetch_tags_by_report_id,
 };
-use crate::{get_connection, get_time_of_now};
+use crate::{fire_tag_changed, get_connection, get_time_of_now};
 
 #[tauri::command]
 pub fn report_get_all(
@@ -156,7 +157,7 @@ pub fn tag_get_all(has_pinned: bool) -> Vec<Tag> {
 }
 
 #[tauri::command]
-pub fn tag_update(tag_id: i64, params: TagParams) -> Tag {
+pub fn tag_update(window: Window, tag_id: i64, params: TagParams) -> Tag {
     let conn = get_connection();
 
     // タグ更新
@@ -179,5 +180,9 @@ pub fn tag_update(tag_id: i64, params: TagParams) -> Tag {
 
     // 更新したレコードを取得
     let new_tag = fetch_tag_by_tag_id(&conn, &tag_id).unwrap();
+
+    // タグ更新イベントを発火
+    fire_tag_changed(&window);
+
     return new_tag;
 }

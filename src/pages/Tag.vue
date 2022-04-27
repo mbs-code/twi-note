@@ -41,13 +41,13 @@ const onEdit = (tag: Tag) => {
 // const onCreated = (report: ReportWithTag) => {
 //   reports.value.unshift(report)
 // }
-const onUpdated = (tag: Tag) => {
-  const index = tags.value.findIndex((tag) => tag.id === tag.id)
+const onUpdated = (updTag: Tag) => {
+  const index = tags.value.findIndex((tag) => tag.id === updTag.id)
   if (index >= 0) {
-    tags.value.splice(index, 1, tag)
+    tags.value.splice(index, 1, updTag)
   } else {
     // 無いはず
-    tags.value.unshift(tag)
+    tags.value.unshift(updTag)
   }
 }
 </script>

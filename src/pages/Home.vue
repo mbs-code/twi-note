@@ -51,12 +51,6 @@ let page = 1;
 const fetchReports = async () => {
   const tag = route.query?.tag as string // url parameter
 
-  console.log({
-    tagName: tag ?? undefined,
-    page: page,
-    count: 20,
-    latest: true
-  })
   const data = await reportAPI.getAll({
     tagName: tag ?? undefined,
     page: page,
@@ -69,8 +63,6 @@ const fetchReports = async () => {
 // 無限スクロール処理
 const endInfinite = ref(false)
 const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
-  console.log('infinite')
-
   // 一度 noMore になったら触らない（バグ？対策）
   if (endInfinite.value) {
     noMore();
@@ -80,11 +72,9 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
   try {
     const data = await fetchReports()
     if (data.length === 0) {
-      console.log('nomore')
       noMore()
       endInfinite.value = true
     } else {
-      console.log('push')
       reports.value.push(...data)
       page ++;
       loaded()
@@ -96,11 +86,9 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
 
 // 保持リスト更新処理
 const handleCreated = (creReport: Report) => {
-  console.log('created')
   reports.value.unshift(creReport)
 }
 const handleUpdated = (updReport: Report) => {
-  console.log('updated')
   const index = reports.value.findIndex((report) => report.id === updReport.id)
   if (index >= 0) {
     // 置き換える
@@ -111,7 +99,6 @@ const handleUpdated = (updReport: Report) => {
   }
 }
 const handleDeleted = (delReport: Report) => {
-  console.log('deleted')
   const index = reports.value.findIndex((report) => report.id === delReport.id)
   if (index >= 0) {
     // 置き換える
