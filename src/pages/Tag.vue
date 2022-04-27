@@ -16,7 +16,9 @@ const tagAPI = useTagAPI()
 const tags = ref<Tag[]>([])
 
 const fetchTags = async () => {
-  const data = await tagAPI.getAll()
+  const data = await tagAPI.getAll({
+    hasPinned: false
+  })
   return data
 }
 

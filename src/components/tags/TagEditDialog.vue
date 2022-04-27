@@ -27,7 +27,7 @@
         />
       </n-form-item>
 
-      <n-checkbox v-model:checked="formIsPinned">
+      <n-checkbox v-model:checked="formHasPinned">
         ピン留めする
       </n-checkbox>
 
@@ -61,13 +61,13 @@ const show = computed({
 
 const formName = ref<string>()
 const formColor = ref<string>()
-const formIsPinned = ref<boolean>()
+const formHasPinned = ref<boolean>()
 const formPriority = ref<number>()
 
 const init = () => {
   formName.value = props.tag?.name ?? ''
   formColor.value = props.tag?.color ?? ''
-  formIsPinned.value = props.tag?.is_pinned ? true : false
+  formHasPinned.value = props.tag?.is_pinned ? true : false
   formPriority.value = props.tag?.priority ?? 0
 }
 onMounted(() => init())
@@ -86,8 +86,8 @@ const onSave = async () => {
   const item: FormTag = {
     name: formName.value,
     color: formColor.value,
-    isPinned: formIsPinned.value,
-    priority: formPriority.value,
+    has_pinned: formHasPinned.value ?? false,
+    priority: formPriority.value ?? 0,
   }
 
   // 実行

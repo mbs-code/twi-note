@@ -1,7 +1,7 @@
 <template>
   <n-space vertical>
-    <div>{{ report.report.title }}</div>
-    <div style="white-space: pre-wrap">{{ report.report.body }}</div>
+    <div>{{ report.title }}</div>
+    <div style="white-space: pre-wrap">{{ report.body }}</div>
 
     <n-space class="expand-first">
       <n-space>
@@ -31,14 +31,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { TimeOutline as ClockIcon } from '@vicons/ionicons5'
-import { ReportWithTag } from '../../composables/useReportAPI'
+import { Report } from '../../composables/useReportAPI'
 import { parseLocal, formatString, formatDistance } from '../../utils/DateUtil'
 
-const props = defineProps<{ report: ReportWithTag }>()
+const props = defineProps<{ report: Report }>()
 
-const isEdited = computed(() =>  props.report.report.created_at !== props.report.report.updated_at)
-const createdLocalDate = computed(() => parseLocal(props.report.report.created_at))
-const updatedLocalDate = computed(() => parseLocal(props.report.report.updated_at))
+const isEdited = computed(() =>  props.report.created_at !== props.report.updated_at)
+const createdLocalDate = computed(() => parseLocal(props.report.created_at))
+const updatedLocalDate = computed(() => parseLocal(props.report.updated_at))
 
 const createdStr = computed(() => formatString(createdLocalDate.value))
 const updatedStr = computed(() => formatString(updatedLocalDate.value))

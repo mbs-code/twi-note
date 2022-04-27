@@ -11,54 +11,48 @@ export type Tag = {
 }
 
 export type FormTag = {
-  name?: string
+  name: string
   color?: string
-  isPinned?: boolean
-  priority?: number
+  has_pinned: boolean
+  priority: number
 }
 
 export type SearchTag = {
-  hasPinned?: boolean
+  hasPinned: boolean
 }
 
 export const useTagAPI = () => {
-  const getAll = async (search: SearchTag = {}) => {
-    const tags: Tag[] = (await invoke('tag_get_all', {
-      hasPinned: search.hasPinned ?? false,
-    })) as []
+  const getAll = async (search: SearchTag) => {
+    const tags: Tag[] = await invoke('tag_get_all', search)
     return tags
   }
 
   const create = async (form: FormTag) => {
     const tag: Tag = await invoke('tag_create', {
-      name: form.name ?? '',
-      color: form.color ?? null,
-      isPinned: form.isPinned ?? false,
-      priority: form.priority ?? 0,
+      params: form,
     })
     return tag
   }
 
-  const update = async (id: number, form: FormTag) => {
+  const update = async (tagId: number, form: FormTag) => {
     const tag: Tag = await invoke('tag_update', {
-      id: id,
-      name: form.name ?? '',
-      color: form.color ?? null,
-      isPinned: form.isPinned ?? false,
-      priority: form.priority ?? 0,
+      tagId: tagId,
+      params: form,
     })
     return tag
   }
 
-  // const remove = async (id: number) => {
-  //   const report_id: number = await invoke('report_remove', { id })
-  //   return report_id
-  // }
+  const remove = async (tagId: number) => {
+    const result: boolean = await invoke('tag_remove', {
+      tagId: tagId,
+    })
+    return result
+  }
 
   return {
     getAll,
     create,
     update,
-    // remove,
+    remove,
   }
 }
