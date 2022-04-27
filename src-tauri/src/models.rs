@@ -47,6 +47,14 @@ impl Tag {
 }
 
 #[derive(Debug)]
+pub struct TagParams {
+    pub name: String,
+    pub color: Option<String>,
+    pub is_pinned: bool,
+    pub priority: i64,
+}
+
+#[derive(Debug)]
 pub struct ReportTag {
     pub id: i64,
     pub report_id: i64,

@@ -3,11 +3,12 @@ pub mod models;
 pub mod query;
 
 use chrono::Utc;
-use models::{Report, ReportWithTagParams};
+use models::{Report, ReportWithTagParams, TagParams};
 use once_cell::sync::OnceCell;
 use query::{
-    report_query::fetch_report_with_tag_by_report_id, report_tag_query::associate_report_tag,
-    tag_query::fetch_tags_by_report_id,
+    report_query::fetch_report_with_tag_by_report_id,
+    report_tag_query::associate_report_tag,
+    tag_query::{fetch_tag_by_tag_id, fetch_tags_by_report_id},
 };
 use rusqlite::{params, Connection};
 use std::sync::Mutex;
@@ -120,7 +121,7 @@ pub fn update_report(
     return new_report;
 }
 
-pub fn delete_report(conn: &mut Connection, report_id: &i32) -> bool {
+pub fn delete_report(conn: &Connection, report_id: &i32) -> bool {
     // レポート削除
     let now = get_time_of_now();
     let _ = conn.execute(
@@ -134,33 +135,52 @@ pub fn delete_report(conn: &mut Connection, report_id: &i32) -> bool {
     return true;
 }
 
-// /// ////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////
 
-// pub fn find_all_tags(conn: &mut SqliteConnection, has_pinned: bool) -> Vec<Tag> {
-//     use crate::schema::tags as tag_schema;
-//     use crate::schema::tags::dsl::id;
-//     use crate::schema::tags::dsl::is_pinned;
-//     use crate::schema::tags::dsl::tags;
+pub fn find_all_tags(conn: &Connection, has_pinned: bool) -> Vec<Tag> {
+    let mut query: Vec<String> = Vec::new();
+    query.push("SELECT t.* FROM tags t".to_string());
 
-//     let mut query = tags.into_boxed();
-//     if has_pinned {
-//         query = query.filter(tag_schema::is_pinned::eq(is_pinned, 1));
-//     }
+    // タグ抽出
+    if has_pinned {
+        // joinしてタグ名で抽出
+        query.push("WHERE t.is_pinned = 1".to_string());
+    }
 
-//     let db_tags = query.order_by(id.asc()).load::<Tag>(conn).unwrap();
-//     return db_tags;
-// }
+    // 並び替え
+    query.push("ORDER BY priority DESC, id ASC".to_string());
 
-// pub fn update_tag(
-//     conn: &mut SqliteConnection,
-//     tag_id: &i32,
-//     name: String,
-//     color: Option<String>,
-//     is_pinned: i32,
-//     priority: i32,
-// ) -> Tag {
-//     // レポートを更新
-//     let tag = update_tag_returning(conn, tag_id, name, color, is_pinned, priority);
+    // タグ配列の取得
+    let mut stmt = conn.prepare(&query.join(" ")).unwrap();
+    let tags = stmt
+        .query_map([], |row| Tag::by_row(row))
+        .unwrap()
+        .map(|r| r.unwrap())
+        .collect::<Vec<Tag>>();
 
-//     return tag;
-// }
+    return tags;
+}
+
+pub fn update_tag(conn: &Connection, tag_id: &i64, params: &TagParams) -> Tag {
+    // タグ更新
+    let is_pinned = if params.is_pinned { 1 } else { 0 };
+    let now = get_time_of_now();
+    let _ = conn.execute(
+        "
+            UPDATE tags SET name=?1, color=?2, is_pinned=?3, priority=?4, updated_at=?5
+            WHERE id=?6
+        ",
+        params![
+            params.name,
+            params.color,
+            is_pinned,
+            params.priority,
+            now,
+            tag_id,
+        ],
+    );
+
+    // 更新したレコードを取得
+    let new_tag = fetch_tag_by_tag_id(conn, &tag_id).unwrap();
+    return new_tag;
+}
