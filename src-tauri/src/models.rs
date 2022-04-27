@@ -1,6 +1,7 @@
 use rusqlite::{Error, Row};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Report {
     pub id: i64,
     pub title: Option<String>,
@@ -22,7 +23,7 @@ impl Report {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tag {
     pub id: i64,
     pub name: String,
@@ -46,7 +47,7 @@ impl Tag {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TagParams {
     pub name: String,
     pub color: Option<String>,
@@ -54,7 +55,7 @@ pub struct TagParams {
     pub priority: i64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReportTag {
     pub id: i64,
     pub report_id: i64,
@@ -64,14 +65,14 @@ pub struct ReportTag {
 
 /// ////////////////////////////////////////
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReportWithTagParams {
     pub title: Option<String>,
     pub body: String,
     pub tag_names: Vec<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReportWithTag {
     pub id: i64,
     pub title: Option<String>,
@@ -97,6 +98,7 @@ impl ReportWithTag {
 
 /// ////////////////////////////////////////
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReportTagJoinTag {
     pub id: i64,
     pub report_id: i64,
