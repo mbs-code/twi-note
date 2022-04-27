@@ -14,7 +14,7 @@ export type Report = {
 export type FormReport = {
   title?: string
   body: string
-  tagNames: String[]
+  tag_names: String[]
 }
 
 export type SearchReport = {
@@ -37,17 +37,17 @@ export const useReportAPI = () => {
     return report
   }
 
-  const update = async (report_id: number, form: FormReport) => {
+  const update = async (reportId: number, form: FormReport) => {
     const report: Report = await invoke('report_update', {
-      report_id: report_id,
+      reportId: reportId,
       params: form,
     })
     return report
   }
 
-  const remove = async (report_id: number) => {
+  const remove = async (reportId: number) => {
     const result: boolean = await invoke('report_remove', {
-      report_id: report_id,
+      reportId: reportId,
     })
     return result
   }

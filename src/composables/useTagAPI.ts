@@ -13,12 +13,12 @@ export type Tag = {
 export type FormTag = {
   name: string
   color?: string
-  hasPinned: boolean
+  has_pinned: boolean
   priority: number
 }
 
 export type SearchTag = {
-  hasPinned?: boolean
+  hasPinned: boolean
 }
 
 export const useTagAPI = () => {
@@ -34,17 +34,17 @@ export const useTagAPI = () => {
     return tag
   }
 
-  const update = async (tag_id: number, form: FormTag) => {
+  const update = async (tagId: number, form: FormTag) => {
     const tag: Tag = await invoke('tag_update', {
-      tag_id: tag_id,
+      tagId: tagId,
       params: form,
     })
     return tag
   }
 
-  const remove = async (tag_id: number) => {
+  const remove = async (tagId: number) => {
     const result: boolean = await invoke('tag_remove', {
-      tag_id: tag_id,
+      tagId: tagId,
     })
     return result
   }

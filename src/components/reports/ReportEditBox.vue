@@ -33,10 +33,10 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { nextTick, onMounted, ref } from 'vue'
-import { ReportWithTag, FormReport, useReportAPI } from '../../composables/useReportAPI'
+import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 
-const props = defineProps<{ report?: ReportWithTag }>()
-const emit = defineEmits<{ (e: 'saved', report: ReportWithTag): void }>()
+const props = defineProps<{ report?: Report }>()
+const emit = defineEmits<{ (e: 'saved', report: Report): void }>()
 const message = useMessage()
 
 // フォーカス処理
@@ -50,8 +50,8 @@ const formTitle = ref<string>()
 const formBody = ref<string>()
 const formTagNames = ref<string[]>([])
 const reset = () => {
-  formTitle.value = props.report?.report.title ?? ''
-  formBody.value = props.report?.report.body ?? ''
+  formTitle.value = props.report?.title ?? ''
+  formBody.value = props.report?.body ?? ''
   formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? []
 }
 onMounted(() => reset())
@@ -72,11 +72,11 @@ const onSave = async () => {
   }
 
   // データ成形
-  const id = props.report?.report.id
+  const id = props.report?.id
   const item: FormReport = {
     title: formTitle.value,
     body: formBody.value ?? '',
-    tagNames: formTagNames.value ?? [],
+    tag_names: formTagNames.value ?? [],
   }
 
   // 実行
