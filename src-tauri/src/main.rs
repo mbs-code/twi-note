@@ -5,7 +5,7 @@
 
 use app::{
     create_report, find_all_reports, models::ReportWithTagParams,
-    query::tag_query::fetch_tag_by_tag_name, DB_CONN,
+    query::tag_query::fetch_tag_by_tag_name, update_report, DB_CONN,
 };
 use std::sync::Mutex;
 // use tauri::generate_handler;
@@ -17,17 +17,27 @@ fn main() {
 
     // fetch_tag_by_tag_name(&conn, &"タグ".to_string());
 
+    // let rcparams = ReportWithTagParams {
+    //     title: Some("新規タイトル".to_string()),
+    //     body: "新規タグ".to_string(),
+    //     tag_names: vec!["テスト".to_string(), "タグ".to_string()],
+    // };
+    // let add = create_report(&conn, &rcparams);
+    // println!("{:?}", add);
+
+    let res = find_all_reports(&conn, None, 1, 1, true);
+    println!("{:?}", res);
+
     let rcparams = ReportWithTagParams {
-        title: Some("新規タイトル".to_string()),
-        body: "新規タグ".to_string(),
+        title: Some("かえて".to_string()),
+        body: "みた".to_string(),
         tag_names: vec!["テスト".to_string(), "タグ".to_string()],
     };
-    let add = create_report(&conn, &rcparams);
+    let add = update_report(&conn, &18, &rcparams);
     println!("{:?}", add);
 
-    // let res = find_all_reports(&conn, Some("ふぁふぁ".to_string()), 1, 10, true);
-    // println!("{:?}", res);
-    // 取得
+    let res = find_all_reports(&conn, None, 1, 1, true);
+    println!("{:?}", res);
 
     // command::run_migration();
 

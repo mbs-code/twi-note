@@ -47,7 +47,7 @@ pub fn find_all_reports(
     }
 
     // 並び替え
-    let order = if latest { "ASC" } else { "DESC" };
+    let order = if latest { "DESC" } else { "ASC" };
     query.push("ORDER BY id".to_string());
     query.push(order.to_string());
 
@@ -97,42 +97,28 @@ pub fn create_report(conn: &Connection, params: &ReportWithTagParams) -> ReportW
     return new_report;
 }
 
-// pub fn create_report(
-//     conn: &mut SqliteConnection,
-//     title: Option<String>,
-//     body: String,
-//     tag_names: Vec<String>,
-// ) -> ReportWithTag {
-//     // レポートを作成
-//     let report = craete_report_returning(conn, title, body);
+pub fn update_report(
+    conn: &Connection,
+    report_id: &i64,
+    params: &ReportWithTagParams,
+) -> ReportWithTag {
+    // レポート更新
+    let now = get_time_of_now();
+    let _ = conn.execute(
+        "
+            UPDATE reports SET title=?1, body=?2, updated_at=?3
+            WHERE id=?4
+        ",
+        params![params.title, params.body, now, report_id],
+    );
 
-//     // タグ名を tag 配列に変換する
-//     let tags = convert_tag_name_to_tag(conn, tag_names);
+    // タグのバインド
+    associate_report_tag(conn, &report_id, &params.tag_names);
 
-//     // タグを紐づける
-//     associate_report_tag(conn, &report, &tags);
-
-//     return ReportWithTag { report, tags };
-// }
-
-// pub fn update_report(
-//     conn: &mut SqliteConnection,
-//     report_id: &i32,
-//     title: Option<String>,
-//     body: String,
-//     tag_names: Vec<String>,
-// ) -> ReportWithTag {
-//     // レポートを更新
-//     let report = update_report_returning(conn, report_id, title, body);
-
-//     // タグ名を tag 配列に変換する
-//     let tags = convert_tag_name_to_tag(conn, tag_names);
-
-//     // タグを紐づける
-//     associate_report_tag(conn, &report, &tags);
-
-//     return ReportWithTag { report, tags };
-// }
+    // 更新したレコードを取得
+    let new_report = fetch_report_with_tag_by_report_id(conn, &report_id);
+    return new_report;
+}
 
 // pub fn delete_report(conn: &mut SqliteConnection, report_id: &i32) -> bool {
 //     // レポートを論理削除する
