@@ -14,17 +14,15 @@ import { Tag, useTagAPI } from '../composables/useTagAPI'
 
 const tagAPI = useTagAPI()
 const tags = ref<Tag[]>([])
-
-const fetchTags = async () => {
+const loadTags = async () => {
   const data = await tagAPI.getAll({
     hasPinned: false
   })
-  return data
+  tags.value = data
 }
 
 onMounted(async () => {
-  const data = await fetchTags()
-  tags.value = data
+  await loadTags()
 })
 
 ///
@@ -35,7 +33,6 @@ const onEdit = (tag: Tag) => {
   selectedTag.value = tag
   showTagModal.value = true
 }
-
 
 // 保持リスト更新処理
 // const onCreated = (report: ReportWithTag) => {
