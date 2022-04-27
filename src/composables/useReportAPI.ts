@@ -8,10 +8,6 @@ export type Report = {
   created_at: string
   updated_at: string
   deleted_at?: string
-}
-
-export type ReportWithTag = {
-  report: Report
   tags: Tag[]
 }
 
@@ -23,44 +19,37 @@ export type FormReport = {
 
 export type SearchReport = {
   tagName?: string
-  page?: number
-  count?: number
-  // latest?: boolean
+  page: number
+  count: number
+  latest: boolean
 }
 
 export const useReportAPI = () => {
-  const getAll = async (search: SearchReport = {}) => {
-    const reports: ReportWithTag[] = (await invoke('report_get_all', {
-      tagName: search.tagName ?? null,
-      page: search.page ?? 1,
-      count: search.count ?? 20,
-      // latest: search.latest ?? false,
-    })) as []
+  const getAll = async (search: SearchReport) => {
+    const reports: Report[] = await invoke('report_get_all', search)
     return reports
   }
 
   const create = async (form: FormReport) => {
-    const report: ReportWithTag = await invoke('report_create', {
-      title: form.title ?? null,
-      body: form.body ?? 'unknown',
-      tagNames: form.tagNames,
+    const report: Report = await invoke('report_create', {
+      params: form,
     })
     return report
   }
 
-  const update = async (id: number, form: FormReport) => {
-    const report: ReportWithTag = await invoke('report_update', {
-      id: id,
-      title: form.title ?? null,
-      body: form.body ?? 'unknown',
-      tagNames: form.tagNames,
+  const update = async (report_id: number, form: FormReport) => {
+    const report: Report = await invoke('report_update', {
+      report_id: report_id,
+      params: form,
     })
     return report
   }
 
-  const remove = async (id: number) => {
-    const report_id: number = await invoke('report_remove', { id })
-    return report_id
+  const remove = async (report_id: number) => {
+    const result: boolean = await invoke('report_remove', {
+      report_id: report_id,
+    })
+    return result
   }
 
   return {
