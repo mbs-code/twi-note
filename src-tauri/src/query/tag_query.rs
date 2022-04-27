@@ -49,7 +49,6 @@ pub fn fetch_tag_by_tag_name(conn: &Connection, tag_name: &String) -> Tag {
     query.push("".to_string() + &"\"" + &tag_name + &"\"");
     query.push("ORDER BY id ASC".to_string());
     query.push("LIMIT 1".to_string());
-    println!("{}", &query.join(" "));
 
     // タグ単体取得
     let mut stmt = conn.prepare(&query.join(" ")).unwrap();
