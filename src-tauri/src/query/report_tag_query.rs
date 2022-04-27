@@ -1,8 +1,7 @@
 use rusqlite::{params, Connection};
 
-use crate::{get_time_of_now, models::ReportTagJoinTag};
-
 use super::tag_query::fetch_tag_by_tag_name;
+use crate::{get_time_of_now, models::ReportTagJoinTag};
 
 /** レポートIDを基準に、レポートタグ配列を取得 */
 pub fn fetch_report_tags_by_report_id(conn: &Connection, report_id: &i64) -> Vec<ReportTagJoinTag> {
@@ -82,11 +81,3 @@ fn detach_report_tag(conn: &Connection, report_tag_id: &i64) {
         params![report_tag_id],
     );
 }
-
-// fn detach_report_tag(conn: &mut SqliteConnection, report_tag: &ReportTag) {
-//     use crate::schema::report_tags::dsl::report_tags;
-
-//     diesel::delete(report_tags.find(report_tag.id))
-//         .execute(conn)
-//         .unwrap();
-// }

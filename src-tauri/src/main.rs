@@ -3,9 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-use app::{run_migration, DB_CONN};
+use app::{command, run_migration, DB_CONN};
 use std::sync::Mutex;
-// use tauri::generate_handler;
+use tauri::generate_handler;
 
 fn main() {
     // init database
@@ -14,16 +14,16 @@ fn main() {
 
     let _ = DB_CONN.set(Mutex::new(conn));
 
-    // // run tauri apptaur
-    // tauri::Builder::default()
-    //     .invoke_handler(generate_handler![
-    //         command::report_get_all,
-    //         command::report_create,
-    //         command::report_update,
-    //         command::report_remove,
-    //         command::tag_get_all,
-    //         command::tag_update,
-    //     ])
-    //     .run(tauri::generate_context!())
-    //     .expect("error while running tauri application");
+    // run tauri apptaur
+    tauri::Builder::default()
+        .invoke_handler(generate_handler![
+            command::report_get_all,
+            command::report_create,
+            command::report_update,
+            command::report_remove,
+            command::tag_get_all,
+            command::tag_update,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
