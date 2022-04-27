@@ -11,6 +11,7 @@ use query::{
     tag_query::{fetch_tag_by_tag_id, fetch_tags_by_report_id},
 };
 use rusqlite::{params, Connection};
+use rusqlite_migration::{Migrations, M};
 use std::sync::Mutex;
 
 use crate::models::{ReportWithTag, Tag};
@@ -22,11 +23,22 @@ pub fn establish_connection() -> Connection {
     return conn;
 }
 
+pub fn run_migration(conn: &mut Connection) {
+    let migrations: Migrations = Migrations::new(vec![M::up(include_str!(
+        "../migrations/2022-04-16-021232_init/up.sql"
+    ))
+    .down(include_str!(
+        "../migrations/2022-04-16-021232_init/down.sql"
+    ))]);
+
+    migrations.to_latest(conn).unwrap();
+}
+
 pub fn get_time_of_now() -> String {
     return Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
 }
 
-///
+/// ////////////////////////////////////////////////////////////
 
 pub fn find_all_reports(
     conn: &Connection,
