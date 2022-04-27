@@ -120,12 +120,19 @@ pub fn update_report(
     return new_report;
 }
 
-// pub fn delete_report(conn: &mut SqliteConnection, report_id: &i32) -> bool {
-//     // レポートを論理削除する
-//     let _ = delete_report_returning(conn, report_id);
+pub fn delete_report(conn: &mut Connection, report_id: &i32) -> bool {
+    // レポート削除
+    let now = get_time_of_now();
+    let _ = conn.execute(
+        "
+            UPDATE reports SET deleted_at=?1
+            WHERE id=?2
+        ",
+        params![now, report_id],
+    );
 
-//     return true;
-// }
+    return true;
+}
 
 // /// ////////////////////////////////////////////////////////////
 
