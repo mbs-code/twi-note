@@ -23,10 +23,13 @@ pub fn report_get_all(
     query.push("LEFT JOIN report_tags rt ON r.id = rt.report_id".to_string());
     query.push("LEFT JOIN tags t ON rt.tag_id = t.id".to_string());
 
+    // deleted_at があるものを除外
+    query.push("WHERE r.deleted_at IS NULL".to_string());
+
     // タグ抽出
     if let Some(name) = tag_name {
         // joinしてタグ名で抽出
-        query.push("WHERE t.name =".to_string());
+        query.push("AND t.name =".to_string());
         query.push("".to_string() + &"\"" + &name + &"\"");
     }
 
