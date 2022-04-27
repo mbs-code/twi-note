@@ -62,7 +62,7 @@ pub fn report_get_all(
 }
 
 #[tauri::command]
-pub fn report_create(params: &ReportWithTagParams) -> ReportWithTag {
+pub fn report_create(params: ReportWithTagParams) -> ReportWithTag {
     let conn = get_connection();
 
     // レポート作成
@@ -85,7 +85,7 @@ pub fn report_create(params: &ReportWithTagParams) -> ReportWithTag {
 }
 
 #[tauri::command]
-pub fn report_update(report_id: &i64, params: &ReportWithTagParams) -> ReportWithTag {
+pub fn report_update(report_id: i64, params: ReportWithTagParams) -> ReportWithTag {
     let conn = get_connection();
 
     // レポート更新
@@ -107,7 +107,7 @@ pub fn report_update(report_id: &i64, params: &ReportWithTagParams) -> ReportWit
 }
 
 #[tauri::command]
-pub fn report_remove(report_id: &i32) -> bool {
+pub fn report_remove(report_id: i32) -> bool {
     let conn = get_connection();
 
     // レポート削除
@@ -153,7 +153,7 @@ pub fn tag_get_all(has_pinned: bool) -> Vec<Tag> {
 }
 
 #[tauri::command]
-pub fn tag_update(tag_id: &i64, params: &TagParams) -> Tag {
+pub fn tag_update(tag_id: i64, params: TagParams) -> Tag {
     let conn = get_connection();
 
     // タグ更新
