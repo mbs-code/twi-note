@@ -157,7 +157,7 @@ pub fn tag_update(tag_id: i64, params: TagParams) -> Tag {
     let conn = get_connection();
 
     // タグ更新
-    let is_pinned = if params.is_pinned { 1 } else { 0 };
+    let is_pinned = if params.has_pinned { 1 } else { 0 };
     let now = get_time_of_now();
     let _ = &conn.execute(
         "
