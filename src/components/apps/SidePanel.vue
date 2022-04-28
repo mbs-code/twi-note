@@ -1,11 +1,24 @@
 <template>
   <n-space vertical>
-    <div>あ</div>
-    <n-button v-for="tag of pinTags" class="p-0" @click="onSelectedTag(tag)">
-      <n-avatar :color="tag.color">
-        {{ tag.name.substring(0, 3) }}
-      </n-avatar>
-    </n-button>
+    <template v-if="expand">
+      <!-- <n-button v-for="(tag, _) of pinTags" :key="_" block dark :color="tag.color" @click="onSelectedTag(tag)">
+        {{ tag.name.substring(0, 10) }}
+      </n-button> -->
+
+      <n-button v-for="(tag, _) of pinTags" :key="`a${_}`" class="p-0" @click="onSelectedTag(tag)">
+        <n-avatar class="avatar-block" :color="tag.color">
+          {{ tag.name.substring(0, 12) }}
+        </n-avatar>
+      </n-button>
+    </template>
+
+    <template v-else>
+      <n-button v-for="(tag, _) of pinTags" :key="`b${_}`" class="p-0" @click="onSelectedTag(tag)">
+        <n-avatar :color="tag.color">
+          {{ tag.name.substring(0, 3) }}
+        </n-avatar>
+      </n-button>
+    </template>
   </n-space>
 </template>
 
@@ -15,6 +28,9 @@ import { useRouter } from 'vue-router'
 import { Tag, useTagAPI } from '../../composables/useTagAPI'
 import { listen } from '@tauri-apps/api/event'
 
+const props = defineProps<{ expand?: boolean }>()
+
+// タグリスト取得
 const tagAPI = useTagAPI()
 const pinTags = ref<Tag[]>([])
 const loadTags = async () => {
@@ -39,3 +55,13 @@ const onSelectedTag = (tag: Tag) => {
 }
 
 </script>
+
+<style scoped lang="scss">
+.avatar-block {
+  width: 140px;
+
+  ::v-deep .n-avatar__text {
+    scale: 1;
+  }
+}
+</style>

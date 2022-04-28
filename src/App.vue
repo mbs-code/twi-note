@@ -6,7 +6,9 @@
           <!-- Header Area -->
           <n-layout-header position="absolute" bordered style="height: 22px;">
             <n-space>
-              <div>div</div>
+              <div>side</div>
+              <n-switch v-model:value="expandSide" />
+              <div>dark</div>
               <n-switch v-model:value="isDark" />
               <router-link to="/"><n-button size="small">ホーム</n-button></router-link>
               <router-link to="/tag"><n-button size="small">タグ</n-button></router-link>
@@ -19,10 +21,11 @@
             <n-layout-sider
               content-style="padding: 8px;"
               :native-scrollbar="false"
-              :width="50"
+              :width="expandSide ? 160 : 50"
+              collapse-mode="width"
               bordered
             >
-              <SidePanel />
+              <SidePanel :expand="expandSide" />
             </n-layout-sider>
 
             <!-- Main Contents -->
@@ -41,5 +44,6 @@
 import { ref } from 'vue'
 import { lightTheme, darkTheme } from 'naive-ui'
 
+const expandSide = ref<boolean>(true)
 const isDark = ref<boolean>(true)
 </script>
