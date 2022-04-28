@@ -9,9 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { DataTableColumns, NButton } from 'naive-ui'
+import { DataTableColumns, NButton, NIcon } from 'naive-ui'
 import { h, reactive } from 'vue'
 import { Tag } from '../../composables/useTagAPI'
+import {
+  CreateOutline as EditIcon,
+} from '@vicons/ionicons5'
 
 const props = defineProps<{ tags: Tag[] }>()
 const emit = defineEmits<{
@@ -22,16 +25,27 @@ const columns = reactive<DataTableColumns<Tag>>([
   {
     title: 'ID',
     key: 'id',
+    width: 80,
+    align: 'center',
     sorter: 'default',
   },
   {
-    title: 'Name',
+    title: '並び順',
+    key: 'priority',
+    width: 100,
+    align: 'center',
+    sorter: 'default',
+    defaultSortOrder: 'descend', // 初期値降順
+  },
+  {
+    title: 'タグ名',
     key: 'name',
     sorter: 'default',
   },
   {
-    title: 'Color',
+    title: '色',
     key: 'color',
+    align: 'center',
     sorter: 'default',
     render: (row: Tag) => {
       return h(
@@ -43,7 +57,7 @@ const columns = reactive<DataTableColumns<Tag>>([
               'span',
               { style: `color: ${row.color}; padding-right: 4px; user-select: 'none';`},
               { default: () => '●'},
-            ) : '',
+            ) : '-',
             row.color,
           ],
         },
@@ -51,14 +65,17 @@ const columns = reactive<DataTableColumns<Tag>>([
     }
   },
   {
-    title: 'is_pinned',
+    title: 'ピン留め',
     key: 'is_pinned',
+    align: 'center',
     sorter: 'default',
-  },
-  {
-    title: 'priority',
-    key: 'priority',
-    sorter: 'default',
+    render: (row: Tag) => {
+      return h(
+        'span',
+        {},
+        { default: () => row.is_pinned ? '○' : '-' },
+      )
+    },
   },
   {
     title: 'created_at',
@@ -71,17 +88,24 @@ const columns = reactive<DataTableColumns<Tag>>([
     sorter: 'default',
   },
   {
-    title: 'actions',
+    title: '',
     key: 'actions',
+    width: 60,
     render: (row: Tag) =>  h(
       NButton,
       {
-        strong: true,
-        tertiary: true,
-        size: 'small',
+        quaternary: true,
+        circle: true,
+        type: 'primary',
         onClick: () => emit('onEdit', row)
       },
-      { default: () => 'Edit' }
+      {
+        icon: () => h(
+          NIcon,
+          {},
+          { default: h(EditIcon) },
+        ),
+      },
     )
   },
 ])
