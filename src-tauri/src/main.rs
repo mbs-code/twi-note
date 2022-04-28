@@ -23,6 +23,8 @@ fn main() {
             command::report_command::report_remove,
             command::tag_command::tag_get_all,
             command::tag_command::tag_update,
+            command::config_command::load_config,
+            command::config_command::save_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
