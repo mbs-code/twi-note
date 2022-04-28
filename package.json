@@ -12,6 +12,7 @@
     "@tauri-apps/api": "^1.0.0-rc.3",
     "@ts-pro/vue-eternal-loading": "^1.2.0",
     "date-fns": "^2.28.0",
+    "pinia": "^2.0.13",
     "vue": "^3.2.25"
   },
   "devDependencies": {

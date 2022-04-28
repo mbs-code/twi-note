@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme="isDark ? darkTheme : lightTheme">
+  <n-config-provider :theme="configStore.is_dark ? darkTheme : lightTheme">
     <n-message-provider placement="top-right">
       <n-dialog-provider>
         <n-layout position="absolute">
@@ -7,9 +7,9 @@
           <n-layout-header position="absolute" bordered style="height: 22px;">
             <n-space>
               <div>side</div>
-              <n-switch v-model:value="expandSide" />
+              <n-switch v-model:value="configStore.expand_side" />
               <div>dark</div>
-              <n-switch v-model:value="isDark" />
+              <n-switch v-model:value="configStore.is_dark" />
               <router-link to="/"><n-button size="small">ホーム</n-button></router-link>
               <router-link to="/tag"><n-button size="small">タグ</n-button></router-link>
             </n-space>
@@ -21,11 +21,11 @@
             <n-layout-sider
               content-style="padding: 8px;"
               :native-scrollbar="false"
-              :width="expandSide ? 160 : 50"
+              :width="configStore.expand_side ? 160 : 50"
               collapse-mode="width"
               bordered
             >
-              <SidePanel :expand="expandSide" />
+              <SidePanel :expand="configStore.expand_side" />
             </n-layout-sider>
 
             <!-- Main Contents -->
@@ -41,9 +41,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { lightTheme, darkTheme } from 'naive-ui'
+import { onMounted, watch } from 'vue'
+import { useAppConfigAPI } from './composables/useAppConfigAPI'
+import { useConfigStore } from './stores/config'
 
-const expandSide = ref<boolean>(true)
-const isDark = ref<boolean>(true)
+const configStore = useConfigStore()
+
+const appConfigAPI = useAppConfigAPI()
+onMounted(async () => {
+  const config = await appConfigAPI.load()
+  configStore.$state = config
+})
+
+watch(configStore.$state, async () => {
+  await appConfigAPI.save(configStore.$state)
+})
 </script>
