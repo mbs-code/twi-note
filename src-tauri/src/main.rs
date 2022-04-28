@@ -17,12 +17,12 @@ fn main() {
     // run tauri apptaur
     tauri::Builder::default()
         .invoke_handler(generate_handler![
-            command::report_get_all,
-            command::report_create,
-            command::report_update,
-            command::report_remove,
-            command::tag_get_all,
-            command::tag_update,
+            command::report_command::report_get_all,
+            command::report_command::report_create,
+            command::report_command::report_update,
+            command::report_command::report_remove,
+            command::tag_command::tag_get_all,
+            command::tag_command::tag_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
