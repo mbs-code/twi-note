@@ -16,7 +16,7 @@
       :autosize="{ minRows: 3 }"
     />
 
-    <ArrayTagForm v-model:value="formTagNames" />
+    <ArrayTagForm ref="tagNamesRef" v-model:value="formTagNames" />
 
     <n-space>
       <n-button round type="primary" :disabled="!validate" @click="onSave">
@@ -34,6 +34,7 @@
 import { useMessage } from 'naive-ui'
 import { nextTick, onMounted, ref } from 'vue'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
+import ArrayTagForm from '../ArrayTagForm.vue'
 
 const props = defineProps<{ report?: Report }>()
 const emit = defineEmits<{ (e: 'saved', report: Report): void }>()
@@ -64,12 +65,16 @@ const validate = () => {
 
 // 保存処理
 const reportAPI = useReportAPI()
+const tagNamesRef = ref<typeof ArrayTagForm | null>()
 const onSave = async () => {
   // バリデーション
   if (!validate()) {
     message.error('入力値エラー')
     return
   }
+
+  // 入力中のタグがあったら確定させる
+  tagNamesRef.value?.onInput()
 
   // データ成形
   const id = props.report?.id

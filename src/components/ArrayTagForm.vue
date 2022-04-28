@@ -56,4 +56,6 @@ const onRemove = (index: number) => {
   emit("update:value", copy)
   focusInputForm()
 }
+
+defineExpose({ onInput })
 </script>
