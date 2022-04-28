@@ -3,13 +3,15 @@
     windows_subsystem = "windows"
 )]
 
-use app::{command, DB_CONN};
+use app::{command, run_migration, DB_CONN};
 use std::sync::Mutex;
 use tauri::generate_handler;
 
 fn main() {
     // init database
-    let conn = app::establish_connection();
+    let mut conn = app::establish_connection();
+    run_migration(&mut conn);
+
     let _ = DB_CONN.set(Mutex::new(conn));
 
     // run tauri apptaur
@@ -19,6 +21,8 @@ fn main() {
             command::report_create,
             command::report_update,
             command::report_remove,
+            command::tag_get_all,
+            command::tag_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

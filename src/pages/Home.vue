@@ -1,14 +1,14 @@
 <template>
   <n-space vertical>
     <n-card>
-      <ReportEditBox @onChanged="onCreated"></ReportEditBox>
+      <ReportEditBox @saved="handleCreated"></ReportEditBox>
     </n-card>
 
     <template v-for="report in reports"  :key="report.id">
       <ReportPanel
         :report="report"
-        @updated="onUpdated"
-        @deleted="onDeleted"
+        @updated="handleUpdated"
+        @deleted="handleDeleted"
       ></ReportPanel>
     </template>
 
@@ -38,31 +38,42 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ReportWithTag, useReportAPI } from '../composables/useReportAPI'
+import { Report, useReportAPI } from '../composables/useReportAPI'
 import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
 const reportAPI = useReportAPI()
-const reports = ref<ReportWithTag[]>([])
+const reports = ref<Report[]>([])
 
 // 検索処理
 let page = 1;
 const fetchReports = async () => {
+  const tag = route.query?.tag as string // url parameter
+
   const data = await reportAPI.getAll({
+    tagName: tag ?? undefined,
     page: page,
     count: 20,
-    latest: true,
+    latest: true
   })
   return data
 }
 
 // 無限スクロール処理
+const endInfinite = ref(false)
 const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
-  console.log('infinite')
+  // 一度 noMore になったら触らない（バグ？対策）
+  if (endInfinite.value) {
+    noMore();
+    return
+  }
 
   try {
     const data = await fetchReports()
     if (data.length === 0) {
       noMore()
+      endInfinite.value = true
     } else {
       reports.value.push(...data)
       page ++;
@@ -74,22 +85,23 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
 }
 
 // 保持リスト更新処理
-const onCreated = (report: ReportWithTag) => {
-  reports.value.unshift(report)
+const handleCreated = (creReport: Report) => {
+  reports.value.unshift(creReport)
 }
-const onUpdated = (report: ReportWithTag) => {
-  const index = reports.value.findIndex((rp) => rp.report.id === report.report.id)
+const handleUpdated = (updReport: Report) => {
+  const index = reports.value.findIndex((report) => report.id === updReport.id)
   if (index >= 0) {
-    reports.value.splice(index, 1, report)
+    // 置き換える
+    reports.value.splice(index, 1, updReport)
   } else {
-    // 無いはず
-    reports.value.unshift(report)
+    // 該当が無かったら先頭に追加しておく（無いはず）
+    reports.value.unshift(updReport)
   }
 }
-const onDeleted = (report: ReportWithTag) => {
-  const index = reports.value.findIndex((rp) => rp.report.id === report.report.id)
-  console.log(index)
+const handleDeleted = (delReport: Report) => {
+  const index = reports.value.findIndex((report) => report.id === delReport.id)
   if (index >= 0) {
+    // 置き換える
     reports.value.splice(index, 1)
   }
 }

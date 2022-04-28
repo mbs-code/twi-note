@@ -5,9 +5,12 @@
 declare module 'vue' {
   export interface GlobalComponents {
     ArrayTagForm: typeof import('./components/ArrayTagForm.vue')['default']
-    ReportEditBox: typeof import('./components/ReportEditBox.vue')['default']
-    ReportPanel: typeof import('./components/ReportPanel.vue')['default']
-    ReportShowBox: typeof import('./components/ReportShowBox.vue')['default']
+    ReportEditBox: typeof import('./components/reports/ReportEditBox.vue')['default']
+    ReportPanel: typeof import('./components/reports/ReportPanel.vue')['default']
+    ReportShowBox: typeof import('./components/reports/ReportShowBox.vue')['default']
+    SidePanel: typeof import('./components/apps/SidePanel.vue')['default']
+    TagEditDialog: typeof import('./components/tags/TagEditDialog.vue')['default']
+    TagTable: typeof import('./components/tags/TagTable.vue')['default']
   }
 }
 
