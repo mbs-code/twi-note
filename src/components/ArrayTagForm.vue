@@ -13,6 +13,7 @@
       v-model:value="formText"
       :input-props="{ autocomplete: 'disabled' }"
       :options="options"
+      :get-show="() => true"
       type="text"
       size="small"
       placeholder="Tag"
@@ -47,7 +48,7 @@ onMounted(async () => {
 const options = computed(() => {
   return tags.value
     .map((tag: Tag) => tag.name)
-    .filter((name: string) => name.includes(formText.value ?? ''))
+    .filter((name: string) => name ? name.includes(formText.value ?? '') : true)
 })
 
 // 更新処理
@@ -73,6 +74,10 @@ const onRemove = (index: number) => {
   emit("update:value", copy)
   focusInputForm()
 }
+const onClear = () => {
+    // 入力を空にする
+    formText.value = ''
+}
 
-defineExpose({ onInput })
+defineExpose({ onInput, onClear })
 </script>

@@ -54,6 +54,9 @@ const reset = () => {
   formTitle.value = props.report?.title ?? ''
   formBody.value = props.report?.body ?? ''
   formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? []
+
+  // インプットも初期化
+  tagNamesRef.value?.onClear()
 }
 onMounted(() => reset())
 
