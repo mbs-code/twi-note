@@ -19,7 +19,7 @@
     <ArrayTagForm ref="tagNamesRef" v-model:value="formTagNames" />
 
     <n-space>
-      <n-button round type="primary" :disabled="!validate" @click="onSave">
+      <n-button round :type="isEdit ? 'warning' : 'primary'" :disabled="!validate" @click="onSave">
         保存(Ctrl+Enter)
       </n-button>
 
@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 import ArrayTagForm from '../ArrayTagForm.vue'
 
@@ -59,6 +59,8 @@ const reset = () => {
   tagNamesRef.value?.onClear()
 }
 onMounted(() => reset())
+
+const isEdit = computed(() => props.report?.id)
 
 // バリデーション
 const validate = () => {
