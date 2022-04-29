@@ -19,7 +19,6 @@
           <n-layout has-sider position="absolute" style="top: 22px;">
             <!-- Left Contents -->
             <n-layout-sider
-              content-style="padding: 8px;"
               :native-scrollbar="false"
               :width="configStore.expand_side ? 160 : 50"
               collapse-mode="width"
