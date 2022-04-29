@@ -1,6 +1,6 @@
 <template>
   <n-card>
-    <n-space class="expand-first">
+    <n-space class="expand-first" :wrap="false">
       <div>
         <template v-if="isEdit">
           <ReportEditBox :report="report" @saved="handleUpdated"></ReportEditBox>
