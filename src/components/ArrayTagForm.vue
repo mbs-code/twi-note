@@ -8,9 +8,11 @@
      {{ text }}
     </n-tag>
 
-    <n-input
+    <n-auto-complete
       ref="inputRef"
       v-model:value="formText"
+      :input-props="{ autocomplete: 'disabled' }"
+      :options="options"
       type="text"
       size="small"
       placeholder="Tag"
@@ -21,7 +23,8 @@
 
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
-import { nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { Tag, useTagAPI } from '../composables/useTagAPI'
 
 const props = defineProps<{ value: string[] }>()
 const emit = defineEmits<{ (e: 'update:value', value: string[]): void }>()
@@ -32,6 +35,20 @@ const inputRef = ref<HTMLInputElement | null>(null)
 const focusInputForm = () => {
   nextTick(() => { inputRef.value?.focus() })
 }
+
+// オートコンプリート
+const tagAPI = useTagAPI()
+const tags = ref<Tag[]>([])
+onMounted(async () => {
+  tags.value = await tagAPI.getAll({
+    hasPinned: false
+  })
+})
+const options = computed(() => {
+  return tags.value
+    .map((tag: Tag) => tag.name)
+    .filter((name: string) => name.includes(formText.value ?? ''))
+})
 
 // 更新処理
 const formText = ref<string>()
