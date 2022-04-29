@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { computed, nextTick, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router';
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 import ArrayTagForm from '../ArrayTagForm.vue'
 
@@ -46,14 +47,22 @@ const onTitleEnter = () => {
   nextTick(() => { inputBodyRef.value?.focus() })
 }
 
+const defaultTags = () => {
+  // デフォタグ配列を作る
+  const name = route.query?.tag as string // url parameter
+  return name ? [name] : []
+}
+
 // 初期化処理
 const formTitle = ref<string>()
 const formBody = ref<string>()
 const formTagNames = ref<string[]>([])
+
+const route = useRoute()
 const reset = () => {
   formTitle.value = props.report?.title ?? ''
   formBody.value = props.report?.body ?? ''
-  formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? []
+  formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? defaultTags()
 
   // インプットも初期化
   tagNamesRef.value?.onClear()
