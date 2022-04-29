@@ -1,24 +1,10 @@
 <template>
   <n-space vertical>
-    <template v-if="expand">
-      <!-- <n-button v-for="(tag, _) of pinTags" :key="_" block dark :color="tag.color" @click="onSelectedTag(tag)">
-        {{ tag.name.substring(0, 10) }}
-      </n-button> -->
-
-      <n-button v-for="(tag, _) of pinTags" :key="`a${_}`" class="p-0" @click="onSelectedTag(tag)">
-        <n-avatar class="avatar-block" :color="tag.color">
-          {{ tag.name.substring(0, 12) }}
-        </n-avatar>
-      </n-button>
-    </template>
-
-    <template v-else>
-      <n-button v-for="(tag, _) of pinTags" :key="`b${_}`" class="p-0" @click="onSelectedTag(tag)">
-        <n-avatar :color="tag.color">
-          {{ tag.name.substring(0, 3) }}
-        </n-avatar>
-      </n-button>
-    </template>
+    <n-button v-for="(tag, _) of pinTags" :key="`a${_}`" class="p-0" @click="onSelectedTag(tag)">
+      <n-avatar :class="{ 'avatar-block': expand }" :color="tag.color">
+        {{ tag.name.substring(0, expand ? 12 : 3) }}
+      </n-avatar>
+    </n-button>
   </n-space>
 </template>
 
