@@ -7,7 +7,7 @@
           <n-layout-header
             position="absolute"
             bordered
-            style="height: 22px;"
+            style="height: 28px;"
           >
             <AppHeader />
           </n-layout-header>
@@ -16,7 +16,7 @@
           <n-layout
             has-sider
             position="absolute"
-            style="top: 22px;"
+            style="top: 34px;"
           >
             <!-- Left Contents -->
             <n-layout-sider

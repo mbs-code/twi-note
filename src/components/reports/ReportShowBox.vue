@@ -13,7 +13,8 @@
         >
           <span
             v-if="tag.color"
-            :style="{ color: tag.color, userSelect: 'none' }"
+            class="no-select"
+            :style="{ color: tag.color }"
           >●</span>
           {{ tag.name }}
         </n-tag>
