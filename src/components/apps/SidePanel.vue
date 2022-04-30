@@ -3,28 +3,25 @@
     vertical
     style="padding: 8px 0 8px 8px;"
   >
-    <template
+    <n-el
       v-for="(tag, _) of pinTags"
       :key="`a${_}`"
+      class="tag-btn"
+      :class="{ 'tag-btn-active': isActive(tag.name) }"
+      type="primary"
     >
-      <n-el
-        class="tag-btn"
-        :class="{ 'tag-btn-active': isActive(tag.name) }"
-        type="primary"
+      <n-button
+        style="padding: 0px;"
+        @click="onSelectedTag(tag)"
       >
-        <n-button
-          class="p-0"
-          @click="onSelectedTag(tag)"
+        <n-avatar
+          :class="{ 'avatar-block': expand }"
+          :color="tag.color || 'gray'"
         >
-          <n-avatar
-            :class="{ 'avatar-block': expand }"
-            :color="tag.color || 'gray'"
-          >
-            {{ tag.name.substring(0, expand ? 12 : 3) }}
-          </n-avatar>
-        </n-button>
-      </n-el>
-    </template>
+          {{ tag.name.substring(0, expand ? 12 : 3) }}
+        </n-avatar>
+      </n-button>
+    </n-el>
   </n-space>
 </template>
 
@@ -85,9 +82,9 @@ const isActive = (tagName: string) => {
 
 .tag-btn {
   display: flex;
-}
 
-.tag-btn-active {
-  border-right: 4px solid var(--primary-color);
+ &.tag-btn-active {
+    border-right: 4px solid var(--primary-color);
+  }
 }
 </style>
