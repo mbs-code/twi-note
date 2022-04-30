@@ -1,5 +1,5 @@
 <template>
-  <n-card>
+  <n-card class="card-dense">
     <n-space class="expand-first" :wrap="false">
       <div>
         <template v-if="isEdit">

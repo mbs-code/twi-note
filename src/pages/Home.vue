@@ -1,6 +1,6 @@
 <template>
   <n-space vertical>
-    <n-card>
+    <n-card class="card-dense">
       <ReportEditBox @saved="handleCreated"></ReportEditBox>
     </n-card>
 
