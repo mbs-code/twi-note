@@ -1,6 +1,11 @@
 <template>
   <n-space>
-    <n-button size="small" text style="font-size: 24px; margin: 3px;" @click="onExpandButton()">
+    <n-button
+      size="small"
+      text
+      style="font-size: 24px; margin: 3px;"
+      @click="onExpandButton()"
+    >
       <n-icon v-if="configStore.expand_side">
         <RightIcon />
       </n-icon>
