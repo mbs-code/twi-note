@@ -1,5 +1,8 @@
 <template>
-  <n-space vertical @keydown.ctrl.enter.exact="onSave">
+  <n-space
+    vertical
+    @keydown.ctrl.enter.exact="onSave"
+  >
     <n-input
       v-model:value="formTitle"
       placeholder="(Title)"
@@ -8,22 +11,34 @@
     />
 
     <n-input
-      v-model:value="formBody"
       ref="inputBodyRef"
+      v-model:value="formBody"
       type="textarea"
       placeholder="Body"
       clearable
       :autosize="{ minRows: 3 }"
     />
 
-    <ArrayTagForm ref="tagNamesRef" v-model:value="formTagNames" />
+    <ArrayTagForm
+      ref="tagNamesRef"
+      v-model:value="formTagNames"
+    />
 
     <n-space>
-      <n-button round :type="isEdit ? 'warning' : 'primary'" :disabled="!validate" @click="onSave">
+      <n-button
+        round
+        :type="isEdit ? 'warning' : 'primary'"
+        :disabled="!validate"
+        @click="onSave"
+      >
         保存(Ctrl+Enter)
       </n-button>
 
-      <n-button round type="default" @click="reset">
+      <n-button
+        round
+        type="default"
+        @click="reset"
+      >
         リセット
       </n-button>
     </n-space>
@@ -33,7 +48,7 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { computed, nextTick, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 import ArrayTagForm from '../ArrayTagForm.vue'
 

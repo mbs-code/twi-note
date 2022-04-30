@@ -1,24 +1,48 @@
 <template>
   <n-card class="card-dense">
-    <n-space class="expand-first" :wrap="false">
+    <n-space
+      class="expand-first"
+      :wrap="false"
+    >
       <div>
         <template v-if="isEdit">
-          <ReportEditBox :report="report" @saved="handleUpdated"></ReportEditBox>
+          <ReportEditBox
+            :report="report"
+            @saved="handleUpdated"
+          />
         </template>
         <template v-else>
-          <ReportShowBox :report="report"></ReportShowBox>
+          <ReportShowBox :report="report" />
         </template>
       </div>
 
-      <n-space vertical justify="space-between" style="height: 100%">
-        <n-button quaternary circle type="primary" @click="onEdit">
+      <n-space
+        vertical
+        justify="space-between"
+        style="height: 100%"
+      >
+        <n-button
+          quaternary
+          circle
+          type="primary"
+          @click="onEdit"
+        >
           <template #icon>
-            <n-icon v-if="isEdit"><CloseIcon /></n-icon>
-            <n-icon v-else><EditIcon /></n-icon>
+            <n-icon v-if="isEdit">
+              <CloseIcon />
+            </n-icon>
+            <n-icon v-else>
+              <EditIcon />
+            </n-icon>
           </template>
         </n-button>
 
-        <n-button v-if="isEdit" circle type="error" @click="onDelete">
+        <n-button
+          v-if="isEdit"
+          circle
+          type="error"
+          @click="onDelete"
+        >
           <template #icon>
             <n-icon><DeleteIcon /></n-icon>
           </template>
@@ -61,14 +85,11 @@ const onDelete = () => {
     content: '削除しますか？',
     positiveText: 'はい',
     negativeText: 'いいえ',
-    onPositiveClick: () => {
-      return reportAPI.remove(props.report.id)
-        .then(report_id => {
-          isEdit.value = false
-          emit('deleted', props.report)
-        })
+    onPositiveClick: async () => {
+      await reportAPI.remove(props.report.id)
+      isEdit.value = false
+      emit('deleted', props.report)
     },
-    onNegativeClick: () => {}
   })
 }
 </script>

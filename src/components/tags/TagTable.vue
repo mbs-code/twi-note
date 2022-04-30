@@ -16,7 +16,7 @@ import {
   CreateOutline as EditIcon,
 } from '@vicons/ionicons5'
 
-const props = defineProps<{ tags: Tag[] }>()
+defineProps<{ tags: Tag[] }>()
 const emit = defineEmits<{
   (e: 'onEdit', tags: Tag): void,
 }>()

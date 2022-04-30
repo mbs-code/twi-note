@@ -20,8 +20,8 @@
 
       <n-form-item label="色">
         <n-color-picker
-          :modes="['hex']"
           v-model:value="formColor"
+          :modes="['hex']"
           :show-alpha="false"
           :swatches="swatches"
         />
@@ -37,7 +37,6 @@
           clearable
         />
       </n-form-item>
-
     </n-space>
   </n-modal>
 </template>
@@ -71,7 +70,7 @@ const init = () => {
   formPriority.value = props.tag?.priority ?? 0
 }
 onMounted(() => init())
-const onReset = () => init()
+// const onReset = () => init()
 watch(() => props.tag, () => init())
 
 ///

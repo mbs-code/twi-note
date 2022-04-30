@@ -1,13 +1,25 @@
 <template>
-  <n-space vertical style="padding: 8px 0 8px 8px;">
-    <template v-for="(tag, _) of pinTags" :key="`a${_}`">
+  <n-space
+    vertical
+    style="padding: 8px 0 8px 8px;"
+  >
+    <template
+      v-for="(tag, _) of pinTags"
+      :key="`a${_}`"
+    >
       <n-el
         class="tag-btn"
         :class="{ 'tag-btn-active': isActive(tag.name) }"
         type="primary"
       >
-        <n-button class="p-0" @click="onSelectedTag(tag)">
-          <n-avatar :class="{ 'avatar-block': expand }" :color="tag.color || 'gray'">
+        <n-button
+          class="p-0"
+          @click="onSelectedTag(tag)"
+        >
+          <n-avatar
+            :class="{ 'avatar-block': expand }"
+            :color="tag.color || 'gray'"
+          >
             {{ tag.name.substring(0, expand ? 12 : 3) }}
           </n-avatar>
         </n-button>
@@ -22,7 +34,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Tag, useTagAPI } from '../../composables/useTagAPI'
 import { listen } from '@tauri-apps/api/event'
 
-const props = defineProps<{ expand?: boolean }>()
+defineProps<{ expand?: boolean }>()
 
 // タグリスト取得
 const tagAPI = useTagAPI()
@@ -38,7 +50,7 @@ onMounted(async () => {
   await loadTags()
 
   // tauri event listener
-  await listen('tag-changed', async (e) => {
+  await listen('tag-changed', async () => {
     await loadTags()
   })
 })
@@ -47,7 +59,7 @@ const router = useRouter()
 const onSelectedTag = (tag: Tag) => {
   const name = route.query?.tag as string // url parameter
   if (name === tag.name) {
-    router.push(`/`)
+    router.push('/')
   } else {
     router.push(`/?tag=${tag.name}`)
   }

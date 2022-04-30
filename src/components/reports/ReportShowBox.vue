@@ -1,12 +1,20 @@
 <template>
   <n-space vertical>
     <div>{{ report.title }}</div>
-    <div style="white-space: pre-wrap">{{ report.body }}</div>
+    <div style="white-space: pre-wrap">
+      {{ report.body }}
+    </div>
 
     <n-space class="expand-first">
       <n-space>
-        <n-tag v-for="tag of report.tags">
-          <span v-if="tag.color" :style="{ color: tag.color, userSelect: 'none' }">●</span>
+        <n-tag
+          v-for="(tag, _) of report.tags"
+          :key="_"
+        >
+          <span
+            v-if="tag.color"
+            :style="{ color: tag.color, userSelect: 'none' }"
+          >●</span>
           {{ tag.name }}
         </n-tag>
       </n-space>
@@ -14,9 +22,16 @@
       <n-tooltip trigger="hover">
         <template #trigger>
           <div style="display: flex; align-items: center;">
-            <div v-if="isEdited" style="color: silver">（編集済み）</div>
+            <div
+              v-if="isEdited"
+              style="color: silver"
+            >
+              （編集済み）
+            </div>
 
-            <n-icon style="padding-right: 4px"><ClockIcon /></n-icon>
+            <n-icon style="padding-right: 4px">
+              <ClockIcon />
+            </n-icon>
             <span>{{ updatedDistance }}</span>
           </div>
         </template>

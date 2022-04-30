@@ -4,19 +4,35 @@
       <n-dialog-provider>
         <n-layout position="absolute">
           <!-- Header Area -->
-          <n-layout-header position="absolute" bordered style="height: 22px;">
+          <n-layout-header
+            position="absolute"
+            bordered
+            style="height: 22px;"
+          >
             <n-space>
               <div>side</div>
               <n-switch v-model:value="configStore.expand_side" />
               <div>dark</div>
               <n-switch v-model:value="configStore.is_dark" />
-              <router-link to="/"><n-button size="small">ホーム</n-button></router-link>
-              <router-link to="/tag"><n-button size="small">タグ</n-button></router-link>
+              <router-link to="/">
+                <n-button size="small">
+                  ホーム
+                </n-button>
+              </router-link>
+              <router-link to="/tag">
+                <n-button size="small">
+                  タグ
+                </n-button>
+              </router-link>
             </n-space>
           </n-layout-header>
 
           <!-- Contents Area -->
-          <n-layout has-sider position="absolute" style="top: 22px;">
+          <n-layout
+            has-sider
+            position="absolute"
+            style="top: 22px;"
+          >
             <!-- Left Contents -->
             <n-layout-sider
               :native-scrollbar="false"
@@ -28,9 +44,15 @@
             </n-layout-sider>
 
             <!-- Main Contents -->
-            <n-layout content-style="padding: 8px;" :native-scrollbar="false">
+            <n-layout
+              content-style="padding: 8px;"
+              :native-scrollbar="false"
+            >
               <router-view :key="$route.fullPath" />
-              <n-back-top bottom="20" right="20" />
+              <n-back-top
+                bottom="20"
+                right="20"
+              />
             </n-layout>
           </n-layout>
         </n-layout>
