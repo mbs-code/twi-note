@@ -1,21 +1,24 @@
 <template>
   <n-space vertical>
     <n-card class="card-dense">
-      <ReportEditBox @saved="handleCreated"></ReportEditBox>
+      <ReportEditBox @saved="handleCreated" />
     </n-card>
 
-    <template v-for="report in reports"  :key="report.id">
+    <template
+      v-for="report in reports"
+      :key="report.id"
+    >
       <ReportPanel
         :report="report"
         @updated="handleUpdated"
         @deleted="handleDeleted"
-      ></ReportPanel>
+      />
     </template>
 
     <VueEternalLoading :load="onInfinite">
       <template #loading>
         <n-space justify="center">
-          <n-spin></n-spin>
+          <n-spin />
         </n-space>
       </template>
 
@@ -26,8 +29,16 @@
       </template>
 
       <template #error="{ retry }">
-        <n-alert title="内部エラーが発生しました。" type="error">
-          <n-button strong secondary type="error" @click="retry">
+        <n-alert
+          title="内部エラーが発生しました。"
+          type="error"
+        >
+          <n-button
+            strong
+            secondary
+            type="error"
+            @click="retry"
+          >
             再試行
           </n-button>
         </n-alert>
@@ -40,14 +51,14 @@
 import { ref } from 'vue'
 import { Report, useReportAPI } from '../composables/useReportAPI'
 import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const reportAPI = useReportAPI()
 const reports = ref<Report[]>([])
 
 // 検索処理
-let page = 1;
+let page = 1
 const fetchReports = async () => {
   const tag = route.query?.tag as string // url parameter
 
@@ -65,7 +76,7 @@ const endInfinite = ref(false)
 const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
   // 一度 noMore になったら触らない（バグ？対策）
   if (endInfinite.value) {
-    noMore();
+    noMore()
     return
   }
 
@@ -76,7 +87,7 @@ const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
       endInfinite.value = true
     } else {
       reports.value.push(...data)
-      page ++;
+      page ++
       loaded()
     }
   } catch (err) {

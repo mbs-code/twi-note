@@ -2,10 +2,11 @@
   <n-space>
     <n-tag
       v-for="(text, _) of value"
+      :key="_"
       closable
       @close="onRemove(_)"
     >
-     {{ text }}
+      {{ text }}
     </n-tag>
 
     <n-auto-complete
@@ -57,7 +58,7 @@ const onInput = () => {
   if (formText.value) {
     // 既に追加されていないなら追加
     if (!props.value.includes(formText.value)) {
-      emit("update:value", [...props.value, formText.value])
+      emit('update:value', [...props.value, formText.value])
     } else {
       message.error('既に追加されています。')
     }
@@ -71,12 +72,12 @@ const onRemove = (index: number) => {
   const copy = [...props.value]
   copy.splice(index, 1)
 
-  emit("update:value", copy)
+  emit('update:value', copy)
   focusInputForm()
 }
 const onClear = () => {
-    // 入力を空にする
-    formText.value = ''
+  // 入力を空にする
+  formText.value = ''
 }
 
 defineExpose({ onInput, onClear })

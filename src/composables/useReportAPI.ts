@@ -14,7 +14,7 @@ export type Report = {
 export type FormReport = {
   title?: string
   body: string
-  tag_names: String[]
+  tag_names: string[]
 }
 
 export type SearchReport = {
