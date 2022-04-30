@@ -75,7 +75,7 @@ const isActive = (tagName: string) => {
 .avatar-block {
   width: 140px;
 
-  & >>> .n-avatar__text {
+  :v-deep(.n-avatar__text) {
     scale: 1;
   }
 }
