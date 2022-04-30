@@ -1,0 +1,28 @@
+env:
+  browser: true
+  es2021: true
+  vue/setup-compiler-macros: true,
+extends:
+  - 'plugin:vue/vue3-recommended'
+  - 'eslint:recommended'
+  - '@vue/typescript/recommended'
+parserOptions:
+  ecmaVersion: 12
+plugins:
+  - vue
+  - '@typescript-eslint'
+rules:
+  vue/multi-word-component-names:
+    - 0
+  indent:
+    - error
+    - 2
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - single
+  semi:
+    - error
+    - never
