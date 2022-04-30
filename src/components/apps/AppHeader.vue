@@ -1,51 +1,38 @@
 <template>
-  <n-space style="background-color: blue;">
-    <n-button
-      size="tiny"
-      style="padding: 0px; margin: 0px;"
-      @click="onExpandButton()"
-    >
-      <n-avatar class="no-select" :size="24">
-        <n-icon v-if="configStore.expand_side">
-          <RightIcon />
-        </n-icon>
-        <n-icon v-else>
-          <LeftIcon />
-        </n-icon>
-      </n-avatar>
+  <n-space>
+    <n-button size="small" text style="font-size: 24px; margin: 3px;" @click="onExpandButton()">
+      <n-icon v-if="configStore.expand_side">
+        <RightIcon />
+      </n-icon>
+      <n-icon v-else>
+        <LeftIcon />
+      </n-icon>
     </n-button>
 
-    <n-button size="small" text>
-      <template #icon>
-        <n-icon>
-          <ReportIcon />
-        </n-icon>
-      </template>
-      メモ
-    </n-button>
-
-    <n-button size="small" text>
-      <template #icon>
-        <n-icon>
-          <TagIcon />
-        </n-icon>
-      </template>
-      タグ
-    </n-button>
-
-    <div>dark</div>
-    <n-switch v-model:value="configStore.is_dark" />
-
-    <router-link to="/">
-      <n-button size="small">
-        ホーム
+    <router-link to="/" class="no-link">
+      <n-button size="small" text>
+        <template #icon>
+          <n-icon>
+            <ReportIcon />
+          </n-icon>
+        </template>
+        メモ
       </n-button>
     </router-link>
-    <router-link to="/tag">
-      <n-button size="small">
+
+    <router-link to="/tag" class="no-link">
+      <n-button size="small" text>
+        <template #icon>
+          <n-icon>
+            <TagIcon />
+          </n-icon>
+        </template>
         タグ
       </n-button>
     </router-link>
+
+    <div>dark</div>
+    <n-switch v-model:value="configStore.is_dark" />
   </n-space>
 </template>
 
