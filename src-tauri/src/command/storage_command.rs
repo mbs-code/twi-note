@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::os::windows::fs::MetadataExt;
-use std::path::Path;
 
 use crate::DB_PATH;
 
