@@ -1,20 +1,21 @@
 <template>
-  <n-space>
+  <div class="d-flex">
     <n-button
       size="small"
       text
-      style="font-size: 24px; margin: 3px;"
       @click="onExpandButton()"
     >
-      <n-icon v-if="configStore.expand_side">
-        <RightIcon />
-      </n-icon>
-      <n-icon v-else>
-        <LeftIcon />
-      </n-icon>
+      <template #icon>
+        <n-icon v-if="configStore.expand_side">
+          <RightIcon />
+        </n-icon>
+        <n-icon v-else>
+          <LeftIcon />
+        </n-icon>
+      </template>
     </n-button>
 
-    <router-link to="/" class="no-link">
+    <router-link to="/" class="no-link flex-shrink-0">
       <n-button size="small" text>
         <template #icon>
           <n-icon>
@@ -25,7 +26,7 @@
       </n-button>
     </router-link>
 
-    <router-link to="/tag" class="no-link">
+    <router-link to="/tag" class="no-link flex-shrink-0">
       <n-button size="small" text>
         <template #icon>
           <n-icon>
@@ -36,9 +37,22 @@
       </n-button>
     </router-link>
 
-    <div>dark</div>
-    <n-switch v-model:value="configStore.is_dark" />
-  </n-space>
+    <div name="spacer" class="flex-grow-1" />
+
+    <n-button
+      size="small"
+      text
+      @click="openDrawer"
+    >
+      <template #icon>
+        <n-icon>
+          <DrawerIcon />
+        </n-icon>
+      </template>
+    </n-button>
+  </div>
+
+  <ConfigDrawer v-model:show="showDrawer" />
 </template>
 
 <script setup lang="ts">
@@ -48,7 +62,9 @@ import {
   ChevronBack as RightIcon,
   DocumentText as ReportIcon,
   Pricetag as TagIcon,
+  SettingsSharp as DrawerIcon,
 } from '@vicons/ionicons5'
+import { ref } from 'vue'
 
 const configStore = useConfigStore()
 
@@ -56,4 +72,23 @@ const onExpandButton = () => {
   console.log('click')
   configStore.expand_side = !configStore.expand_side
 }
+
+const showDrawer = ref(false)
+const openDrawer = () => {
+  showDrawer.value = true
+}
 </script>
+
+<style scoped lang="scss">
+.d-flex {
+  display: flex;
+
+  > * {
+    margin: 0 12px;
+  }
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+</style>
