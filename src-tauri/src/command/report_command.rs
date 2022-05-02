@@ -10,6 +10,7 @@ use crate::{get_connection, get_time_of_now};
 
 #[tauri::command]
 pub fn report_get_all(
+    text: Option<String>,
     tag_name: Option<String>,
     page: i32,
     count: i32,
@@ -25,11 +26,24 @@ pub fn report_get_all(
     // deleted_at があるものを除外
     query.push("WHERE r.deleted_at IS NULL".to_string());
 
+    // テキスト抽出
+    if let Some(text) = text {
+        // title, body, tag_name の like 検索
+        let like = "".to_string() + &"\'%" + &text + &"%\'";
+        query.push("AND (r.body LIKE".to_string());
+        query.push(like.to_string());
+        query.push("OR r.title LIKE".to_string());
+        query.push(like.to_string());
+        query.push("OR t.name LIKE".to_string());
+        query.push(like.to_string());
+        query.push(")".to_string());
+    }
+
     // タグ抽出
     if let Some(name) = tag_name {
-        // joinしてタグ名で抽出
+        // タグ名で抽出
         query.push("AND t.name =".to_string());
-        query.push("".to_string() + &"\"" + &name + &"\"");
+        query.push("".to_string() + &"\'" + &name + &"\'");
     }
 
     // 並び替え
@@ -42,6 +56,7 @@ pub fn report_get_all(
     query.push(count.to_string());
     query.push("OFFSET".to_string());
     query.push(((page - 1) * count).to_string());
+    println!("{:?}", &query.join(" "));
 
     // レポート配列の取得
     let mut stmt = conn.prepare(&query.join(" ")).unwrap();

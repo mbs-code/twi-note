@@ -1,4 +1,6 @@
 <template>
+  <n-input v-model:value="search" @change="onSearch" />
+
   <n-space vertical>
     <n-card class="card-dense">
       <ReportEditBox @saved="handleCreated" />
@@ -51,18 +53,30 @@
 import { ref } from 'vue'
 import { Report, useReportAPI } from '../composables/useReportAPI'
 import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 const reportAPI = useReportAPI()
 const reports = ref<Report[]>([])
 
 // 検索処理
 let page = 1
+const search = ref<string>('')
+const onSearch = () => {
+  console.log(search.value)
+  router.push({ path: '/', query: {
+    ...route.query,
+    text: search.value,
+  }})
+}
+
 const fetchReports = async () => {
   const tag = route.query?.tag as string // url parameter
+  const text = route.query?.text as string
 
   const data = await reportAPI.getAll({
+    text: text ?? undefined,
     tagName: tag ?? undefined,
     page: page,
     count: 20,
