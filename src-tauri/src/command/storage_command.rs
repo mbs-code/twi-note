@@ -1,6 +1,6 @@
+use filesize::PathExt;
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::os::windows::fs::MetadataExt;
+use std::path::Path;
 
 use crate::DB_PATH;
 
@@ -15,8 +15,8 @@ pub struct StorageInfo {
 
 #[tauri::command]
 pub fn get_storage_info() -> StorageInfo {
-    let filesize = match fs::metadata(DB_PATH) {
-        Ok(res) => Some(res.file_size().try_into().unwrap()),
+    let filesize = match Path::new(DB_PATH).size_on_disk() {
+        Ok(res) => Some(res.try_into().unwrap()),
         Err(_) => None,
     };
 
