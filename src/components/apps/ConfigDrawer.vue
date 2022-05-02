@@ -21,7 +21,7 @@
             </template>
           </n-input>
 
-          <span>{{ filesize(storage?.size) }}</span>
+          <span>{{ filesize(storage?.size ?? 0) }}</span>
         </n-space>
       </n-form-item>
     </n-drawer-content>
