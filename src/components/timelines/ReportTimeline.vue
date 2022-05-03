@@ -13,7 +13,7 @@
       <!-- @deleted="handleDeleted" -->
     </template>
 
-
+    <!-- 無限スクロール -->
     <VueEternalLoading
       v-model:is-initial="_isInitial"
       :load="onLoad"
@@ -26,9 +26,7 @@
       </template>
 
       <template #no-more>
-        <n-space justify="center">
-          ～ココマデ～
-        </n-space>
+        <n-empty description="No Contents" style="margin: 12px" />
       </template>
 
       <template #error="{ retry }">
@@ -53,6 +51,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import {
+  FileTray as DoneIcon,
   Search as SearchIcon,
 } from '@vicons/ionicons5'
 import { Report, useReportAPI } from '../../composables/useReportAPI'
