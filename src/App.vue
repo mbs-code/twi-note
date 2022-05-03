@@ -30,7 +30,7 @@
 
             <!-- Main Contents -->
             <n-layout
-              content-style="padding: 8px;"
+              content-style="padding: 8px 16px 8px 8px;"
               :native-scrollbar="false"
             >
               <router-view :key="$route.fullPath" />

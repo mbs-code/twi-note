@@ -15,27 +15,16 @@
       </template>
     </n-button>
 
-    <router-link to="/" class="no-link flex-shrink-0">
-      <n-button size="small" text>
-        <template #icon>
-          <n-icon>
-            <ReportIcon />
-          </n-icon>
-        </template>
-        メモ
-      </n-button>
-    </router-link>
-
-    <router-link to="/tag" class="no-link flex-shrink-0">
-      <n-button size="small" text>
-        <template #icon>
-          <n-icon>
-            <TagIcon />
-          </n-icon>
-        </template>
-        タグ
-      </n-button>
-    </router-link>
+    <template v-for="(link, _) of links" :key="_">
+      <router-link :to="link.to" class="no-link">
+        <n-button size="small" text>
+          <template #icon>
+            <n-icon :component="link.icon" />
+          </template>
+          {{ link.name }}
+        </n-button>
+      </router-link>
+    </template>
 
     <div name="spacer" class="flex-grow-1" />
 
@@ -60,13 +49,19 @@ import { useConfigStore } from '../../stores/config'
 import {
   ChevronForward as LeftIcon,
   ChevronBack as RightIcon,
+  SettingsSharp as DrawerIcon,
   DocumentText as ReportIcon,
   Pricetag as TagIcon,
-  SettingsSharp as DrawerIcon,
 } from '@vicons/ionicons5'
 import { ref } from 'vue'
 
 const configStore = useConfigStore()
+
+const links = [
+  { name: 'ホーム', icon: ReportIcon, to: { name: 'home' } },
+  { name: 'タイムライン', icon: ReportIcon, to: { name: 'timeline' } },
+  { name: 'タグ', icon: TagIcon, to: { name: 'tag' } },
+]
 
 const onExpandButton = () => {
   console.log('click')

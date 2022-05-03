@@ -3,7 +3,7 @@
     :columns="columns"
     :pagination="false"
     :data="tags"
-    :style="{ height: 'calc(100vh - 40px)' }"
+    :style="{ height: 'calc(100vh - 48px)' }"
     flex-height
   />
 </template>
