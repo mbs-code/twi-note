@@ -1,17 +1,15 @@
 <template>
   <n-space vertical>
     <!-- カード郡 -->
-    <template
-      v-for="report in reports"
-      :key="report.id"
-    >
+    <transition-group tag="div" name="list">
       <ReportPanel
+        v-for="report in reports"
+        :key="report.id"
         :report="report"
       />
-
       <!-- @updated="handleUpdated" -->
       <!-- @deleted="handleDeleted" -->
-    </template>
+    </transition-group>
 
     <!-- 無限スクロール -->
     <VueEternalLoading
@@ -153,3 +151,19 @@ const onLoad = (action: LoadAction) => {
 //   }
 // }
 </script>
+
+<style scoped>
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.2s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+</style>
