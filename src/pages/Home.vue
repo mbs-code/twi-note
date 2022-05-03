@@ -1,7 +1,13 @@
 <template>
-  <n-input v-model:value="search" @change="onSearch" />
-
   <n-space vertical>
+    <n-input v-model:value="search" placeholder="検索" @change="onSearch">
+      <template #prefix>
+        <n-button text>
+          <n-icon :component="SearchIcon" />
+        </n-button>
+      </template>
+    </n-input>
+
     <n-card class="card-dense">
       <ReportEditBox @saved="handleCreated" />
     </n-card>
@@ -51,6 +57,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import {
+  Search as SearchIcon,
+} from '@vicons/ionicons5'
 import { Report, useReportAPI } from '../composables/useReportAPI'
 import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
 import { useRoute, useRouter } from 'vue-router'

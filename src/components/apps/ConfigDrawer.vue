@@ -1,5 +1,4 @@
 <template>
- <!-- :width="500" -->
   <n-drawer v-model:show="showDrawer" :style="{ width: 'calc(100vw)', maxWidth: '320px' }">
     <n-drawer-content title="Config" closable>
       <n-form-item label="Dark Mode">
