@@ -1,5 +1,6 @@
 <template>
-  <n-drawer v-model:show="showDrawer" :width="500">
+ <!-- :width="500" -->
+  <n-drawer v-model:show="showDrawer" :style="{ width: 'calc(100vw)', maxWidth: '320px' }">
     <n-drawer-content title="Config" closable>
       <n-form-item label="Dark Mode">
         <n-space>
@@ -17,11 +18,22 @@
         <n-space vertical style="width: 100%">
           <n-input :value="storage?.path" readonly>
             <template #prefix>
-              <n-icon :component="PathIcon" />
+              <n-button text>
+                <n-icon :component="PathIcon" />
+              </n-button>
             </template>
           </n-input>
 
-          <span>{{ filesize(storage?.size ?? 0) }}</span>
+          <n-space align="center" justify="space-between">
+            <span>{{ fileSize }}</span>
+
+            <n-button type="info" ghost @click="onOpen">
+              <template #icon>
+                <n-icon :component="FolderIcon" />
+              </template>
+              Open
+            </n-button>
+          </n-space>
         </n-space>
       </n-form-item>
     </n-drawer-content>
@@ -35,6 +47,7 @@ import {
   Sunny as LightIcon,
   Moon as DarkIcon,
   Save as PathIcon,
+  FolderOpen as FolderIcon,
 } from '@vicons/ionicons5'
 import { useConfigStore } from '../../stores/config'
 import { StorageInfo, useStorageAPI } from '../../composables/useStorageAPI'
@@ -55,4 +68,11 @@ const storage = ref<StorageInfo>()
 onMounted(async () => {
   storage.value = await storageAPI.load()
 })
+const fileSize = computed(() => {
+  return filesize(storage.value?.size ?? 0)
+})
+
+const onOpen = async () => {
+  await storageAPI.open()
+}
 </script>

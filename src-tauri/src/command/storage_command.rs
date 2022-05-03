@@ -1,6 +1,6 @@
 use filesize::PathExt;
 use serde::{Deserialize, Serialize};
-use std::path::Path;
+use std::{fs, path::Path, process::Command};
 
 use crate::DB_PATH;
 
@@ -30,4 +30,24 @@ pub fn get_storage_info() -> StorageInfo {
         exist: if filesize.is_some() { true } else { false },
         size: filesize,
     };
+}
+
+#[tauri::command]
+pub fn open_directory() -> bool {
+    let command = if cfg!(windows) {
+        "explorer"
+    } else if cfg!(macos) {
+        "open"
+    } else {
+        "xdg-open"
+    };
+
+    let dir = fs::canonicalize(DB_PATH).unwrap();
+    let path = dir.parent().unwrap().to_str().unwrap();
+
+    let res = match Command::new(command).arg(path).spawn() {
+        Ok(_) => true,
+        Err(_) => false,
+    };
+    return res;
 }

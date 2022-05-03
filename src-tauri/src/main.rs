@@ -26,6 +26,7 @@ fn main() {
             command::config_command::load_config,
             command::config_command::save_config,
             command::storage_command::get_storage_info,
+            command::storage_command::open_directory,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

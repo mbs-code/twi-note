@@ -56,7 +56,6 @@ pub fn report_get_all(
     query.push(count.to_string());
     query.push("OFFSET".to_string());
     query.push(((page - 1) * count).to_string());
-    println!("{:?}", &query.join(" "));
 
     // レポート配列の取得
     let mut stmt = conn.prepare(&query.join(" ")).unwrap();

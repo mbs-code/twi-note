@@ -12,7 +12,12 @@ export const useStorageAPI = () => {
     return storage
   }
 
+  const open = async () => {
+    await invoke('open_directory')
+  }
+
   return {
     load,
+    open,
   }
 }
