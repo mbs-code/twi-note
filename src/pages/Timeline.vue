@@ -1,7 +1,7 @@
 <template>
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
-      <SearchPanel />
+      <SearchPanel @search="onSearch" />
     </div>
   </n-layout-header>
 
@@ -10,7 +10,13 @@
     :style="{ top: headerHeight + 'px', bottom: footerHeight + 'px' }"
     :native-scrollbar="false"
   >
-    <div v-for="(k, _) of Array.from({ length: 50 })" :key="_">コンテンツ</div>
+    <div style="padding-right: 14px">
+      <ReportTimeline
+        v-model:is-initial="isInitial"
+        :reports="reports"
+        @load="onInfiniteLoad"
+      />
+    </div>
   </n-layout>
 
   <n-layout-footer bordered position="absolute">
@@ -25,6 +31,64 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { LoadAction } from '@ts-pro/vue-eternal-loading'
+import { Report, SearchReport, useReportAPI } from '../composables/useReportAPI'
+
+const reportAPI = useReportAPI()
+
+/// ////////////////////////////////////////////////////////////
+/// 検索機能
+
+const reports = ref<Report[]>([])
+const isInitial = ref<boolean>(false)
+const searchParams = ref<SearchReport>({
+  text: undefined,
+  page: 1,
+  count: 5,
+  latest: true,
+})
+
+const fetchReports = async () => {
+  const items = await reportAPI.getAll(searchParams.value)
+  reports.value.push(...items)
+}
+
+const resetReports = () => {
+  reports.value = []
+  isInitial.value = true
+  searchParams.value.page = 1
+}
+
+// NOTE: 初回取得は行う必要が無い
+// NOTE: onMounted は onInfinite で処理される
+
+///
+
+const onSearch = async (text: string) => {
+  searchParams.value.text = text ?? undefined
+  resetReports()
+}
+
+const onInfiniteLoad = async ({ loaded, noMore, error }: LoadAction) => {
+  const beforeReportLength = reports.value.length
+  searchParams.value.page++
+
+  try {
+    await fetchReports()
+
+    const afterReportLength = reports.value.length
+    if (beforeReportLength === afterReportLength) {
+      noMore()
+    } else {
+      loaded()
+    }
+  } catch (err) {
+    error()
+  }
+}
+
+/// ////////////////////////////////////////////////////////////
+/// 高さ計算機能
 
 const headerHeight = ref(0)
 const footerHeight = ref(0)

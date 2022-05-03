@@ -30,7 +30,8 @@ import { useRoute } from 'vue-router'
 const emit = defineEmits<{ (e: 'search', text: string): void }>()
 const route = useRoute()
 
-///
+/// ////////////////////////////////////////////////////////////
+/// 検索機能
 
 const text = ref<string>('')
 onMounted(() => {
@@ -39,8 +40,6 @@ onMounted(() => {
 })
 
 const onSearch = () => {
-  if (text.value) {
-    emit('search', text.value)
-  }
+  emit('search', text.value)
 }
 </script>
