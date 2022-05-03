@@ -3,41 +3,24 @@
     <n-message-provider placement="top-right">
       <n-dialog-provider>
         <n-layout position="absolute">
-          <!-- Header Area -->
-          <n-layout-header
-            position="absolute"
-            bordered
-            style="height: 32px;"
-          >
+          <!-- Fixed Header -->
+          <n-layout-header bordered position="absolute">
             <AppHeader />
           </n-layout-header>
 
-          <!-- Contents Area -->
-          <n-layout
-            has-sider
-            position="absolute"
-            style="top: 32px;"
-          >
-            <!-- Left Contents -->
+          <!-- Contents -->
+          <n-layout has-sider position="absolute" style="top: 32px">
             <n-layout-sider
-              :native-scrollbar="false"
-              :width="configStore.expand_side ? 160 : 50"
-              collapse-mode="width"
               bordered
+              collapse-mode="width"
+              :width="configStore.expand_side ? 160 : 50"
+              :native-scrollbar="false"
             >
               <SidePanel :expand="configStore.expand_side" />
             </n-layout-sider>
 
-            <!-- Main Contents -->
-            <n-layout
-              content-style="padding: 8px 16px 8px 8px;"
-              :native-scrollbar="false"
-            >
+            <n-layout>
               <router-view :key="$route.fullPath" />
-              <n-back-top
-                bottom="20"
-                right="20"
-              />
             </n-layout>
           </n-layout>
         </n-layout>

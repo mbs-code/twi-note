@@ -73,17 +73,3 @@ const openDrawer = () => {
   showDrawer.value = true
 }
 </script>
-
-<style scoped lang="scss">
-.d-flex {
-  display: flex;
-
-  > * {
-    margin: 0 12px;
-  }
-}
-
-.flex-grow-1 {
-  flex-grow: 1;
-}
-</style>

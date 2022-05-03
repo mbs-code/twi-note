@@ -1,142 +1,54 @@
 <template>
-  <n-space vertical>
-    <n-input v-model:value="search" placeholder="検索" @change="onSearch">
-      <template #prefix>
-        <n-button text>
-          <n-icon :component="SearchIcon" />
-        </n-button>
-      </template>
-    </n-input>
+  <n-layout-header bordered position="absolute">
+    <div ref="headerRef" style="padding: 4px">
+      <SearchPanel />
+    </div>
+  </n-layout-header>
 
-    <n-card class="card-dense">
-      <ReportEditBox @saved="handleCreated" />
-    </n-card>
+  <n-layout
+    position="absolute"
+    :style="{ top: headerHeight + 'px', bottom: footerHeight + 'px' }"
+    :native-scrollbar="false"
+  >
+    <div v-for="(k, _) of Array.from({ length: 50 })" :key="_">コンテンツ</div>
+  </n-layout>
 
-    <template
-      v-for="report in reports"
-      :key="report.id"
-    >
-      <ReportPanel
-        :report="report"
-        @updated="handleUpdated"
-        @deleted="handleDeleted"
-      />
-    </template>
-
-    <VueEternalLoading :load="onInfinite">
-      <template #loading>
-        <n-space justify="center">
-          <n-spin />
-        </n-space>
-      </template>
-
-      <template #no-more>
-        <n-space justify="center">
-          ～ココマデ～
-        </n-space>
-      </template>
-
-      <template #error="{ retry }">
-        <n-alert
-          title="内部エラーが発生しました。"
-          type="error"
-        >
-          <n-button
-            strong
-            secondary
-            type="error"
-            @click="retry"
-          >
-            再試行
-          </n-button>
-        </n-alert>
-      </template>
-    </VueEternalLoading>
-  </n-space>
+  <n-layout-footer bordered position="absolute">
+    <div ref="footerRef">
+      <n-card class="card-dense">
+        <ReportEditBox />
+        <!-- @saved="handleCreated"  -->
+      </n-card>
+    </div>
+  </n-layout-footer>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import {
-  Search as SearchIcon,
-} from '@vicons/ionicons5'
-import { Report, useReportAPI } from '../composables/useReportAPI'
-import { VueEternalLoading, LoadAction } from '@ts-pro/vue-eternal-loading'
-import { useRoute, useRouter } from 'vue-router'
+import { onMounted, onUnmounted, ref } from 'vue'
 
-const router = useRouter()
-const route = useRoute()
-const reportAPI = useReportAPI()
-const reports = ref<Report[]>([])
+const headerHeight = ref(0)
+const footerHeight = ref(0)
 
-// 検索処理
-let page = 1
-const search = ref<string>('')
-const onSearch = () => {
-  console.log(search.value)
-  router.push({ path: '/', query: {
-    ...route.query,
-    text: search.value,
-  }})
-}
+const headerRef = ref<HTMLDivElement>()
+const footerRef = ref<HTMLDivElement>()
+const sizeObserver = ref<ResizeObserver>()
 
-const fetchReports = async () => {
-  const tag = route.query?.tag as string // url parameter
-  const text = route.query?.text as string
-
-  const data = await reportAPI.getAll({
-    text: text ?? undefined,
-    tagName: tag ?? undefined,
-    page: page,
-    count: 20,
-    latest: true
+onMounted(() => {
+  const observer = new ResizeObserver(() => {
+    headerHeight.value = (headerRef.value?.clientHeight ?? 0) + 1
+    footerHeight.value = (footerRef.value?.clientHeight ?? 0) + 1
   })
-  return data
-}
 
-// 無限スクロール処理
-const endInfinite = ref(false)
-const onInfinite  = async ({ loaded, noMore, error }: LoadAction) => {
-  // 一度 noMore になったら触らない（バグ？対策）
-  if (endInfinite.value) {
-    noMore()
-    return
-  }
+  if (headerRef.value) observer.observe(headerRef.value)
+  if (footerRef.value) observer.observe(footerRef.value)
+  sizeObserver.value = observer
+})
 
-  try {
-    const data = await fetchReports()
-    if (data.length === 0) {
-      noMore()
-      endInfinite.value = true
-    } else {
-      reports.value.push(...data)
-      page ++
-      loaded()
-    }
-  } catch (err) {
-    error()
+onUnmounted(() => {
+  const observer = sizeObserver.value
+  if (observer) {
+    if (headerRef.value) observer.unobserve(headerRef.value)
+    if (footerRef.value) observer.unobserve(footerRef.value)
   }
-}
-
-// 保持リスト更新処理
-const handleCreated = (creReport: Report) => {
-  reports.value.unshift(creReport)
-}
-const handleUpdated = (updReport: Report) => {
-  const index = reports.value.findIndex((report) => report.id === updReport.id)
-  if (index >= 0) {
-    // 置き換える
-    reports.value.splice(index, 1, updReport)
-  } else {
-    // 該当が無かったら先頭に追加しておく（無いはず）
-    reports.value.unshift(updReport)
-  }
-}
-const handleDeleted = (delReport: Report) => {
-  const index = reports.value.findIndex((report) => report.id === delReport.id)
-  if (index >= 0) {
-    // 置き換える
-    reports.value.splice(index, 1)
-  }
-}
+})
 </script>
