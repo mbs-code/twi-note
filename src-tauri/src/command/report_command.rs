@@ -19,6 +19,14 @@ pub fn report_get_all(
 ) -> Vec<ReportWithTag> {
     let conn = get_connection();
 
+    // 検索に使う日付カラム名
+    let timestamp_column = if ref_updated_at {
+        "r.updated_at"
+    } else {
+        "r.created_at"
+    };
+
+    // クエリ作成
     let mut query: Vec<String> = Vec::new();
     query.push("SELECT r.* FROM reports r".to_string());
 
@@ -29,6 +37,8 @@ pub fn report_get_all(
     if let Some(text) = text {
         // NOTE:
         // - スペースごとに処理
+        // - `before:` `after:` があったら日付検索
+        //   - フォーマットは `yyyy-mm-dd`
         // - `tag:` が先頭にあったらタグ一致検索
         // - 何もなければ一部でも含まれているものを検索
 
@@ -37,11 +47,30 @@ pub fn report_get_all(
         for word in words {
             let qword = word.trim();
 
-            if qword.starts_with("tag:") {
-                // タグ検索要素なら、タグの完全一致を行う
+            if qword.starts_with("before:") {
+                // この日以前のものを取得する
+                let trim_word = qword.trim_start_matches("before:");
+                if trim_word.len() == 10 {
+                    let keyword = "\'".to_string() + trim_word + "\'";
+                    query.push("AND".to_string());
+                    query.push(timestamp_column.to_string());
+                    query.push("<=".to_string());
+                    query.push(keyword);
+                }
+            } else if qword.starts_with("after:") {
+                // この日以降のものを取得する
+                let trim_word = qword.trim_start_matches("after:");
+                if trim_word.len() == 10 {
+                    let keyword = "\'".to_string() + trim_word + "\'";
+                    query.push("AND".to_string());
+                    query.push(timestamp_column.to_string());
+                    query.push(">=".to_string());
+                    query.push(keyword);
+                }
+            } else if qword.starts_with("tag:") {
+                // タグ検索要素なら、タグの完全一致を行う（サブクエリ）
                 let trim_word = qword.trim_start_matches("tag:");
                 if trim_word.len() > 0 {
-                    // タグのみの完全一致（サブクエリ）
                     let keyword = "\'".to_string() + trim_word + "\'";
                     query.push("AND r.id in (".to_string());
                     query.push("SELECT rt.report_id FROM report_tags rt".to_string());
@@ -79,14 +108,8 @@ pub fn report_get_all(
 
     // 並び替え
     let order = if latest { "DESC" } else { "ASC" };
-    let order_column = if ref_updated_at {
-        "r.updated_at"
-    } else {
-        "r.created_at"
-    };
-
     query.push("ORDER BY".to_string());
-    query.push(order_column.to_string());
+    query.push(timestamp_column.to_string());
     query.push(order.to_string());
     query.push(", r.id".to_string());
     query.push(order.to_string());
