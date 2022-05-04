@@ -9,17 +9,28 @@
       {{ text }}
     </n-tag>
 
-    <n-auto-complete
-      ref="inputRef"
-      v-model:value="formText"
-      :input-props="{ autocomplete: 'disabled' }"
-      :options="options"
-      :get-show="() => true"
-      type="text"
-      size="small"
-      placeholder="Tag"
-      @keyup.enter.exact="onInput"
-    />
+    <div class="d-flex flex-align-center">
+      <n-auto-complete
+        ref="inputRef"
+        v-model:value="formText"
+        :input-props="{ autocomplete: 'disabled' }"
+        :options="options"
+        :get-show="() => true"
+        type="text"
+        size="small"
+        placeholder="Tag"
+        @blur="onInput"
+      />
+
+      <n-button
+        size="small"
+        type="primary"
+        ghost
+        @click="onInput"
+      >
+        <n-icon :component="AddIcon" />
+      </n-button>
+    </div>
   </n-space>
 </template>
 
@@ -27,6 +38,9 @@
 import { useMessage } from 'naive-ui'
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { Tag, useTagAPI } from '../composables/useTagAPI'
+import {
+  Add as AddIcon,
+} from '@vicons/ionicons5'
 
 const props = defineProps<{ value: string[] }>()
 const emit = defineEmits<{ (e: 'update:value', value: string[]): void }>()
