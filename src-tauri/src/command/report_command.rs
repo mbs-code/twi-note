@@ -20,30 +20,60 @@ pub fn report_get_all(
     let conn = get_connection();
 
     let mut query: Vec<String> = Vec::new();
-    query.push("SELECT distinct r.* FROM reports r".to_string());
-    query.push("LEFT JOIN report_tags rt ON r.id = rt.report_id".to_string());
-    query.push("LEFT JOIN tags t ON rt.tag_id = t.id".to_string());
+    query.push("SELECT r.* FROM reports r".to_string());
 
     // deleted_at があるものを除外
     query.push("WHERE r.deleted_at IS NULL".to_string());
 
     // テキスト抽出
     if let Some(text) = text {
-        // title, body, tag_name の like 検索
-        let like = "".to_string() + &"\'%" + &text + &"%\'";
-        query.push("AND (r.body LIKE".to_string());
-        query.push(like.to_string());
-        query.push("OR r.title LIKE".to_string());
-        query.push(like.to_string());
-        query.push("OR t.name LIKE".to_string());
-        query.push(like.to_string());
-        query.push(")".to_string());
+        // NOTE:
+        // - スペースごとに処理
+        // - `tag:` が先頭にあったらタグ一致検索
+        // - 何もなければ一部でも含まれているものを検索
+
+        // スペースで分割し、それぞれで処理
+        let words = text.split([' ', '　']).collect::<Vec<&str>>();
+        for word in words {
+            let qword = word.trim();
+
+            if qword.starts_with("tag:") {
+                // タグ検索要素なら、タグの完全一致を行う
+                let trim_word = qword.trim_start_matches("tag:");
+                if trim_word.len() > 0 {
+                    // タグのみの完全一致（サブクエリ）
+                    let keyword = "\'".to_string() + trim_word + "\'";
+                    query.push("AND r.id in (".to_string());
+                    query.push("SELECT rt.report_id FROM report_tags rt".to_string());
+                    query.push("LEFT JOIN tags t ON rt.tag_id = t.id".to_string());
+                    query.push("WHERE rt.report_id = r.id".to_string());
+                    query.push("AND t.name LIKE".to_string());
+                    query.push(keyword);
+                    query.push(")".to_string());
+                }
+            } else if qword.len() > 0 {
+                // title, body, tag_name の like 検索（一括り）
+                let keyword = "\'%".to_string() + qword + "%\'";
+                query.push("AND (r.body LIKE".to_string());
+                query.push(keyword.to_string());
+                query.push("OR r.title LIKE".to_string());
+                query.push(keyword.to_string());
+
+                query.push("OR r.id in (".to_string());
+                query.push("SELECT rt.report_id FROM report_tags rt".to_string());
+                query.push("LEFT JOIN tags t ON rt.tag_id = t.id".to_string());
+                query.push("WHERE rt.report_id = r.id".to_string());
+                query.push("AND t.name LIKE".to_string());
+                query.push(keyword);
+                query.push("))".to_string());
+            }
+        }
     }
 
     // タグ抽出
     if let Some(name) = tag_name {
         // タグ名で抽出
-        query.push("AND t.name =".to_string());
+        query.push("AND t.name LIKE".to_string());
         query.push("".to_string() + &"\'" + &name + &"\'");
     }
 
