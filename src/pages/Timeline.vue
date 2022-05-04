@@ -10,7 +10,7 @@
     :style="{ top: headerHeight + 'px', bottom: footerHeight + 'px' }"
     :native-scrollbar="false"
   >
-    <div style="padding-right: 16px">
+    <div style="padding-right: 18px">
       <ReportTimeline
         v-model:is-initial="isInitial"
         :reports="reports"
@@ -19,6 +19,8 @@
         @delete:after="listDeleted"
       />
     </div>
+
+    <n-back-top :bottom="backtoHeight" right="20" :visibility-height="10" />
   </n-layout>
 
   <n-layout-footer bordered position="absolute">
@@ -42,6 +44,38 @@ import { useConfigStore } from '../stores/config'
 
 const reportAPI = useReportAPI()
 const configStore = useConfigStore()
+
+
+/// ////////////////////////////////////////////////////////////
+/// 高さ計算機能
+
+const headerHeight = ref(0)
+const footerHeight = ref(0)
+const backtoHeight = ref(0)
+
+const headerRef = ref<HTMLDivElement>()
+const footerRef = ref<HTMLDivElement>()
+const sizeObserver = ref<ResizeObserver>()
+
+onMounted(() => {
+  const observer = new ResizeObserver(() => {
+    headerHeight.value = (headerRef.value?.clientHeight ?? 0) + 1
+    footerHeight.value = (footerRef.value?.clientHeight ?? 0) + 1
+    backtoHeight.value = (footerRef.value?.clientHeight ?? 0) + 6
+  })
+
+  if (headerRef.value) observer.observe(headerRef.value)
+  if (footerRef.value) observer.observe(footerRef.value)
+  sizeObserver.value = observer
+})
+
+onUnmounted(() => {
+  const observer = sizeObserver.value
+  if (observer) {
+    if (headerRef.value) observer.unobserve(headerRef.value)
+    if (footerRef.value) observer.unobserve(footerRef.value)
+  }
+})
 
 /// ////////////////////////////////////////////////////////////
 /// 検索機能
@@ -119,33 +153,4 @@ const listDeleted = (deleteReport: Report) => {
     reports.value.splice(index, 1)
   }
 }
-
-/// ////////////////////////////////////////////////////////////
-/// 高さ計算機能
-
-const headerHeight = ref(0)
-const footerHeight = ref(0)
-
-const headerRef = ref<HTMLDivElement>()
-const footerRef = ref<HTMLDivElement>()
-const sizeObserver = ref<ResizeObserver>()
-
-onMounted(() => {
-  const observer = new ResizeObserver(() => {
-    headerHeight.value = (headerRef.value?.clientHeight ?? 0) + 1
-    footerHeight.value = (footerRef.value?.clientHeight ?? 0) + 1
-  })
-
-  if (headerRef.value) observer.observe(headerRef.value)
-  if (footerRef.value) observer.observe(footerRef.value)
-  sizeObserver.value = observer
-})
-
-onUnmounted(() => {
-  const observer = sizeObserver.value
-  if (observer) {
-    if (headerRef.value) observer.unobserve(headerRef.value)
-    if (footerRef.value) observer.unobserve(footerRef.value)
-  }
-})
 </script>

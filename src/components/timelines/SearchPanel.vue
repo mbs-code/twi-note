@@ -1,7 +1,8 @@
 <template>
-  <n-space class="expand-first">
+  <div class="d-flex flex-align-center" style="height: 24px">
     <n-input
       v-model:value="text"
+      class="flex-grow-1"
       placeholder="検索"
       size="small"
       clearable
@@ -17,7 +18,7 @@
     <n-button size="small">
       検索
     </n-button>
-  </n-space>
+  </div>
 </template>
 
 <script setup lang="ts">
