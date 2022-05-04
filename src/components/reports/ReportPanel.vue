@@ -1,26 +1,41 @@
 <template>
-  <n-card>
-    <n-space class="expand-first">
-      <div>
-        <template v-if="isEdit">
-          <ReportEditBox :report="report" @saved="handleUpdated"></ReportEditBox>
-        </template>
-        <template v-else>
-          <ReportShowBox :report="report"></ReportShowBox>
-        </template>
-      </div>
+  <n-card class="card-dense">
+    <n-space class="expand-first" :wrap="false">
+      <ReportEditBox
+        v-if="isEdit"
+        :report="report"
+        :expand="true"
+        :show-expand="false"
+        @save:after="onUpdateAfter"
+      />
+      <ReportShowBox
+        v-else
+        :report="report"
+        @click:tag="emit('click:tag', $event)"
+      />
 
       <n-space vertical justify="space-between" style="height: 100%">
-        <n-button quaternary circle type="primary" @click="onEdit">
+        <n-button
+          quaternary
+          circle
+          type="primary"
+          @click="onEdit"
+        >
           <template #icon>
-            <n-icon v-if="isEdit"><CloseIcon /></n-icon>
-            <n-icon v-else><EditIcon /></n-icon>
+            <n-icon v-if="isEdit" :component="CloseIcon" />
+            <n-icon v-else :component="EditIcon" />
           </template>
         </n-button>
 
-        <n-button v-if="isEdit" circle type="error" @click="onDelete">
+        <n-button
+          v-if="isEdit"
+          circle
+          type="error"
+          style="height: 36px"
+          @click="openDeleteDialog"
+        >
           <template #icon>
-            <n-icon><DeleteIcon /></n-icon>
+            <n-icon :component="DeleteIcon" />
           </template>
         </n-button>
       </n-space>
@@ -30,7 +45,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useDialog } from 'naive-ui'
+import { useDialog, useMessage } from 'naive-ui'
 import { Report, useReportAPI } from '../../composables/useReportAPI'
 import {
   CreateOutline as EditIcon,
@@ -40,35 +55,51 @@ import {
 
 const props = defineProps<{ report: Report }>()
 const emit = defineEmits<{
-  (e: 'updated', reports: Report): void,
-  (e: 'deleted', reports: Report): void,
+  (e: 'update:after', reports: Report): void,
+  (e: 'delete:after', reports: Report): void,
+  (e: 'click:tag', name: string): void, // bridge
 }>()
+
+const message = useMessage()
+const dialog = useDialog()
+const reportAPI = useReportAPI()
+
+/// ////////////////////////////////////////////////////////////
+/// フォーム基本機能
 
 // 編集・保存処理
 const isEdit = ref(false)
 const onEdit = () => { isEdit.value = !isEdit.value }
-const handleUpdated = (report: Report) => {
+const onUpdateAfter = (report: Report) => {
   isEdit.value = false
-  emit('updated', report)
+  emit('update:after', report)
 }
 
 // 削除ダイアログ
-const reportAPI = useReportAPI()
-const dialog = useDialog()
-const onDelete = () => {
+const openDeleteDialog = () => {
   dialog.error({
     title: '確認',
     content: '削除しますか？',
     positiveText: 'はい',
     negativeText: 'いいえ',
-    onPositiveClick: () => {
-      return reportAPI.remove(props.report.id)
-        .then(report_id => {
-          isEdit.value = false
-          emit('deleted', props.report)
-        })
+    onPositiveClick: async () => {
+      await onDelete()
     },
-    onNegativeClick: () => {}
   })
+}
+
+const onDelete = async () => {
+  const report = props.report
+
+  // 実行
+  try {
+    const res = await reportAPI.remove(props.report.id)
+    if (!res) throw new Error('Failed to delete')
+
+    emit('delete:after', report)
+  } catch (err) {
+    console.log(err)
+    message.error('内部エラーが発生しました。')
+  }
 }
 </script>

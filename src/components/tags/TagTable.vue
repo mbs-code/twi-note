@@ -3,7 +3,7 @@
     :columns="columns"
     :pagination="false"
     :data="tags"
-    :style="{ height: 'calc(100vh - 40px)' }"
+    :style="{ height: 'calc(100vh - 48px)' }"
     flex-height
   />
 </template>
@@ -16,7 +16,7 @@ import {
   CreateOutline as EditIcon,
 } from '@vicons/ionicons5'
 
-const props = defineProps<{ tags: Tag[] }>()
+defineProps<{ tags: Tag[] }>()
 const emit = defineEmits<{
   (e: 'onEdit', tags: Tag): void,
 }>()

@@ -11,6 +11,7 @@ use std::sync::{Mutex, MutexGuard};
 use tauri::Window;
 
 pub static DB_CONN: OnceCell<Mutex<Connection>> = OnceCell::new();
+pub static DB_PATH: &str = "./storage.db";
 
 pub fn get_connection() -> MutexGuard<'static, Connection> {
     let conn = DB_CONN.get().unwrap().lock().unwrap();
@@ -18,7 +19,7 @@ pub fn get_connection() -> MutexGuard<'static, Connection> {
 }
 
 pub fn establish_connection() -> Connection {
-    let conn = Connection::open("storage.db").unwrap();
+    let conn = Connection::open(DB_PATH).unwrap();
     return conn;
 }
 

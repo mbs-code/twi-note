@@ -3,6 +3,45 @@
   flex-grow: 1;
 }
 
-.p-0 {
-  padding: 0;
+// カードの余白調整
+.card-dense .n-card__content {
+  padding: 8px !important;
+}
+
+.no-select {
+  user-select: none;
+}
+
+.no-link {
+  text-decoration:none;
+}
+
+///
+
+.d-flex {
+  display: flex;
+
+  > *:not(:last-child) {
+    margin-right: 12px;
+  }
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
 }

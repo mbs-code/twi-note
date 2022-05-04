@@ -14,14 +14,15 @@ export type Report = {
 export type FormReport = {
   title?: string
   body: string
-  tag_names: String[]
+  tag_names: string[]
 }
 
 export type SearchReport = {
-  tagName?: string
+  text?: string
   page: number
   count: number
   latest: boolean
+  refUpdatedAt: boolean
 }
 
 export const useReportAPI = () => {

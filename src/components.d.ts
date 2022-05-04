@@ -4,10 +4,14 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AppHeader: typeof import('./components/apps/AppHeader.vue')['default']
     ArrayTagForm: typeof import('./components/ArrayTagForm.vue')['default']
+    ConfigDrawer: typeof import('./components/apps/ConfigDrawer.vue')['default']
     ReportEditBox: typeof import('./components/reports/ReportEditBox.vue')['default']
     ReportPanel: typeof import('./components/reports/ReportPanel.vue')['default']
     ReportShowBox: typeof import('./components/reports/ReportShowBox.vue')['default']
+    ReportTimeline: typeof import('./components/timelines/ReportTimeline.vue')['default']
+    SearchPanel: typeof import('./components/timelines/SearchPanel.vue')['default']
     SidePanel: typeof import('./components/apps/SidePanel.vue')['default']
     TagEditDialog: typeof import('./components/tags/TagEditDialog.vue')['default']
     TagTable: typeof import('./components/tags/TagTable.vue')['default']

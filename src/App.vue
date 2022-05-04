@@ -1,37 +1,26 @@
 <template>
-  <n-config-provider :theme="isDark ? darkTheme : lightTheme">
+  <n-config-provider :theme="configStore.is_dark ? darkTheme : lightTheme">
     <n-message-provider placement="top-right">
       <n-dialog-provider>
         <n-layout position="absolute">
-          <!-- Header Area -->
-          <n-layout-header position="absolute" bordered style="height: 22px;">
-            <n-space>
-              <div>side</div>
-              <n-switch v-model:value="expandSide" />
-              <div>dark</div>
-              <n-switch v-model:value="isDark" />
-              <router-link to="/"><n-button size="small">ホーム</n-button></router-link>
-              <router-link to="/tag"><n-button size="small">タグ</n-button></router-link>
-            </n-space>
+          <!-- Fixed Header -->
+          <n-layout-header bordered position="absolute">
+            <AppHeader />
           </n-layout-header>
 
-          <!-- Contents Area -->
-          <n-layout has-sider position="absolute" style="top: 22px;">
-            <!-- Left Contents -->
+          <!-- Contents -->
+          <n-layout has-sider position="absolute" style="top: 32px">
             <n-layout-sider
-              content-style="padding: 8px;"
-              :native-scrollbar="false"
-              :width="expandSide ? 160 : 50"
-              collapse-mode="width"
               bordered
+              collapse-mode="width"
+              :width="configStore.expand_side ? 160 : 50"
+              :native-scrollbar="false"
             >
-              <SidePanel :expand="expandSide" />
+              <SidePanel :expand="configStore.expand_side" />
             </n-layout-sider>
 
-            <!-- Main Contents -->
-            <n-layout content-style="padding: 8px;" :native-scrollbar="false">
+            <n-layout>
               <router-view :key="$route.fullPath" />
-              <n-back-top bottom="20" right="20" />
             </n-layout>
           </n-layout>
         </n-layout>
@@ -41,9 +30,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { lightTheme, darkTheme } from 'naive-ui'
+import { onMounted, watch } from 'vue'
+import { useAppConfigAPI } from './composables/useAppConfigAPI'
+import { useConfigStore } from './stores/config'
 
-const expandSide = ref<boolean>(true)
-const isDark = ref<boolean>(true)
+const configStore = useConfigStore()
+
+const appConfigAPI = useAppConfigAPI()
+onMounted(async () => {
+  const config = await appConfigAPI.load()
+  configStore.$state = config
+})
+
+watch(configStore.$state, async () => {
+  await appConfigAPI.save(configStore.$state)
+})
 </script>
