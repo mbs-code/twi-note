@@ -10,7 +10,11 @@
 
     <n-space class="expand-first" align="center">
       <n-space>
-        <n-tag v-for="(tag, _) of report.tags" :key="_">
+        <n-tag
+          v-for="(tag, _) of report.tags"
+          :key="_"
+          @click="emit('click:tag', tag.name)"
+        >
           <span
             v-if="tag.color"
             class="no-select"
@@ -49,6 +53,10 @@ import { parseLocal, formatString, formatDistance } from '../../utils/DateUtil'
 import { useConfigStore } from '../../stores/config'
 
 const props = defineProps<{ report: Report }>()
+const emit = defineEmits<{
+  (e: 'click:tag', name: string): void,
+}>()
+
 const configStore = useConfigStore()
 
 /// ////////////////////////////////////////////////////////////

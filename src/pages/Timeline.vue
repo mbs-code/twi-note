@@ -18,6 +18,7 @@
         @load="onInfiniteLoad"
         @update:after="listUpdated"
         @delete:after="listDeleted"
+        @click:tag="onTagClick"
       />
     </div>
 
@@ -38,9 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { LoadAction } from '@ts-pro/vue-eternal-loading'
-import { Report, SearchReport, useReportAPI } from '../composables/useReportAPI'
+import { Report, useReportAPI } from '../composables/useReportAPI'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
 import { useRoute } from 'vue-router'
@@ -87,23 +88,29 @@ const reports = ref<Report[]>([])
 const isInitial = ref<boolean>(false) // infinite 用
 
 const search = ref<string>('')
-const searchParams = ref<SearchReport>({
-  text: undefined,
-  page: 0, // load 時に +1 する
-  count: Number(configStore.tl_once_count),
-  latest: true,
-  refUpdatedAt: Boolean(configStore.ref_updated_at),
-})
+const page = ref<number>(0) // load 時に +1 する
 
 const fetchReports = async () => {
-  const items = await reportAPI.getAll(searchParams.value)
+  // 設定バッファ
+  tlOnceCountBuffer.value = configStore.tl_once_count
+  refUpdatedAtBuffer.value = configStore.ref_updated_at
+
+  // データ取得
+  const items = await reportAPI.getAll({
+    text: search.value || undefined,
+    page: page.value || 1,
+    count: configStore.tl_once_count,
+    latest: true,
+    refUpdatedAt: configStore.ref_updated_at,
+  })
+
   reports.value.push(...items)
 }
 
-const resetReports = () => {
+const reloadReports = () => {
   reports.value = []
   isInitial.value = true
-  searchParams.value.page = 0
+  page.value = 0
 }
 
 onMounted(() => {
@@ -111,23 +118,7 @@ onMounted(() => {
   const tag = route.query?.tag as string // url parameter
   if (tag) {
     search.value = `tag:${tag} `
-    searchParams.value.text = `tag:${tag}`
   }
-})
-
-watch(configStore, (after) => {
-  // 設定が変わった際に自動で再読み込みする
-  let reload = false
-  if (searchParams.value.count !== after.tl_once_count) {
-    searchParams.value.count = after.tl_once_count
-  }
-
-  if (searchParams.value.refUpdatedAt !== after.ref_updated_at) {
-    searchParams.value.refUpdatedAt = after.ref_updated_at
-    reload = true
-  }
-
-  if (reload) resetReports()
 })
 
 // NOTE: onMounted は onInfinite で処理される
@@ -135,14 +126,35 @@ watch(configStore, (after) => {
 
 ///
 
+const tlOnceCountBuffer = ref<number>(10)
+const refUpdatedAtBuffer = ref<boolean>(false)
+configStore.$subscribe((mutation, state) => {
+  // 設定が変わった際に自動で再読み込みする
+  if (tlOnceCountBuffer.value !== state.tl_once_count) {
+    reloadReports()
+  }
+
+  if (refUpdatedAtBuffer.value !== state.ref_updated_at) {
+    reloadReports()
+  }
+})
+
+///
+
 const onSearch = () => {
-  searchParams.value.text = search.value
-  resetReports()
+  // 再検索する
+  reloadReports()
+}
+
+const onTagClick = (name: string) => {
+  // タグクリック時に検索文字列に反映して、再検索する
+  search.value = [search.value.trim(), `tag:${name} `].join(' ')
+  reloadReports()
 }
 
 const onInfiniteLoad = async ({ loaded, noMore, error }: LoadAction) => {
   const beforeReportLength = reports.value.length
-  searchParams.value.page++
+  page.value++ // ページカウント
 
   try {
     await fetchReports()

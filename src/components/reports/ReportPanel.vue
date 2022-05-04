@@ -11,6 +11,7 @@
       <ReportShowBox
         v-else
         :report="report"
+        @click:tag="emit('click:tag', $event)"
       />
 
       <n-space vertical justify="space-between" style="height: 100%">
@@ -56,6 +57,7 @@ const props = defineProps<{ report: Report }>()
 const emit = defineEmits<{
   (e: 'update:after', reports: Report): void,
   (e: 'delete:after', reports: Report): void,
+  (e: 'click:tag', name: string): void, // bridge
 }>()
 
 const message = useMessage()
