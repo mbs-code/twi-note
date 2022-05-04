@@ -4,7 +4,9 @@
       <ReportEditBox
         v-if="isEdit"
         :report="report"
-        @save="onUpdateAfter"
+        :expand="true"
+        :show-expand="false"
+        @save:after="onUpdateAfter"
       />
       <ReportShowBox
         v-else
@@ -28,6 +30,7 @@
           v-if="isEdit"
           circle
           type="error"
+          style="height: 36px"
           @click="openDeleteDialog"
         >
           <template #icon>

@@ -7,6 +7,8 @@ pub struct AppConfig {
     pub is_dark: bool,
     #[serde(default = "default_bool")]
     pub expand_side: bool,
+    #[serde(default = "default_bool")]
+    pub expand_editor: bool,
 }
 
 fn default_bool() -> bool {

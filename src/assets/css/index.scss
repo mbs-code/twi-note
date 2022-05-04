@@ -21,9 +21,13 @@
 .d-flex {
   display: flex;
 
-  > * {
-    margin: 0 12px;
+  > *:not(:last-child) {
+    margin-right: 12px;
   }
+}
+
+.flex-align-center {
+  align-items: center;
 }
 
 .flex-grow-1 {

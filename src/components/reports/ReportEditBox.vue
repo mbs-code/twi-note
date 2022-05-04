@@ -1,5 +1,7 @@
 <template>
+  <!-- フルサイズモード -->
   <n-space
+    v-if="expand"
     vertical
     @keydown.ctrl.enter.exact="onSave"
   >
@@ -12,7 +14,7 @@
     <n-input
       v-model:value="formBody"
       type="textarea"
-      placeholder="Body"
+      placeholder="Text"
       clearable
       :autosize="{ minRows: 3 }"
     />
@@ -22,9 +24,14 @@
       v-model:value="formTagNames"
     />
 
-    <n-space>
+    <div class="d-flex flex-align-center" style="height: 36px">
+      <n-button type="default" @click="resetForm">
+        リセット
+      </n-button>
+
+      <div class="flex-grow-1" />
+
       <n-button
-        round
         :type="isEdit ? 'warning' : 'primary'"
         :disabled="!isValidated"
         @click="onSave"
@@ -33,14 +40,50 @@
       </n-button>
 
       <n-button
-        round
-        type="default"
-        @click="resetForm"
+        v-if="showExpand"
+        text
+        @click="onExpandButton"
       >
-        リセット
+        <template #icon>
+          <n-icon :component="BottomIcon" />
+        </template>
       </n-button>
-    </n-space>
+    </div>
   </n-space>
+
+  <!-- ミニマムモード -->
+  <div
+    v-else
+    class="d-flex flex-align-center"
+    style="height: 36px"
+    @keydown.ctrl.enter.exact="onSave"
+  >
+    <n-input
+      v-model:value="formBody"
+      type="textarea"
+      placeholder="Text"
+      clearable
+      :autosize="{ minRows: 1 }"
+    />
+
+    <n-button
+      :type="isEdit ? 'warning' : 'primary'"
+      :disabled="!isValidated"
+      @click="onSave"
+    >
+      保存(Ctrl+Enter)
+    </n-button>
+
+    <n-button
+      v-if="showExpand"
+      text
+      @click="onExpandButton"
+    >
+      <template #icon>
+        <n-icon :component="TopIcon" />
+      </template>
+    </n-button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -49,13 +92,28 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 import ArrayTagForm from '../ArrayTagForm.vue'
+import {
+  ChevronUp as TopIcon,
+  ChevronDown as BottomIcon,
+} from '@vicons/ionicons5'
 
-const props = defineProps<{ report?: Report }>()
-const emit = defineEmits<{ (e: 'save:after', createReport: Report): void }>()
+const props = defineProps<{
+  report?: Report,
+  expand: boolean,
+  showExpand: boolean,
+}>()
+const emit = defineEmits<{
+  (e: 'save:after', createReport: Report): void,
+  (e: 'update:expand', val: boolean): void,
+}>()
 
 const route = useRoute()
 const message = useMessage()
 const reportAPI = useReportAPI()
+
+const onExpandButton = () => {
+  emit('update:expand', !props.expand)
+}
 
 /// ////////////////////////////////////////////////////////////
 /// フォーム基本機能

@@ -3,15 +3,11 @@
     <n-button
       size="small"
       text
-      @click="onExpandButton()"
+      @click="onExpandButton"
     >
       <template #icon>
-        <n-icon v-if="configStore.expand_side">
-          <RightIcon />
-        </n-icon>
-        <n-icon v-else>
-          <LeftIcon />
-        </n-icon>
+        <n-icon v-if="configStore.expand_side" :component="RightIcon" />
+        <n-icon v-else :component="LeftIcon" />
       </template>
     </n-button>
 
@@ -64,7 +60,6 @@ const links = [
 ]
 
 const onExpandButton = () => {
-  console.log('click')
   configStore.expand_side = !configStore.expand_side
 }
 

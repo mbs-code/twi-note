@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 export type AppConfig = {
   is_dark: boolean
   expand_side: boolean
+  expand_editor: boolean
 }
 
 export const useAppConfigAPI = () => {

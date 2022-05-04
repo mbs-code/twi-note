@@ -24,7 +24,11 @@
   <n-layout-footer bordered position="absolute">
     <div ref="footerRef">
       <n-card class="card-dense">
-        <ReportEditBox @save:after="listCreated" />
+        <ReportEditBox
+          v-model:expand="configStore.expand_editor"
+          :show-expand="true"
+          @save:after="listCreated"
+        />
       </n-card>
     </div>
   </n-layout-footer>
@@ -34,8 +38,10 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { LoadAction } from '@ts-pro/vue-eternal-loading'
 import { Report, SearchReport, useReportAPI } from '../composables/useReportAPI'
+import { useConfigStore } from '../stores/config'
 
 const reportAPI = useReportAPI()
+const configStore = useConfigStore()
 
 /// ////////////////////////////////////////////////////////////
 /// 検索機能
