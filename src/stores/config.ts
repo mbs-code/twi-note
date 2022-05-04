@@ -14,6 +14,8 @@ export const useConfigStore = defineStore('config', () => {
   const timestamp_mode = ref<TimestampMode>('relative')
   /** 更新時間を使用するか */
   const ref_updated_at = ref<boolean>(false)
+  /** TLで一度に取得する量 */
+  const tl_once_count = ref<number>(20)
 
   return {
     is_dark,
@@ -22,5 +24,6 @@ export const useConfigStore = defineStore('config', () => {
 
     timestamp_mode,
     ref_updated_at,
+    tl_once_count,
   }
 })

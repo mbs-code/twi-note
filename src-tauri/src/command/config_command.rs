@@ -14,6 +14,8 @@ pub struct AppConfig {
     pub timestamp_mode: String,
     #[serde(default = "default_bool")]
     pub ref_updated_at: bool,
+    #[serde(default = "default_count")]
+    pub tl_once_count: i64,
 }
 
 fn default_bool() -> bool {
@@ -22,6 +24,10 @@ fn default_bool() -> bool {
 
 fn default_timestamp_mode() -> String {
     "relative".to_string()
+}
+
+fn default_count() -> i64 {
+    20
 }
 
 ///

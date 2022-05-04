@@ -86,7 +86,7 @@ const isInitial = ref<boolean>(false)
 const searchParams = ref<SearchReport>({
   text: undefined,
   page: 0, // load 時に +1 する
-  count: 5,
+  count: Number(configStore.tl_once_count),
   latest: true,
   refUpdatedAt: Boolean(configStore.ref_updated_at),
 })
@@ -102,18 +102,25 @@ const resetReports = () => {
   searchParams.value.page = 0
 }
 
+watch(configStore, (after) => {
+  // 設定が変わった際に自動で再読み込みする
+  let reload = false
+  if (searchParams.value.count !== after.tl_once_count) {
+    searchParams.value.count = after.tl_once_count
+  }
+
+  if (searchParams.value.refUpdatedAt !== after.ref_updated_at) {
+    searchParams.value.refUpdatedAt = after.ref_updated_at
+    reload = true
+  }
+
+  if (reload) resetReports()
+})
+
 // NOTE: onMounted は onInfinite で処理される
 // NOTE: 初回取得は行う必要が無い
 
 ///
-
-watch(configStore, (after) => {
-  // 設定が変わった際に自動で再読み込みする
-  if (searchParams.value.refUpdatedAt !== after.ref_updated_at) {
-    searchParams.value.refUpdatedAt = after.ref_updated_at
-    resetReports()
-  }
-})
 
 const onSearch = async (text: string) => {
   searchParams.value.text = text || undefined

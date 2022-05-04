@@ -25,6 +25,16 @@
         </n-space>
       </n-form-item>
 
+      <n-form-item label="一度に取得する数 (TL)">
+        <n-input-number
+          v-model:value="configStore.tl_once_count"
+          min="1"
+          max="1000"
+          step="5"
+          required
+        />
+      </n-form-item>
+
       <n-form-item label="Storage">
         <n-space vertical style="width: 100%">
           <n-input :value="storage?.path" readonly>
