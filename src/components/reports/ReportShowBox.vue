@@ -1,16 +1,16 @@
 <template>
   <n-space vertical>
-    <div>{{ report.title }}</div>
+    <div v-if="report.title">
+      {{ report.title }}
+    </div>
+
     <div style="white-space: pre-wrap">
       {{ report.body }}
     </div>
 
     <n-space class="expand-first">
       <n-space>
-        <n-tag
-          v-for="(tag, _) of report.tags"
-          :key="_"
-        >
+        <n-tag v-for="(tag, _) of report.tags" :key="_">
           <span
             v-if="tag.color"
             class="no-select"
@@ -23,16 +23,12 @@
       <n-tooltip trigger="hover">
         <template #trigger>
           <div style="display: flex; align-items: center;">
-            <div
-              v-if="isEdited"
-              style="color: silver"
-            >
+            <div v-if="isEdited" style="color: silver">
               （編集済み）
             </div>
 
-            <n-icon style="padding-right: 4px">
-              <ClockIcon />
-            </n-icon>
+            <n-icon style="padding-right: 4px" :component="ClockIcon" />
+
             <span>{{ updatedDistance }}</span>
           </div>
         </template>

@@ -10,11 +10,13 @@
     :style="{ top: headerHeight + 'px', bottom: footerHeight + 'px' }"
     :native-scrollbar="false"
   >
-    <div style="padding-right: 14px">
+    <div style="padding-right: 16px">
       <ReportTimeline
         v-model:is-initial="isInitial"
         :reports="reports"
         @load="onInfiniteLoad"
+        @update:after="listUpdated"
+        @delete:after="listDeleted"
       />
     </div>
   </n-layout>
@@ -22,8 +24,7 @@
   <n-layout-footer bordered position="absolute">
     <div ref="footerRef">
       <n-card class="card-dense">
-        <ReportEditBox />
-        <!-- @saved="handleCreated"  -->
+        <ReportEditBox @save:after="listCreated" />
       </n-card>
     </div>
   </n-layout-footer>
@@ -59,8 +60,8 @@ const resetReports = () => {
   searchParams.value.page = 1
 }
 
-// NOTE: 初回取得は行う必要が無い
 // NOTE: onMounted は onInfinite で処理される
+// NOTE: 初回取得は行う必要が無い
 
 ///
 
@@ -84,6 +85,32 @@ const onInfiniteLoad = async ({ loaded, noMore, error }: LoadAction) => {
     }
   } catch (err) {
     error()
+  }
+}
+
+/// ////////////////////////////////////////////////////////////
+/// 配列更新機能
+
+const listCreated = (createReport: Report) => {
+  reports.value.unshift(createReport)
+}
+
+const listUpdated = (updateReport: Report) => {
+  const index = reports.value.findIndex((report) => report.id === updateReport.id)
+  if (index >= 0) {
+    // 同IDがあれば置き換える
+    reports.value.splice(index, 1, updateReport)
+  } else {
+    // 該当が無かったら先頭に追加
+    reports.value.unshift(updateReport)
+  }
+}
+
+const listDeleted = (deleteReport: Report) => {
+  const index = reports.value.findIndex((report) => report.id === deleteReport.id)
+  if (index >= 0) {
+    // 同IDがあれば削除する
+    reports.value.splice(index, 1)
   }
 }
 
