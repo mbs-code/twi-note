@@ -6,6 +6,7 @@
   </n-layout-header>
 
   <n-layout
+    ref="scrollRef"
     position="absolute"
     :style="{ top: headerHeight + 'px', bottom: footerHeight + 'px' }"
     :native-scrollbar="false"
@@ -41,6 +42,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { LoadAction } from '@ts-pro/vue-eternal-loading'
 import { Report, SearchReport, useReportAPI } from '../composables/useReportAPI'
 import { useConfigStore } from '../stores/config'
+import { NLayout } from 'naive-ui/lib/components'
 
 const reportAPI = useReportAPI()
 const configStore = useConfigStore()
@@ -132,7 +134,9 @@ const onInfiniteLoad = async ({ loaded, noMore, error }: LoadAction) => {
 /// 配列更新機能
 
 const listCreated = (createReport: Report) => {
+  // 先頭に追加
   reports.value.unshift(createReport)
+  scrollToTop()
 }
 
 const listUpdated = (updateReport: Report) => {
@@ -143,6 +147,7 @@ const listUpdated = (updateReport: Report) => {
   } else {
     // 該当が無かったら先頭に追加
     reports.value.unshift(updateReport)
+    scrollToTop()
   }
 }
 
@@ -152,5 +157,13 @@ const listDeleted = (deleteReport: Report) => {
     // 同IDがあれば削除する
     reports.value.splice(index, 1)
   }
+}
+
+/// ////////////////////////////////////////////////////////////
+/// スクロール機能
+
+const scrollRef = ref<typeof NLayout>()
+const scrollToTop = () => {
+  scrollRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>

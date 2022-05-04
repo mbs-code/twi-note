@@ -72,6 +72,7 @@ const _isInitial = computed({
 const onLoad = (action: LoadAction) => {
   emit('load', action)
 }
+
 </script>
 
 <style scoped>
