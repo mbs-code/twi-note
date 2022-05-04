@@ -1,49 +1,48 @@
 <template>
-  <n-space vertical>
-    <!-- カード郡 -->
-    <transition-group tag="div" name="list">
-      <ReportPanel
-        v-for="report in reports"
-        :key="report.id"
-        :report="report"
-      />
-      <!-- @updated="handleUpdated" -->
-      <!-- @deleted="handleDeleted" -->
-    </transition-group>
+  <!-- カード郡 -->
+  <transition-group tag="div" name="list">
+    <ReportPanel
+      v-for="report in reports"
+      :key="report.id"
+      :report="report"
+      style="margin: 4px"
+    />
+    <!-- @updated="handleUpdated" -->
+    <!-- @deleted="handleDeleted" -->
+  </transition-group>
 
-    <!-- 無限スクロール -->
-    <VueEternalLoading
-      v-model:is-initial="_isInitial"
-      :load="onLoad"
-      position="top"
-    >
-      <template #loading>
-        <n-space justify="center">
-          <n-spin />
-        </n-space>
-      </template>
+  <!-- 無限スクロール -->
+  <VueEternalLoading
+    v-model:is-initial="_isInitial"
+    :load="onLoad"
+    position="top"
+  >
+    <template #loading>
+      <n-space justify="center">
+        <n-spin />
+      </n-space>
+    </template>
 
-      <template #no-more>
-        <n-empty description="No Contents" style="margin: 12px" />
-      </template>
+    <template #no-more>
+      <n-empty description="No Contents" style="margin: 12px" />
+    </template>
 
-      <template #error="{ retry }">
-        <n-alert
-          title="内部エラーが発生しました。"
+    <template #error="{ retry }">
+      <n-alert
+        title="内部エラーが発生しました。"
+        type="error"
+      >
+        <n-button
+          strong
+          secondary
           type="error"
+          @click="retry"
         >
-          <n-button
-            strong
-            secondary
-            type="error"
-            @click="retry"
-          >
-            再試行
-          </n-button>
-        </n-alert>
-      </template>
-    </VueEternalLoading>
-  </n-space>
+          再試行
+        </n-button>
+      </n-alert>
+    </template>
+  </VueEternalLoading>
 </template>
 
 <script setup lang="ts">
@@ -161,9 +160,14 @@ const onLoad = (action: LoadAction) => {
 .list-leave-active {
   transition: all 0.2s ease;
 }
+
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
   transform: translateY(-30px);
+}
+
+.list-move {
+  transition: transform 0.2s ease;
 }
 </style>
