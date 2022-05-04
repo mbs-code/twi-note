@@ -13,6 +13,10 @@
         </n-space>
       </n-form-item>
 
+      <n-form-item label="Timestamp">
+        <n-select v-model:value="configStore.timestamp_mode" :options="timestapOptions" />
+      </n-form-item>
+
       <n-form-item label="Storage">
         <n-space vertical style="width: 100%">
           <n-input :value="storage?.path" readonly>
@@ -26,7 +30,7 @@
           <n-space align="center" justify="space-between">
             <span>{{ fileSize }}</span>
 
-            <n-button type="info" ghost @click="onOpen">
+            <n-button type="info" ghost @click="onOpenDirectory">
               <template #icon>
                 <n-icon :component="FolderIcon" />
               </template>
@@ -53,25 +57,36 @@ import { StorageInfo, useStorageAPI } from '../../composables/useStorageAPI'
 
 const props = defineProps<{ show: boolean }>()
 const emit = defineEmits<{ (e: 'update:show', value: boolean): void }>()
+
 const configStore = useConfigStore()
+const storageAPI = useStorageAPI()
+
+/// ////////////////////////////////////////////////////////////
+/// ドロワー表示管理
 
 const showDrawer = computed({
   get: () => props.show,
   set: (val: boolean) => emit('update:show', val),
 })
 
-///
+/// ////////////////////////////////////////////////////////////
+/// フォーム管理
 
-const storageAPI = useStorageAPI()
 const storage = ref<StorageInfo>()
 onMounted(async () => {
   storage.value = await storageAPI.load()
 })
+
+const timestapOptions = ref([
+  { label: '相対時間: 5日前', value: 'relative' },
+  { label: '絶対時間: 2022-04-01 10:00:00', value: 'absolute' },
+])
+
 const fileSize = computed(() => {
   return filesize(storage.value?.size ?? 0)
 })
 
-const onOpen = async () => {
+const onOpenDirectory = async () => {
   await storageAPI.open()
 }
 </script>

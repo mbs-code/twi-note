@@ -33,8 +33,8 @@
           </div>
         </template>
 
-        <div>作成日: {{ createdStr }}</div>
-        <div>更新日: {{ updatedStr }}</div>
+        <div>作成日: {{ createdStr }} ({{ createdDistStr }})</div>
+        <div>更新日: {{ updatedStr }} ({{ updatedDistStr }})</div>
       </n-tooltip>
     </n-space>
   </n-space>
@@ -45,8 +45,12 @@ import { computed } from 'vue'
 import { TimeOutline as ClockIcon } from '@vicons/ionicons5'
 import { Report } from '../../composables/useReportAPI'
 import { parseLocal, formatString, formatDistance } from '../../utils/DateUtil'
+import { useConfigStore } from '../../stores/config'
 
 const props = defineProps<{ report: Report }>()
+const configStore = useConfigStore()
+
+/// ////////////////////////////////////////////////////////////
 
 const isEdited = computed(() =>  props.report.created_at !== props.report.updated_at)
 const createdLocalDate = computed(() => parseLocal(props.report.created_at))
@@ -54,5 +58,14 @@ const updatedLocalDate = computed(() => parseLocal(props.report.updated_at))
 
 const createdStr = computed(() => formatString(createdLocalDate.value))
 const updatedStr = computed(() => formatString(updatedLocalDate.value))
-const updatedDistance = computed(() => formatDistance(updatedLocalDate.value))
+const createdDistStr = computed(() => formatDistance(createdLocalDate.value))
+const updatedDistStr = computed(() => formatDistance(updatedLocalDate.value))
+
+const updatedDistance = computed(() => {
+  switch (configStore.timestamp_mode) {
+    case 'relative': return createdStr.value
+    case 'absolute': return createdDistStr.value
+    default: return '-' // 起きないはず
+  }
+})
 </script>
