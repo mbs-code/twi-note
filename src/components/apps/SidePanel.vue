@@ -56,9 +56,9 @@ const router = useRouter()
 const onSelectedTag = (tag: Tag) => {
   const name = route.query?.tag as string // url parameter
   if (name === tag.name) {
-    router.push('/')
+    router.push({ name: 'timeline' })
   } else {
-    router.push(`/?tag=${tag.name}`)
+    router.push({ name: 'timeline', query: { tag: tag.name } })
   }
 }
 
@@ -68,7 +68,6 @@ const isActive = (tagName: string) => {
   const name = route.query?.tag as string // url parameter
   return tagName === name
 }
-
 </script>
 
 <style scoped lang="scss">

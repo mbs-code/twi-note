@@ -5,7 +5,7 @@
 
 // カードの余白調整
 .card-dense .n-card__content {
-  padding: 12px !important;
+  padding: 8px !important;
 }
 
 .no-select {
@@ -14,4 +14,34 @@
 
 .no-link {
   text-decoration:none;
+}
+
+///
+
+.d-flex {
+  display: flex;
+
+  > *:not(:last-child) {
+    margin-right: 12px;
+  }
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
 }

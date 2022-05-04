@@ -1,8 +1,15 @@
 import { invoke } from '@tauri-apps/api/tauri'
 
+export type TimestampMode = 'relative' | 'absolute'
+
 export type AppConfig = {
   is_dark: boolean
   expand_side: boolean
+  expand_editor: boolean
+
+  timestamp_mode: TimestampMode
+  ref_updated_at: boolean
+  tl_once_count: number
 }
 
 export const useAppConfigAPI = () => {

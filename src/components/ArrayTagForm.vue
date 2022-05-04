@@ -9,17 +9,28 @@
       {{ text }}
     </n-tag>
 
-    <n-auto-complete
-      ref="inputRef"
-      v-model:value="formText"
-      :input-props="{ autocomplete: 'disabled' }"
-      :options="options"
-      :get-show="() => true"
-      type="text"
-      size="small"
-      placeholder="Tag"
-      @keyup.enter.exact="onInput"
-    />
+    <div class="d-flex flex-align-center">
+      <n-auto-complete
+        ref="inputRef"
+        v-model:value="formText"
+        :input-props="{ autocomplete: 'disabled' }"
+        :options="options"
+        :get-show="() => true"
+        type="text"
+        size="small"
+        placeholder="Tag"
+        @blur="onInput"
+      />
+
+      <n-button
+        size="small"
+        type="primary"
+        ghost
+        @click="onInput"
+      >
+        <n-icon :component="AddIcon" />
+      </n-button>
+    </div>
   </n-space>
 </template>
 
@@ -27,32 +38,43 @@
 import { useMessage } from 'naive-ui'
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { Tag, useTagAPI } from '../composables/useTagAPI'
+import {
+  Add as AddIcon,
+} from '@vicons/ionicons5'
 
 const props = defineProps<{ value: string[] }>()
 const emit = defineEmits<{ (e: 'update:value', value: string[]): void }>()
-const message = useMessage()
 
-// フォーカス処理
+const message = useMessage()
+const tagAPI = useTagAPI()
+
+/// ////////////////////////////////////////////////////////////
+/// フォーカス機能
+
 const inputRef = ref<HTMLInputElement | null>(null)
 const focusInputForm = () => {
   nextTick(() => { inputRef.value?.focus() })
 }
 
-// オートコンプリート
-const tagAPI = useTagAPI()
+/// ////////////////////////////////////////////////////////////
+/// オートコンプリート機能
+
 const tags = ref<Tag[]>([])
 onMounted(async () => {
   tags.value = await tagAPI.getAll({
     hasPinned: false
   })
 })
+
 const options = computed(() => {
   return tags.value
     .map((tag: Tag) => tag.name)
     .filter((name: string) => name ? name.includes(formText.value ?? '') : true)
 })
 
-// 更新処理
+/// ////////////////////////////////////////////////////////////
+/// フォームアクション
+
 const formText = ref<string>()
 const onInput = () => {
   if (formText.value) {
@@ -68,6 +90,7 @@ const onInput = () => {
     focusInputForm()
   }
 }
+
 const onRemove = (index: number) => {
   const copy = [...props.value]
   copy.splice(index, 1)
@@ -75,10 +98,13 @@ const onRemove = (index: number) => {
   emit('update:value', copy)
   focusInputForm()
 }
+
 const onClear = () => {
   // 入力を空にする
   formText.value = ''
 }
+
+/// ////////////////////////////////////////////////////////////
 
 defineExpose({ onInput, onClear })
 </script>

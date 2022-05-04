@@ -1,5 +1,7 @@
 <template>
+  <!-- フルサイズモード -->
   <n-space
+    v-if="expand"
     vertical
     @keydown.ctrl.enter.exact="onSave"
   >
@@ -7,14 +9,12 @@
       v-model:value="formTitle"
       placeholder="(Title)"
       clearable
-      @keyup.enter.exact="onTitleEnter"
     />
 
     <n-input
-      ref="inputBodyRef"
       v-model:value="formBody"
       type="textarea"
-      placeholder="Body"
+      placeholder="Text"
       clearable
       :autosize="{ minRows: 3 }"
     />
@@ -24,57 +24,112 @@
       v-model:value="formTagNames"
     />
 
-    <n-space>
+    <div class="d-flex flex-align-center" style="height: 36px">
+      <n-button type="default" @click="resetForm">
+        リセット
+      </n-button>
+
+      <div class="flex-grow-1" />
+
       <n-button
-        round
         :type="isEdit ? 'warning' : 'primary'"
-        :disabled="!validate"
+        :disabled="!isValidated"
         @click="onSave"
       >
         保存(Ctrl+Enter)
       </n-button>
 
       <n-button
-        round
-        type="default"
-        @click="reset"
+        v-if="showExpand"
+        text
+        @click="onExpandButton"
       >
-        リセット
+        <template #icon>
+          <n-icon :component="BottomIcon" />
+        </template>
       </n-button>
-    </n-space>
+    </div>
   </n-space>
+
+  <!-- ミニマムモード -->
+  <div
+    v-else
+    class="d-flex flex-align-center"
+    style="height: 36px"
+    @keydown.ctrl.enter.exact="onSave"
+  >
+    <n-input
+      v-model:value="formBody"
+      type="textarea"
+      placeholder="Text"
+      clearable
+      :autosize="{ minRows: 1 }"
+    />
+
+    <n-button
+      :type="isEdit ? 'warning' : 'primary'"
+      :disabled="!isValidated"
+      @click="onSave"
+    >
+      保存(Ctrl+Enter)
+    </n-button>
+
+    <n-button
+      v-if="showExpand"
+      text
+      @click="onExpandButton"
+    >
+      <template #icon>
+        <n-icon :component="TopIcon" />
+      </template>
+    </n-button>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 import ArrayTagForm from '../ArrayTagForm.vue'
+import {
+  ChevronUp as TopIcon,
+  ChevronDown as BottomIcon,
+} from '@vicons/ionicons5'
 
-const props = defineProps<{ report?: Report }>()
-const emit = defineEmits<{ (e: 'saved', report: Report): void }>()
+const props = defineProps<{
+  report?: Report,
+  expand: boolean,
+  showExpand: boolean,
+}>()
+const emit = defineEmits<{
+  (e: 'save:after', createReport: Report): void,
+  (e: 'update:expand', val: boolean): void,
+}>()
+
+const route = useRoute()
 const message = useMessage()
+const reportAPI = useReportAPI()
 
-// フォーカス処理
-const inputBodyRef = ref<HTMLTextAreaElement | null>(null)
-const onTitleEnter = () => {
-  nextTick(() => { inputBodyRef.value?.focus() })
+const onExpandButton = () => {
+  emit('update:expand', !props.expand)
 }
 
-const defaultTags = () => {
-  // デフォタグ配列を作る
-  const name = route.query?.tag as string // url parameter
-  return name ? [name] : []
-}
+/// ////////////////////////////////////////////////////////////
+/// フォーム基本機能
 
-// 初期化処理
+const isEdit = computed(() => props.report?.id)
+
 const formTitle = ref<string>()
 const formBody = ref<string>()
 const formTagNames = ref<string[]>([])
 
-const route = useRoute()
-const reset = () => {
+const defaultTags = () => {
+  const tag = route.query?.tag as string // url parameter
+  return tag ? [tag] : []
+}
+
+const resetForm = () => {
   formTitle.value = props.report?.title ?? ''
   formBody.value = props.report?.body ?? ''
   formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? defaultTags()
@@ -82,22 +137,24 @@ const reset = () => {
   // インプットも初期化
   tagNamesRef.value?.onClear()
 }
-onMounted(() => reset())
 
-const isEdit = computed(() => props.report?.id)
+onMounted(() => resetForm())
+
+/// ////////////////////////////////////////////////////////////
+/// フォームアクション
 
 // バリデーション
-const validate = () => {
+const isValidated = () => {
   if (!formBody.value)  return false // body は必須
   return true
 }
 
 // 保存処理
-const reportAPI = useReportAPI()
-const tagNamesRef = ref<typeof ArrayTagForm | null>()
+const tagNamesRef = ref<typeof ArrayTagForm>()
 const onSave = async () => {
-  // バリデーション
-  if (!validate()) {
+  // バリデーションを通るか確認
+  console.log(isValidated())
+  if (!isValidated()) {
     message.error('入力値エラー')
     return
   }
@@ -114,11 +171,16 @@ const onSave = async () => {
   }
 
   // 実行
-  const newReport = id
-    ? await reportAPI.update(id, item)
-    : await reportAPI.create(item)
+  try {
+    const newReport = id
+      ? await reportAPI.update(id, item)
+      : await reportAPI.create(item)
 
-  emit('saved', newReport)
-  reset()
+    emit('save:after', newReport)
+    resetForm()
+  } catch (err) {
+    console.log(err)
+    message.error('内部エラーが発生しました。')
+  }
 }
 </script>
