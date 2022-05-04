@@ -15,11 +15,12 @@ pub fn report_get_all(
     page: i32,
     count: i32,
     latest: bool,
+    ref_updated_at: bool,
 ) -> Vec<ReportWithTag> {
     let conn = get_connection();
 
     let mut query: Vec<String> = Vec::new();
-    query.push("SELECT r.* FROM reports r".to_string());
+    query.push("SELECT distinct r.* FROM reports r".to_string());
     query.push("LEFT JOIN report_tags rt ON r.id = rt.report_id".to_string());
     query.push("LEFT JOIN tags t ON rt.tag_id = t.id".to_string());
 
@@ -48,7 +49,16 @@ pub fn report_get_all(
 
     // 並び替え
     let order = if latest { "DESC" } else { "ASC" };
-    query.push("ORDER BY id".to_string());
+    let order_column = if ref_updated_at {
+        "r.updated_at"
+    } else {
+        "r.created_at"
+    };
+
+    query.push("ORDER BY".to_string());
+    query.push(order_column.to_string());
+    query.push(order.to_string());
+    query.push(", r.id".to_string());
     query.push(order.to_string());
 
     // ページネーション
@@ -56,6 +66,7 @@ pub fn report_get_all(
     query.push(count.to_string());
     query.push("OFFSET".to_string());
     query.push(((page - 1) * count).to_string());
+    println!("{:?}", &query.join(" "));
 
     // レポート配列の取得
     let mut stmt = conn.prepare(&query.join(" ")).unwrap();

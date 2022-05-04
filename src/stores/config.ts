@@ -9,13 +9,18 @@ export const useConfigStore = defineStore('config', () => {
   const expand_side = ref<boolean>(false)
   /** 下部エディタの拡縮 */
   const expand_editor = ref<boolean>(false)
+
   /** 時刻の表示方法 */
   const timestamp_mode = ref<TimestampMode>('relative')
+  /** 更新時間を使用するか */
+  const ref_updated_at = ref<boolean>(false)
 
   return {
     is_dark,
     expand_side,
     expand_editor,
+
     timestamp_mode,
+    ref_updated_at,
   }
 })

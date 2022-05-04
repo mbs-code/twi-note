@@ -13,8 +13,16 @@
         </n-space>
       </n-form-item>
 
-      <n-form-item label="Timestamp">
+      <n-form-item label="Timestamp display">
         <n-select v-model:value="configStore.timestamp_mode" :options="timestapOptions" />
+      </n-form-item>
+
+      <n-form-item label="Timestamp sort">
+        <n-space>
+          <span>作成日</span>
+          <n-switch v-model:value="configStore.ref_updated_at" />
+          <span>更新日</span>
+        </n-space>
       </n-form-item>
 
       <n-form-item label="Storage">
@@ -78,8 +86,8 @@ onMounted(async () => {
 })
 
 const timestapOptions = ref([
-  { label: '相対時間: 5日前', value: 'relative' },
-  { label: '絶対時間: 2022-04-01 10:00:00', value: 'absolute' },
+  { label: '相対時間 [5日前]', value: 'relative' },
+  { label: '絶対時間 [2022-04-01 10:00:00]', value: 'absolute' },
 ])
 
 const fileSize = computed(() => {

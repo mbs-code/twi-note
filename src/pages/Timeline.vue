@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { LoadAction } from '@ts-pro/vue-eternal-loading'
 import { Report, SearchReport, useReportAPI } from '../composables/useReportAPI'
 import { useConfigStore } from '../stores/config'
@@ -46,7 +46,6 @@ import { NLayout } from 'naive-ui/lib/components'
 
 const reportAPI = useReportAPI()
 const configStore = useConfigStore()
-
 
 /// ////////////////////////////////////////////////////////////
 /// 高さ計算機能
@@ -86,9 +85,10 @@ const reports = ref<Report[]>([])
 const isInitial = ref<boolean>(false)
 const searchParams = ref<SearchReport>({
   text: undefined,
-  page: 1,
+  page: 0, // load 時に +1 する
   count: 5,
   latest: true,
+  refUpdatedAt: Boolean(configStore.ref_updated_at),
 })
 
 const fetchReports = async () => {
@@ -99,7 +99,7 @@ const fetchReports = async () => {
 const resetReports = () => {
   reports.value = []
   isInitial.value = true
-  searchParams.value.page = 1
+  searchParams.value.page = 0
 }
 
 // NOTE: onMounted は onInfinite で処理される
@@ -107,8 +107,16 @@ const resetReports = () => {
 
 ///
 
+watch(configStore, (after) => {
+  // 設定が変わった際に自動で再読み込みする
+  if (searchParams.value.refUpdatedAt !== after.ref_updated_at) {
+    searchParams.value.refUpdatedAt = after.ref_updated_at
+    resetReports()
+  }
+})
+
 const onSearch = async (text: string) => {
-  searchParams.value.text = text ?? undefined
+  searchParams.value.text = text || undefined
   resetReports()
 }
 

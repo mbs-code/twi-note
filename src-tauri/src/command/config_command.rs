@@ -9,8 +9,11 @@ pub struct AppConfig {
     pub expand_side: bool,
     #[serde(default = "default_bool")]
     pub expand_editor: bool,
+
     #[serde(default = "default_timestamp_mode")]
     pub timestamp_mode: String,
+    #[serde(default = "default_bool")]
+    pub ref_updated_at: bool,
 }
 
 fn default_bool() -> bool {

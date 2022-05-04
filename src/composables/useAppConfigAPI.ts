@@ -7,6 +7,7 @@ export type AppConfig = {
   expand_side: boolean
   expand_editor: boolean
   timestamp_mode: TimestampMode
+  ref_updated_at: boolean
 }
 
 export const useAppConfigAPI = () => {

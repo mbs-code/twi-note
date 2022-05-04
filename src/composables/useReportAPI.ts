@@ -23,6 +23,7 @@ export type SearchReport = {
   page: number
   count: number
   latest: boolean
+  refUpdatedAt: boolean
 }
 
 export const useReportAPI = () => {

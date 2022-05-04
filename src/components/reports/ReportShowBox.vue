@@ -8,7 +8,7 @@
       {{ report.body }}
     </div>
 
-    <n-space class="expand-first">
+    <n-space class="expand-first" align="center">
       <n-space>
         <n-tag v-for="(tag, _) of report.tags" :key="_">
           <span
@@ -22,14 +22,15 @@
 
       <n-tooltip trigger="hover">
         <template #trigger>
-          <div style="display: flex; align-items: center;">
+          <div class="d-flex flex-align-center flex-wrap-reverse">
             <div v-if="isEdited" style="color: silver">
               （編集済み）
             </div>
 
-            <n-icon style="padding-right: 4px" :component="ClockIcon" />
-
-            <span>{{ updatedDistance }}</span>
+            <div>
+              <n-icon style="padding-right: 4px" :component="ClockIcon" />
+              {{ timestampStr }}
+            </div>
           </div>
         </template>
 
@@ -61,11 +62,16 @@ const updatedStr = computed(() => formatString(updatedLocalDate.value))
 const createdDistStr = computed(() => formatDistance(createdLocalDate.value))
 const updatedDistStr = computed(() => formatDistance(updatedLocalDate.value))
 
-const updatedDistance = computed(() => {
+const timestampStr = computed(() => {
+  const refUpdatedAt = configStore.ref_updated_at
+
   switch (configStore.timestamp_mode) {
-    case 'relative': return createdStr.value
-    case 'absolute': return createdDistStr.value
-    default: return '-' // 起きないはず
+    case 'relative':
+      return refUpdatedAt ? updatedStr.value : createdStr.value
+    case 'absolute':
+      return refUpdatedAt ? updatedDistStr.value : createdDistStr.value
+    default:
+      return '-' // 起きないはず
   }
 })
 </script>
