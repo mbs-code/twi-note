@@ -148,8 +148,11 @@ const onSearch = () => {
 
 const onTagClick = (name: string) => {
   // タグクリック時に検索文字列に反映して、再検索する
-  search.value = [search.value.trim(), `tag:${name} `].join(' ')
-  reloadReports()
+  let tag = `tag:${name}`
+  if (!search.value.includes(tag)) {
+    search.value = [search.value.trim(), `tag:${name} `].join(' ')
+    reloadReports()
+  }
 }
 
 const onInfiniteLoad = async ({ loaded, noMore, error }: LoadAction) => {
