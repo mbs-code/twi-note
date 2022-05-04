@@ -17,7 +17,7 @@
         <n-select v-model:value="configStore.timestamp_mode" :options="timestapOptions" />
       </n-form-item>
 
-      <n-form-item label="Timestamp sort">
+      <n-form-item label="Timestamp sort by">
         <n-space>
           <span>作成日</span>
           <n-switch v-model:value="configStore.ref_updated_at" />
