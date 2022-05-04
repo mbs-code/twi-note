@@ -11,7 +11,6 @@ use crate::{get_connection, get_time_of_now};
 #[tauri::command]
 pub fn report_get_all(
     text: Option<String>,
-    tag_name: Option<String>,
     page: i32,
     count: i32,
     latest: bool,
@@ -97,13 +96,6 @@ pub fn report_get_all(
                 query.push("))".to_string());
             }
         }
-    }
-
-    // タグ抽出
-    if let Some(name) = tag_name {
-        // タグ名で抽出
-        query.push("AND t.name LIKE".to_string());
-        query.push("".to_string() + &"\'" + &name + &"\'");
     }
 
     // 並び替え

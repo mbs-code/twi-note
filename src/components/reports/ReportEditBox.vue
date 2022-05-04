@@ -125,8 +125,8 @@ const formBody = ref<string>()
 const formTagNames = ref<string[]>([])
 
 const defaultTags = () => {
-  const name = route.query?.tag as string // url parameter
-  return name ? [name] : []
+  const tag = route.query?.tag as string // url parameter
+  return tag ? [tag] : []
 }
 
 const resetForm = () => {

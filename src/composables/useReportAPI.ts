@@ -19,7 +19,6 @@ export type FormReport = {
 
 export type SearchReport = {
   text?: string
-  tagName?: string
   page: number
   count: number
   latest: boolean

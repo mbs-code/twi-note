@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-align-center" style="height: 24px">
     <n-input
-      v-model:value="text"
+      v-model:value="_value"
       class="flex-grow-1"
       placeholder="検索"
       size="small"
@@ -22,25 +22,26 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import {
   Search as SearchIcon,
 } from '@vicons/ionicons5'
-import { useRoute } from 'vue-router'
 
-const emit = defineEmits<{ (e: 'search', text: string): void }>()
-const route = useRoute()
+const props = defineProps<{ value: string }>()
+const emit = defineEmits<{
+  (e: 'update:value', value: string): void,
+  (e: 'search'): void,
+}>()
 
 /// ////////////////////////////////////////////////////////////
 /// 検索機能
 
-const text = ref<string>('')
-onMounted(() => {
-  const q = route.query?.text as string
-  text.value = q ?? ''
+const _value = computed({
+  get: () => props.value,
+  set: (value: string) => emit('update:value', value)
 })
 
 const onSearch = () => {
-  emit('search', text.value)
+  emit('search')
 }
 </script>

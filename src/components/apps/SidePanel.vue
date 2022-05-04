@@ -68,7 +68,6 @@ const isActive = (tagName: string) => {
   const name = route.query?.tag as string // url parameter
   return tagName === name
 }
-
 </script>
 
 <style scoped lang="scss">

@@ -1,7 +1,7 @@
 <template>
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
-      <SearchPanel @search="onSearch" />
+      <SearchPanel v-model:value="search" @search="onSearch" />
     </div>
   </n-layout-header>
 
@@ -43,7 +43,9 @@ import { LoadAction } from '@ts-pro/vue-eternal-loading'
 import { Report, SearchReport, useReportAPI } from '../composables/useReportAPI'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const reportAPI = useReportAPI()
 const configStore = useConfigStore()
 
@@ -82,7 +84,9 @@ onUnmounted(() => {
 /// 検索機能
 
 const reports = ref<Report[]>([])
-const isInitial = ref<boolean>(false)
+const isInitial = ref<boolean>(false) // infinite 用
+
+const search = ref<string>('')
 const searchParams = ref<SearchReport>({
   text: undefined,
   page: 0, // load 時に +1 する
@@ -101,6 +105,15 @@ const resetReports = () => {
   isInitial.value = true
   searchParams.value.page = 0
 }
+
+onMounted(() => {
+  // もしタグが指定されていたら、検索パラメタに追加する
+  const tag = route.query?.tag as string // url parameter
+  if (tag) {
+    search.value = `tag:${tag} `
+    searchParams.value.text = `tag:${tag}`
+  }
+})
 
 watch(configStore, (after) => {
   // 設定が変わった際に自動で再読み込みする
@@ -122,8 +135,8 @@ watch(configStore, (after) => {
 
 ///
 
-const onSearch = async (text: string) => {
-  searchParams.value.text = text || undefined
+const onSearch = () => {
+  searchParams.value.text = search.value
   resetReports()
 }
 
