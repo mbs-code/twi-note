@@ -65,7 +65,7 @@
       type="textarea"
       placeholder="Text"
       clearable
-      :autosize="{ minRows: 3, maxRows: 10 }"
+      :autosize="{ minRows: 1, maxRows: 10 }"
     />
 
     <div>
