@@ -15,7 +15,7 @@
       </template>
     </n-input>
 
-    <n-button size="small" @click="onSearch">
+    <n-button size="small" @click="emit('search', props.value)">
       検索
     </n-button>
   </div>
@@ -23,25 +23,16 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import {
-  Search as SearchIcon,
-} from '@vicons/ionicons5'
+import { Search as SearchIcon } from '@vicons/ionicons5'
 
 const props = defineProps<{ value: string }>()
 const emit = defineEmits<{
   (e: 'update:value', value: string): void,
-  (e: 'search'): void,
+  (e: 'search', text: string): void,
 }>()
-
-/// ////////////////////////////////////////////////////////////
-/// 検索機能
 
 const _value = computed({
   get: () => props.value,
   set: (value: string) => emit('update:value', value)
 })
-
-const onSearch = () => {
-  emit('search')
-}
 </script>
