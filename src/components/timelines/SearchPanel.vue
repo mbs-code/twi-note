@@ -15,7 +15,7 @@
       </template>
     </n-input>
 
-    <n-button size="small">
+    <n-button size="small" @click="onSearch">
       検索
     </n-button>
   </div>
