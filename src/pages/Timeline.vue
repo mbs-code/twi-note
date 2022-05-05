@@ -81,6 +81,7 @@ const reportList = useReportList({
 
 onMounted(() => {
   // URLクエリにタグが指定されていたら、検索パラメタに追加する
+  // TODO: 指定タグを検索とは別に管理する
   const name = route.query?.tag as string // url parameter
   if (name) reportList.pushSearch(`tag:${name}`)
 })
