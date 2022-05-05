@@ -9,6 +9,7 @@ declare module 'vue' {
     ConfigDrawer: typeof import('./components/apps/ConfigDrawer.vue')['default']
     ReportEditBox: typeof import('./components/reports/ReportEditBox.vue')['default']
     ReportPanel: typeof import('./components/reports/ReportPanel.vue')['default']
+    ReportSearchPanel: typeof import('./components/timelines/ReportSearchPanel.vue')['default']
     ReportShowBox: typeof import('./components/reports/ReportShowBox.vue')['default']
     ReportTimeline: typeof import('./components/timelines/ReportTimeline.vue')['default']
     SearchPanel: typeof import('./components/timelines/SearchPanel.vue')['default']

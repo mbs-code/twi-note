@@ -1,7 +1,7 @@
 <template>
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
-      <SearchPanel
+      <ReportSearchPanel
         v-model:value="reportList.search.value"
         @search="onSearch"
       />

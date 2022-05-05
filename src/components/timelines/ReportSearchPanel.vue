@@ -6,7 +6,7 @@
       placeholder="検索"
       size="small"
       clearable
-      @change="onSearch"
+      @keydown.enter.exact="onSearch"
     >
       <template #prefix>
         <n-button text>
@@ -15,7 +15,7 @@
       </template>
     </n-input>
 
-    <n-button size="small" @click="emit('search', props.value)">
+    <n-button size="small" @click="onSearch">
       検索
     </n-button>
   </div>
@@ -35,4 +35,6 @@ const _value = computed({
   get: () => props.value,
   set: (value: string) => emit('update:value', value)
 })
+
+const onSearch = () => emit('search', props.value)
 </script>
