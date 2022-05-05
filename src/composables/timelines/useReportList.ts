@@ -83,13 +83,20 @@ export const useReportList = (events?: Events) => {
 
   const search = ref<string>('')
   const pushSearch = (text: string) => {
-    // 検索文字列に含まれていないなら追加
-    if (!search.value.includes(text)) {
+    const words = search.value.replace('　', ' ').split(' ')
+
+    const index = words.indexOf(text)
+    if (index >= 0) {
+      // 検索文字列に含まれていたら削除
+      words.splice(index, 1)
+    } else {
+      // 含まれていないなら追加
+      words.push(text)
       search.value = [search.value.trim(), text].filter((e) => e).join(' ') + ' '
       return true
     }
 
-    return false
+    search.value = words.join(' ')
   }
 
   /// ////////////////////////////////////////////////////////////
