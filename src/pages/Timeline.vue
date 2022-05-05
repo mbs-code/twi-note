@@ -1,14 +1,20 @@
 <template>
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
-      <SearchPanel v-model:value="reportList.search.value" @search="onSearch" />
+      <SearchPanel
+        v-model:value="reportList.search.value"
+        @search="onSearch"
+      />
     </div>
   </n-layout-header>
 
   <n-layout
     ref="scrollRef"
     position="absolute"
-    :style="{ top: headerHeight + 'px', bottom: footerHeight + 'px' }"
+    :style="{
+      top: heights.headerHeight.value + 'px',
+      bottom: heights.footerHeight.value + 'px',
+    }"
     :native-scrollbar="false"
   >
     <div style="padding-right: 18px">
@@ -22,7 +28,11 @@
       />
     </div>
 
-    <n-back-top :bottom="backtoHeight" right="20" :visibility-height="10" />
+    <n-back-top
+      :bottom="heights.backtoHeight.value"
+      right="20"
+      :visibility-height="10"
+    />
   </n-layout>
 
   <n-layout-footer bordered position="absolute">
@@ -39,14 +49,22 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
 import { useRoute } from 'vue-router'
 import { useReportList } from '../composables/timelines/useReportList'
+import { useHeights } from '../composables/timelines/useHeights'
 
 const route = useRoute()
 const configStore = useConfigStore()
+
+/// ////////////////////////////////////////////////////////////
+/// 高さ計算機能
+
+const headerRef = ref<HTMLDivElement>()
+const footerRef = ref<HTMLDivElement>()
+const heights = useHeights(headerRef, footerRef)
 
 /// ////////////////////////////////////////////////////////////
 /// レポート管理
@@ -72,35 +90,4 @@ const onSearch = () => reportList.reload()
 
 // タグクリック時に検索文字列に反映する
 const onTagClick = (name: string) => reportList.pushSearch(`tag:${name}`)
-
-/// ////////////////////////////////////////////////////////////
-/// 高さ計算機能
-
-const headerHeight = ref(0)
-const footerHeight = ref(0)
-const backtoHeight = ref(0)
-
-const headerRef = ref<HTMLDivElement>()
-const footerRef = ref<HTMLDivElement>()
-const sizeObserver = ref<ResizeObserver>()
-
-onMounted(() => {
-  const observer = new ResizeObserver(() => {
-    headerHeight.value = (headerRef.value?.clientHeight ?? 0) + 1
-    footerHeight.value = (footerRef.value?.clientHeight ?? 0) + 1
-    backtoHeight.value = (footerRef.value?.clientHeight ?? 0) + 6
-  })
-
-  if (headerRef.value) observer.observe(headerRef.value)
-  if (footerRef.value) observer.observe(footerRef.value)
-  sizeObserver.value = observer
-})
-
-onUnmounted(() => {
-  const observer = sizeObserver.value
-  if (observer) {
-    if (headerRef.value) observer.unobserve(headerRef.value)
-    if (footerRef.value) observer.unobserve(footerRef.value)
-  }
-})
 </script>
