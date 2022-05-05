@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-align-center" style="height: 24px">
     <n-input
-      v-model:value="_value"
+      v-model:value="bufferText"
       class="flex-grow-1"
       placeholder="検索"
       size="small"
@@ -18,23 +18,53 @@
     <n-button size="small" @click="onSearch">
       検索
     </n-button>
+
+    <n-button size="small" @click="openSearchDialog">
+      高度な検索
+    </n-button>
   </div>
+
+  <ReportSearchDialog
+    v-model:show="showSearchDialog"
+    :search-text="bufferText"
+    @search="onAdvanceSearch"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, watch } from 'vue'
 import { Search as SearchIcon } from '@vicons/ionicons5'
+import { computed } from '@vue/reactivity'
 
-const props = defineProps<{ value: string }>()
+const props = defineProps<{ searchText: string }>()
 const emit = defineEmits<{
-  (e: 'update:value', value: string): void,
   (e: 'search', text: string): void,
 }>()
 
-const _value = computed({
-  get: () => props.value,
-  set: (value: string) => emit('update:value', value)
+/// ////////////////////////////////////////////////////////////
+/// ダイアログ管理
+
+const showSearchDialog = ref<boolean>(false)
+const openSearchDialog = () => {
+  showSearchDialog.value = true
+}
+
+const _searchText = computed(() => props.searchText)
+watch(_searchText, (text) => {
+  // 値が変わったらバッファも更新する
+  bufferText.value = text
 })
 
-const onSearch = () => emit('search', props.value)
+/// ////////////////////////////////////////////////////////////
+/// フォーム管理
+
+const bufferText = ref<string>('')
+
+const onSearch = () => {
+  emit('search', bufferText.value)
+}
+
+const onAdvanceSearch = (text: string) => {
+  emit('search', text)
+}
 </script>

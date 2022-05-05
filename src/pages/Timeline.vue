@@ -2,7 +2,7 @@
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
       <ReportSearchPanel
-        v-model:value="reportList.search.value"
+        :search-text="reportList.search.value"
         @search="onSearch"
       />
     </div>
@@ -86,7 +86,10 @@ onMounted(() => {
 })
 
 // 再検索する
-const onSearch = () => reportList.reload()
+const onSearch = (text: string) => {
+  reportList.search.value = text
+  reportList.reload()
+}
 
 // タグクリック時に検索文字列に反映する
 const onTagClick = (name: string) => reportList.pushSearch(`tag:${name}`)

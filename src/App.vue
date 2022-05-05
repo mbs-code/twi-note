@@ -1,5 +1,9 @@
 <template>
-  <n-config-provider :theme="configStore.is_dark ? darkTheme : lightTheme">
+  <n-config-provider
+    :theme="configStore.is_dark ? darkTheme : lightTheme"
+    :locale="jaJP"
+    :date-locale="dateJaJP"
+  >
     <n-message-provider placement="top-right">
       <n-dialog-provider>
         <n-layout position="absolute">
@@ -30,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { lightTheme, darkTheme } from 'naive-ui'
+import { lightTheme, darkTheme, jaJP, dateJaJP } from 'naive-ui'
 import { onMounted, watch } from 'vue'
 import { useAppConfigAPI } from './composables/useAppConfigAPI'
 import { useConfigStore } from './stores/config'
