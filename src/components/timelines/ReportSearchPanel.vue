@@ -20,9 +20,18 @@
       検索
     </n-button>
 
-    <n-button size="small" @click="openSearchDialog">
-      高度な検索
-    </n-button>
+
+    <n-tooltip trigger="hover">
+      <template #trigger>
+        <n-button size="small" @click="openSearchDialog">
+          <template #icon>
+            <n-icon :component="AdvanceIcon" />
+          </template>
+        </n-button>
+      </template>
+
+      <div>高度な検索</div>
+    </n-tooltip>
   </div>
 
   <ReportSearchDialog
@@ -34,7 +43,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { Search as SearchIcon } from '@vicons/ionicons5'
+import {
+  Search as SearchIcon,
+  EllipsisHorizontal as AdvanceIcon,
+} from '@vicons/ionicons5'
 import { computed } from '@vue/reactivity'
 
 const props = defineProps<{ searchText: string }>()
