@@ -91,6 +91,9 @@ const onSearch = (text: string) => {
   reportList.reload()
 }
 
-// タグクリック時に検索文字列に反映する
-const onTagClick = (name: string) => reportList.pushSearch(`tag:${name}`)
+// タグクリック時に検索文字列に反映、再検索する
+const onTagClick = (name: string) => {
+  let res = reportList.pushSearch(`tag:${name}`)
+  if (res) reportList.reload()
+}
 </script>

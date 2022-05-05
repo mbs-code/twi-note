@@ -86,7 +86,10 @@ export const useReportList = (events?: Events) => {
     // 検索文字列に含まれていないなら追加
     if (!search.value.includes(text)) {
       search.value = [search.value.trim(), text].filter((e) => e).join(' ') + ' '
+      return true
     }
+
+    return false
   }
 
   /// ////////////////////////////////////////////////////////////

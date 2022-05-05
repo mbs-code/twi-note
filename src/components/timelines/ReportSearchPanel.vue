@@ -6,6 +6,7 @@
       placeholder="検索"
       size="small"
       clearable
+      @clear="onClearSearch"
       @keydown.enter.exact="onSearch"
     >
       <template #prefix>
@@ -62,6 +63,10 @@ const bufferText = ref<string>('')
 
 const onSearch = () => {
   emit('search', bufferText.value)
+}
+
+const onClearSearch = () => {
+  emit('search', '')
 }
 
 const onAdvanceSearch = (text: string) => {
