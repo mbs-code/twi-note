@@ -12,6 +12,7 @@ export const useHeights = (headerRef: Ref<HTMLDivElement | undefined>, footerRef
       headerHeight.value = (headerRef.value?.clientHeight ?? 0) + 1
       footerHeight.value = (footerRef.value?.clientHeight ?? 0) + 1
       backtoHeight.value = (footerRef.value?.clientHeight ?? 0) + 6
+      console.log(footerRef.value?.clientHeight)
     })
 
     if (headerRef.value) observer.observe(headerRef.value)

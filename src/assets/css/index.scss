@@ -26,16 +26,28 @@
   }
 }
 
+.flex-column {
+  flex-direction: column;
+}
+
 .flex-align-center {
   align-items: center;
+}
+
+.flex-align-stretch {
+  align-items: stretch;
+}
+
+.flex-align-end {
+  align-items: end;
 }
 
 .flex-grow-1 {
   flex-grow: 1;
 }
 
-.flex-column {
-  flex-direction: column;
+.flex-space {
+  flex-grow: 1;
 }
 
 .flex-wrap {

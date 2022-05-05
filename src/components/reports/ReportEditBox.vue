@@ -16,7 +16,7 @@
       type="textarea"
       placeholder="Text"
       clearable
-      :autosize="{ minRows: 3 }"
+      :autosize="{ minRows: 3, maxRows: 10 }"
     />
 
     <ArrayTagForm
@@ -24,7 +24,7 @@
       v-model:value="formTagNames"
     />
 
-    <div class="d-flex flex-align-center" style="height: 36px">
+    <div class="d-flex flex-align-stretch" style="min-height: 36px">
       <n-button type="default" @click="resetForm">
         リセット
       </n-button>
@@ -57,8 +57,7 @@
   <!-- ミニマムモード -->
   <div
     v-else
-    class="d-flex flex-align-center"
-    style="height: 36px"
+    class="d-flex flex-align"
     @keydown.ctrl.enter.exact="onSave"
   >
     <n-input
@@ -66,29 +65,37 @@
       type="textarea"
       placeholder="Text"
       clearable
-      :autosize="{ minRows: 1 }"
+      :autosize="{ minRows: 3, maxRows: 10 }"
     />
 
-    <n-button
-      :type="isEdit ? 'warning' : 'primary'"
-      :disabled="!isValidated()"
-      @click="onSave"
-    >
-      <template #icon>
-        <n-icon :component="CreateIcon" />
-      </template>
-      作成
-    </n-button>
+    <div>
+      <div class="d-flex flex-column flex-align-stretch" style="height: 100%">
+        <div class="flex-space" />
 
-    <n-button
-      v-if="showExpand"
-      text
-      @click="onExpandButton"
-    >
-      <template #icon>
-        <n-icon :component="TopIcon" />
-      </template>
-    </n-button>
+        <div class="d-flex" style="min-height: 36px">
+          <n-button
+            :type="isEdit ? 'warning' : 'primary'"
+            :disabled="!isValidated()"
+            @click="onSave"
+          >
+            <template #icon>
+              <n-icon :component="CreateIcon" />
+            </template>
+            作成
+          </n-button>
+
+          <n-button
+            v-if="showExpand"
+            text
+            @click="onExpandButton"
+          >
+            <template #icon>
+              <n-icon :component="TopIcon" />
+            </template>
+          </n-button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
