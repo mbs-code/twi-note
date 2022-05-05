@@ -33,10 +33,13 @@
 
       <n-button
         :type="isEdit ? 'warning' : 'primary'"
-        :disabled="!isValidated"
+        :disabled="!isValidated()"
         @click="onSave"
       >
-        保存(Ctrl+Enter)
+        <template #icon>
+          <n-icon :component="CreateIcon" />
+        </template>
+        作成
       </n-button>
 
       <n-button
@@ -68,10 +71,13 @@
 
     <n-button
       :type="isEdit ? 'warning' : 'primary'"
-      :disabled="!isValidated"
+      :disabled="!isValidated()"
       @click="onSave"
     >
-      保存(Ctrl+Enter)
+      <template #icon>
+        <n-icon :component="CreateIcon" />
+      </template>
+      作成
     </n-button>
 
     <n-button
@@ -93,6 +99,7 @@ import { useRoute } from 'vue-router'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
 import ArrayTagForm from '../ArrayTagForm.vue'
 import {
+  FileTrayOutline as CreateIcon,
   ChevronUp as TopIcon,
   ChevronDown as BottomIcon,
 } from '@vicons/ionicons5'
