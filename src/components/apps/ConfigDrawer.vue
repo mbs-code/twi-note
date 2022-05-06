@@ -20,7 +20,7 @@
       <n-form-item label="Timestamp sort by">
         <n-space>
           <span>作成日</span>
-          <n-switch v-model:value="configStore.ref_updated_at" />
+          <n-switch v-model:value="configStore.use_updated_at" />
           <span>更新日</span>
         </n-space>
       </n-form-item>

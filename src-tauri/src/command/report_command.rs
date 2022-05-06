@@ -15,12 +15,12 @@ pub fn report_get_all(
     page: i32,
     count: i32,
     latest: bool,
-    ref_updated_at: bool,
+    use_updated_at: bool,
 ) -> Vec<ReportWithTag> {
     let conn = get_connection();
 
     // 検索に使う日付カラム名
-    let timestamp_column = if ref_updated_at {
+    let timestamp_column = if use_updated_at {
         "r.updated_at"
     } else {
         "r.created_at"

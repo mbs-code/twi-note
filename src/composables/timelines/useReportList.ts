@@ -29,7 +29,7 @@ export const useReportList = (events?: Events) => {
       reload()
     }
 
-    if (refUpdatedAtBuffer.value !== state.ref_updated_at) {
+    if (refUpdatedAtBuffer.value !== state.use_updated_at) {
       reload()
     }
   })
@@ -40,7 +40,7 @@ export const useReportList = (events?: Events) => {
   const _fetchReports = async () => {
     // 設定バッファ
     tlOnceCountBuffer.value = configStore.tl_once_count
-    refUpdatedAtBuffer.value = configStore.ref_updated_at
+    refUpdatedAtBuffer.value = configStore.use_updated_at
 
     // データ取得
     const items = await reportAPI.getAll({
@@ -48,7 +48,7 @@ export const useReportList = (events?: Events) => {
       page: _page.value || 1,
       count: configStore.tl_once_count,
       latest: true,
-      refUpdatedAt: configStore.ref_updated_at,
+      useUpdatedAt: configStore.use_updated_at,
     })
 
     reports.value.push(...items)

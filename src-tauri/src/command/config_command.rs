@@ -13,7 +13,7 @@ pub struct AppConfig {
     #[serde(default = "default_timestamp_mode")]
     pub timestamp_mode: String,
     #[serde(default = "default_bool")]
-    pub ref_updated_at: bool,
+    pub use_updated_at: bool,
     #[serde(default = "default_count")]
     pub tl_once_count: i64,
 }

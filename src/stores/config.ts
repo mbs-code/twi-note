@@ -13,7 +13,7 @@ export const useConfigStore = defineStore('config', () => {
   /** 時刻の表示方法 */
   const timestamp_mode = ref<TimestampMode>('relative')
   /** 更新時間を使用するか */
-  const ref_updated_at = ref<boolean>(false)
+  const use_updated_at = ref<boolean>(false)
   /** TLで一度に取得する量 */
   const tl_once_count = ref<number>(20)
 
@@ -23,7 +23,7 @@ export const useConfigStore = defineStore('config', () => {
     expand_editor,
 
     timestamp_mode,
-    ref_updated_at,
+    use_updated_at,
     tl_once_count,
   }
 })
