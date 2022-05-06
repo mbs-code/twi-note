@@ -31,7 +31,7 @@
               （編集済み）
             </div>
 
-            <div>
+            <div class="d-flex flex-align-center">
               <n-icon style="padding-right: 4px" :component="ClockIcon" />
               {{ timestampStr }}
             </div>
@@ -40,6 +40,9 @@
 
         <div>作成日: {{ createdStr }} ({{ createdDistStr }})</div>
         <div>更新日: {{ updatedStr }} ({{ updatedDistStr }})</div>
+        <div v-if="isEdited">
+          (編集済み)
+        </div>
       </n-tooltip>
     </n-space>
   </n-space>
@@ -71,13 +74,13 @@ const createdDistStr = computed(() => formatDistance(createdLocalDate.value))
 const updatedDistStr = computed(() => formatDistance(updatedLocalDate.value))
 
 const timestampStr = computed(() => {
-  const refUpdatedAt = configStore.ref_updated_at
+  const refUpdatedAt = configStore.use_updated_at
 
   switch (configStore.timestamp_mode) {
     case 'relative':
-      return refUpdatedAt ? updatedStr.value : createdStr.value
-    case 'absolute':
       return refUpdatedAt ? updatedDistStr.value : createdDistStr.value
+    case 'absolute':
+      return refUpdatedAt ? updatedStr.value : createdStr.value
     default:
       return '-' // 起きないはず
   }
