@@ -17,6 +17,8 @@ export const useConfigStore = defineStore('config', () => {
   const use_updated_at = ref<boolean>(false)
   /** TLで一度に取得する量 */
   const tl_once_count = ref<number>(20)
+  /** 編集済みを隠す */
+  const hide_edited = ref<boolean>(false)
 
   /** タイムゾーン値 */
   const timezone_offset_sec = ref<number>(0)
@@ -44,6 +46,7 @@ export const useConfigStore = defineStore('config', () => {
     timestamp_mode,
     use_updated_at,
     tl_once_count,
+    hide_edited,
 
     timezone_offset_sec,
     timezone_offset_hour,

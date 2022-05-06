@@ -35,6 +35,12 @@
         />
       </n-form-item>
 
+      <n-form-item :show-label="false">
+        <n-checkbox v-model:checked="configStore.hide_edited">
+          編集済みを非表示にする
+        </n-checkbox>
+      </n-form-item>
+
       <n-form-item label="Timezone UTC Offset (Hour)">
         <n-input-number
           v-model:value="configStore.timezone_offset_hour"

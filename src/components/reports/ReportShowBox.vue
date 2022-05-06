@@ -27,7 +27,7 @@
       <n-tooltip trigger="hover">
         <template #trigger>
           <div class="d-flex flex-align-center flex-wrap-reverse">
-            <div v-if="isEdited" style="color: silver">
+            <div v-if="isEdited && !configStore.hide_edited" style="color: silver">
               （編集済み）
             </div>
 

@@ -14,6 +14,9 @@ pub struct AppConfig {
     pub timestamp_mode: String,
     #[serde(default = "default_as_false")]
     pub use_updated_at: bool,
+    #[serde(default = "default_as_false")]
+    pub hide_edited: bool,
+
     #[serde(default = "default_as_20")]
     pub tl_once_count: i64,
     #[serde(default = "default_as_0")]
