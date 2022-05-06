@@ -49,6 +49,7 @@ export const useReportList = (events?: Events) => {
       count: configStore.tl_once_count,
       latest: true,
       useUpdatedAt: configStore.use_updated_at,
+      timezoneOffsetSec: configStore.offset_sec,
     })
 
     reports.value.push(...items)

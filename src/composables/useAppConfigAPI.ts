@@ -10,6 +10,8 @@ export type AppConfig = {
   timestamp_mode: TimestampMode
   ref_updated_at: boolean
   tl_once_count: number
+  timezone_offset_sec: number
+  start_of_day: string
 }
 
 export const useAppConfigAPI = () => {

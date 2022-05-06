@@ -12,10 +12,11 @@ use chrono::{Duration, NaiveDate, NaiveDateTime};
 #[tauri::command]
 pub fn report_get_all(
     text: Option<String>,
-    page: i32,
-    count: i32,
+    page: i64,
+    count: i64,
     latest: bool,
     use_updated_at: bool,
+    timezone_offset_sec: i64,
 ) -> Vec<ReportWithTag> {
     let conn = get_connection();
 
@@ -56,8 +57,9 @@ pub fn report_get_all(
                     let date = NaiveDate::parse_from_str(trim_word, "%Y-%m-%d")
                         .unwrap()
                         .and_hms(0, 0, 0);
-                    let before: NaiveDateTime =
-                        date - Duration::hours(9) + Duration::days(1) - Duration::seconds(1);
+                    let before: NaiveDateTime = date - Duration::seconds(timezone_offset_sec)
+                        + Duration::days(1)
+                        - Duration::seconds(1);
                     let before_str = before.format("%Y-%m-%d %H:%M:%S").to_string();
 
                     let keyword = "\'".to_string() + &before_str + "\'";
@@ -74,7 +76,7 @@ pub fn report_get_all(
                     let date = NaiveDate::parse_from_str(trim_word, "%Y-%m-%d")
                         .unwrap()
                         .and_hms(0, 0, 0);
-                    let after: NaiveDateTime = date - Duration::hours(9);
+                    let after: NaiveDateTime = date - Duration::seconds(timezone_offset_sec);
                     let after_str = after.format("%Y-%m-%d %H:%M:%S").to_string();
 
                     let keyword = "\'".to_string() + &after_str + "\'";

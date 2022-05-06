@@ -35,6 +35,26 @@
         />
       </n-form-item>
 
+      <n-form-item label="Timezone UTC Offset (Hour)">
+        <n-input-number
+          v-model:value="configStore.timezone_offset_hour"
+          min="-24"
+          max="24"
+          step="1"
+          required
+        />
+      </n-form-item>
+
+      <n-form-item label="一日の開始時刻">
+        <n-time-picker
+          v-model:formatted-value="configStore.start_of_day"
+          close-on-select
+          :actions="[]"
+          format="HH:mm"
+          value-format="HH:mm"
+        />
+      </n-form-item>
+
       <n-form-item label="Storage">
         <n-space vertical style="width: 100%">
           <n-input :value="storage?.path" readonly>
@@ -78,6 +98,8 @@ const emit = defineEmits<{ (e: 'update:show', value: boolean): void }>()
 
 const configStore = useConfigStore()
 const storageAPI = useStorageAPI()
+
+const test = ref()
 
 /// ////////////////////////////////////////////////////////////
 /// ドロワー表示管理
