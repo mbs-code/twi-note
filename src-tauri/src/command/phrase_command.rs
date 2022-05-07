@@ -11,7 +11,7 @@ pub fn phrase_get_all() -> Vec<Phrase> {
     let conn = get_connection();
 
     let mut query: Vec<String> = Vec::new();
-    query.push("SELECT p.* FROM phrase p".to_string());
+    query.push("SELECT p.* FROM phrases p".to_string());
 
     // 並び替え
     query.push("ORDER BY priority DESC, id ASC".to_string());

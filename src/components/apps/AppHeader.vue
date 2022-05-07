@@ -48,6 +48,7 @@ import {
   SettingsSharp as DrawerIcon,
   DocumentText as ReportIcon,
   Pricetag as TagIcon,
+  Bookmark as PhraseIcon
 } from '@vicons/ionicons5'
 import { ref } from 'vue'
 
@@ -57,6 +58,7 @@ const links = [
   { name: 'ホーム', icon: ReportIcon, to: { name: 'home' } },
   { name: 'タイムライン', icon: ReportIcon, to: { name: 'timeline' } },
   { name: 'タグ', icon: TagIcon, to: { name: 'tag' } },
+  { name: 'フレーズ', icon: PhraseIcon, to: { name: 'phrase' } },
 ]
 
 const onExpandButton = () => {

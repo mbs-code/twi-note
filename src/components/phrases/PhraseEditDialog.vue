@@ -73,6 +73,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void,
+  (e: 'change', value: Phrase): void,
 }>()
 
 const _show = computed({
@@ -132,6 +133,7 @@ const onSave = async () => {
       : await phraseAPI.create(item)
 
     message.success(`フレーズを保存しました (${newPhrase.id})`)
+    emit('change', newPhrase)
     onClose()
   } catch (err) {
     console.log(err)
