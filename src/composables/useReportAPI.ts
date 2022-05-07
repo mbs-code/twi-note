@@ -22,7 +22,8 @@ export type SearchReport = {
   page: number
   count: number
   latest: boolean
-  refUpdatedAt: boolean
+  useUpdatedAt: boolean
+  timezoneOffsetSec: number
 }
 
 export const useReportAPI = () => {

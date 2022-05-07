@@ -20,7 +20,7 @@
       <n-form-item label="Timestamp sort by">
         <n-space>
           <span>作成日</span>
-          <n-switch v-model:value="configStore.ref_updated_at" />
+          <n-switch v-model:value="configStore.use_updated_at" />
           <span>更新日</span>
         </n-space>
       </n-form-item>
@@ -32,6 +32,32 @@
           max="1000"
           step="5"
           required
+        />
+      </n-form-item>
+
+      <n-form-item :show-label="false">
+        <n-checkbox v-model:checked="configStore.hide_edited">
+          編集済みを非表示にする
+        </n-checkbox>
+      </n-form-item>
+
+      <n-form-item label="Timezone UTC Offset (Hour)">
+        <n-input-number
+          v-model:value="configStore.timezone_offset_hour"
+          min="-24"
+          max="24"
+          step="1"
+          required
+        />
+      </n-form-item>
+
+      <n-form-item label="一日の開始時刻">
+        <n-time-picker
+          v-model:formatted-value="configStore.start_of_day"
+          close-on-select
+          :actions="[]"
+          format="HH:mm"
+          value-format="HH:mm"
         />
       </n-form-item>
 

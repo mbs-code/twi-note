@@ -7,19 +7,21 @@ use crate::query::{
     tag_query::fetch_tags_by_report_id,
 };
 use crate::{get_connection, get_time_of_now};
+use chrono::{Duration, NaiveDate, NaiveDateTime};
 
 #[tauri::command]
 pub fn report_get_all(
     text: Option<String>,
-    page: i32,
-    count: i32,
+    page: i64,
+    count: i64,
     latest: bool,
-    ref_updated_at: bool,
+    use_updated_at: bool,
+    timezone_offset_sec: i64,
 ) -> Vec<ReportWithTag> {
     let conn = get_connection();
 
     // 検索に使う日付カラム名
-    let timestamp_column = if ref_updated_at {
+    let timestamp_column = if use_updated_at {
         "r.updated_at"
     } else {
         "r.created_at"
@@ -38,6 +40,7 @@ pub fn report_get_all(
         // - スペースごとに処理
         // - `before:` `after:` があったら日付検索
         //   - フォーマットは `yyyy-mm-dd`
+        //   - タイムゾーンを考慮して一日の範囲を取得する
         // - `tag:` が先頭にあったらタグ一致検索
         // - 何もなければ一部でも含まれているものを検索
 
@@ -50,7 +53,16 @@ pub fn report_get_all(
                 // この日以前のものを取得する
                 let trim_word = qword.trim_start_matches("before:");
                 if trim_word.len() == 10 {
-                    let keyword = "\'".to_string() + trim_word + "\'";
+                    // タイムゾーンを考慮して時刻換算する
+                    let date = NaiveDate::parse_from_str(trim_word, "%Y-%m-%d")
+                        .unwrap()
+                        .and_hms(0, 0, 0);
+                    let before: NaiveDateTime = date - Duration::seconds(timezone_offset_sec)
+                        + Duration::days(1)
+                        - Duration::seconds(1);
+                    let before_str = before.format("%Y-%m-%d %H:%M:%S").to_string();
+
+                    let keyword = "\'".to_string() + &before_str + "\'";
                     query.push("AND".to_string());
                     query.push(timestamp_column.to_string());
                     query.push("<=".to_string());
@@ -60,7 +72,14 @@ pub fn report_get_all(
                 // この日以降のものを取得する
                 let trim_word = qword.trim_start_matches("after:");
                 if trim_word.len() == 10 {
-                    let keyword = "\'".to_string() + trim_word + "\'";
+                    // タイムゾーンを考慮して時刻換算する
+                    let date = NaiveDate::parse_from_str(trim_word, "%Y-%m-%d")
+                        .unwrap()
+                        .and_hms(0, 0, 0);
+                    let after: NaiveDateTime = date - Duration::seconds(timezone_offset_sec);
+                    let after_str = after.format("%Y-%m-%d %H:%M:%S").to_string();
+
+                    let keyword = "\'".to_string() + &after_str + "\'";
                     query.push("AND".to_string());
                     query.push(timestamp_column.to_string());
                     query.push(">=".to_string());

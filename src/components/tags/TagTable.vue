@@ -1,10 +1,13 @@
 <template>
   <n-data-table
     :columns="columns"
-    :pagination="false"
     :data="tags"
-    :style="{ height: 'calc(100vh - 48px)' }"
+    size="small"
     flex-height
+    :bordered="false"
+    :pagination="false"
+
+    :style="{ height: 'calc(100vh - 34px)' }"
   />
 </template>
 

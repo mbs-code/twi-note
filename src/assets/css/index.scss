@@ -4,8 +4,24 @@
 }
 
 // カードの余白調整
-.card-dense .n-card__content {
-  padding: 8px !important;
+.card-dense {
+  > .n-card__content {
+    padding: 8px !important;
+  }
+
+  > .n-card__action {
+    padding: 8px !important;
+  }
+}
+
+.card-tiny {
+  > .n-card__content {
+    padding: 0px !important;
+  }
+
+  > .n-card__action {
+    padding: 0px !important;
+  }
 }
 
 .no-select {
@@ -14,6 +30,10 @@
 
 .no-link {
   text-decoration:none;
+}
+
+.m-0 {
+  margin: 0 !important;
 }
 
 ///
@@ -26,16 +46,28 @@
   }
 }
 
+.flex-column {
+  flex-direction: column;
+}
+
 .flex-align-center {
   align-items: center;
+}
+
+.flex-align-stretch {
+  align-items: stretch;
+}
+
+.flex-align-end {
+  align-items: end;
 }
 
 .flex-grow-1 {
   flex-grow: 1;
 }
 
-.flex-column {
-  flex-direction: column;
+.flex-space {
+  flex-grow: 1;
 }
 
 .flex-wrap {

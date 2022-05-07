@@ -1,101 +1,37 @@
 <template>
   <!-- フルサイズモード -->
-  <n-space
+  <ReportEditFullSheet
     v-if="expand"
-    vertical
-    @keydown.ctrl.enter.exact="onSave"
-  >
-    <n-input
-      v-model:value="formTitle"
-      placeholder="(Title)"
-      clearable
-    />
-
-    <n-input
-      v-model:value="formBody"
-      type="textarea"
-      placeholder="Text"
-      clearable
-      :autosize="{ minRows: 3 }"
-    />
-
-    <ArrayTagForm
-      ref="tagNamesRef"
-      v-model:value="formTagNames"
-    />
-
-    <div class="d-flex flex-align-center" style="height: 36px">
-      <n-button type="default" @click="resetForm">
-        リセット
-      </n-button>
-
-      <div class="flex-grow-1" />
-
-      <n-button
-        :type="isEdit ? 'warning' : 'primary'"
-        :disabled="!isValidated"
-        @click="onSave"
-      >
-        保存(Ctrl+Enter)
-      </n-button>
-
-      <n-button
-        v-if="showExpand"
-        text
-        @click="onExpandButton"
-      >
-        <template #icon>
-          <n-icon :component="BottomIcon" />
-        </template>
-      </n-button>
-    </div>
-  </n-space>
+    v-model:title="formTitle"
+    v-model:body="formBody"
+    v-model:tag-names="formTagNames"
+    :is-edit="isEdit"
+    :show-expand="showExpand"
+    :is-valid="isValidated"
+    @save="onSave"
+    @reset="resetForm"
+    @expand="onExpandButton"
+  />
 
   <!-- ミニマムモード -->
-  <div
+  <ReportEditSimpleSheet
     v-else
-    class="d-flex flex-align-center"
-    style="height: 36px"
-    @keydown.ctrl.enter.exact="onSave"
-  >
-    <n-input
-      v-model:value="formBody"
-      type="textarea"
-      placeholder="Text"
-      clearable
-      :autosize="{ minRows: 1 }"
-    />
-
-    <n-button
-      :type="isEdit ? 'warning' : 'primary'"
-      :disabled="!isValidated"
-      @click="onSave"
-    >
-      保存(Ctrl+Enter)
-    </n-button>
-
-    <n-button
-      v-if="showExpand"
-      text
-      @click="onExpandButton"
-    >
-      <template #icon>
-        <n-icon :component="TopIcon" />
-      </template>
-    </n-button>
-  </div>
+    v-model:body="formBody"
+    :is-edit="isEdit"
+    :show-expand="showExpand"
+    :is-valid="isValidated"
+    @save="onSave"
+    @reset="resetForm"
+    @expand="onExpandButton"
+  />
 </template>
 
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
-import ArrayTagForm from '../ArrayTagForm.vue'
-import {
-  ChevronUp as TopIcon,
-  ChevronDown as BottomIcon,
-} from '@vicons/ionicons5'
+import { FormReport, Report, useReportAPI } from '../../../composables/useReportAPI'
+import ArrayTagForm from '../reports/ArrayTagForm.vue'
 
 const props = defineProps<{
   report?: Report,
@@ -118,10 +54,10 @@ const onExpandButton = () => {
 /// ////////////////////////////////////////////////////////////
 /// フォーム基本機能
 
-const isEdit = computed(() => props.report?.id)
+const isEdit = computed(() => (props.report?.id ?? 0) > 0)
 
-const formTitle = ref<string>()
-const formBody = ref<string>()
+const formTitle = ref<string>('')
+const formBody = ref<string>('')
 const formTagNames = ref<string[]>([])
 
 const defaultTags = () => {
@@ -144,17 +80,16 @@ onMounted(() => resetForm())
 /// フォームアクション
 
 // バリデーション
-const isValidated = () => {
+const isValidated = computed(() => {
   if (!formBody.value)  return false // body は必須
   return true
-}
+})
 
 // 保存処理
 const tagNamesRef = ref<typeof ArrayTagForm>()
 const onSave = async () => {
   // バリデーションを通るか確認
-  console.log(isValidated())
-  if (!isValidated()) {
+  if (!isValidated.value) {
     message.error('入力値エラー')
     return
   }

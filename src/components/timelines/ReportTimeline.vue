@@ -5,7 +5,7 @@
       v-for="report in reports"
       :key="report.id"
       :report="report"
-      style="margin: 4px"
+      style="margin: 8px"
       @update:after="emit('update:after', $event)"
       @delete:after="emit('delete:after', $event)"
       @click:tag="emit('click:tag', $event)"
