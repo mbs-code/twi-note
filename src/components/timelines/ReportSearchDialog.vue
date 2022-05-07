@@ -137,13 +137,6 @@ watch(_show, () => {
   }
 })
 
-// const _searchText = computed(() => props.searchText)
-// watch(_searchText, () => {
-//   console.log('change search text')
-//   // 検索文字列が変わったらバインドし直す
-//   reportSearch.bind(props.searchText)
-// })
-
 const onSearch = () => {
   const searchText = reportSearch.generate()
   emit('search', searchText)

@@ -5,7 +5,7 @@
 declare module 'vue' {
   export interface GlobalComponents {
     AppHeader: typeof import('./components/apps/AppHeader.vue')['default']
-    ArrayTagForm: typeof import('./components/ArrayTagForm.vue')['default']
+    ArrayTagForm: typeof import('./components/reports/ArrayTagForm.vue')['default']
     ConfigDrawer: typeof import('./components/apps/ConfigDrawer.vue')['default']
     ReportEditBox: typeof import('./components/reports/ReportEditBox.vue')['default']
     ReportPanel: typeof import('./components/reports/ReportPanel.vue')['default']

@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { computed, nextTick, onMounted, ref } from 'vue'
-import { Tag, useTagAPI } from '../composables/useTagAPI'
+import { Tag, useTagAPI } from '../../composables/useTagAPI'
 import {
   Add as AddIcon,
 } from '@vicons/ionicons5'

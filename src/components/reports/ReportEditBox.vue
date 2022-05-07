@@ -104,7 +104,8 @@ import { useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { FormReport, Report, useReportAPI } from '../../composables/useReportAPI'
-import ArrayTagForm from '../ArrayTagForm.vue'
+import ArrayTagForm from '../reports/ArrayTagForm.vue'
+
 import {
   FileTrayOutline as CreateIcon,
   ChevronUp as TopIcon,

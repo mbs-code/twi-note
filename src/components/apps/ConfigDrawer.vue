@@ -105,8 +105,6 @@ const emit = defineEmits<{ (e: 'update:show', value: boolean): void }>()
 const configStore = useConfigStore()
 const storageAPI = useStorageAPI()
 
-const test = ref()
-
 /// ////////////////////////////////////////////////////////////
 /// ドロワー表示管理
 
