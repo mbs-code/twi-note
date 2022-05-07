@@ -50,11 +50,12 @@
 import { onMounted, ref } from 'vue'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useReportList } from '../composables/timelines/useReportList'
 import { useHeights } from '../composables/timelines/useHeights'
 
 const route = useRoute()
+const router = useRouter()
 const configStore = useConfigStore()
 
 /// ////////////////////////////////////////////////////////////
@@ -80,18 +81,28 @@ const reportList = useReportList({
 onMounted(() => {
   // URLクエリにフレーズが指定されていたら、検索パラメタに追加する
   const text = route.query?.phrase as string // url parameter
-  if (text) reportList.pushSearch(text)
+  if (text) reportList.pushSearch(text?.trim())
 })
 
 // 再検索する
 const onSearch = (text: string) => {
   reportList.search.value = text
   reportList.reload()
+  replaceUrlPhrase()
 }
 
 // タグクリック時に検索文字列に反映、再検索する
 const onTagClick = (name: string) => {
   reportList.pushSearch(`tag:${name}`)
   reportList.reload()
+  replaceUrlPhrase()
+}
+
+// URL の書き換え
+const replaceUrlPhrase = () => {
+  router.replace({
+    name: 'timeline',
+    query: { ...route.query, phrase: reportList.search.value },
+  })
 }
 </script>

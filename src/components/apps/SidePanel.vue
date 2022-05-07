@@ -69,7 +69,7 @@ const onSelect = (phrase: Phrase) => {
 // アクティブタグを判定
 const isActive = (phrase: Phrase) => {
   const text = route.query?.phrase as string // url parameter
-  return text === phrase.text
+  return text?.trim() === phrase.text
 }
 
 const shortDisplayName = (phrase: Phrase) => {
