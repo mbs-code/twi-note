@@ -17,7 +17,7 @@
     }"
     :native-scrollbar="false"
   >
-    <div style="padding-right: 18px">
+    <div style="padding-right: 20px">
       <ReportTimeline
         v-model:is-initial="reportList.isInitial.value"
         :reports="reportList.reports.value"
