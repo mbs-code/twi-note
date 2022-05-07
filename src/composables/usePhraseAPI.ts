@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 export type Phrase = {
   id: number
   text: string
+  color?: string
   priority: number
   created_at: string
   updated_at: string
@@ -10,10 +11,11 @@ export type Phrase = {
 
 export type FormPhrase = {
   text: string
+  color?: string
   priority: number
 }
 
-export const useTagAPI = () => {
+export const usePhraseAPI = () => {
   const getAll = async () => {
     const phrases: Phrase[] = await invoke('phrase_get_all')
     return phrases
@@ -27,7 +29,7 @@ export const useTagAPI = () => {
   }
 
   const update = async (phraseId: number, form: FormPhrase) => {
-    const phrase: FormPhrase = await invoke('phrase_update', {
+    const phrase: Phrase = await invoke('phrase_update', {
       phraseId: phraseId,
       params: form,
     })

@@ -7,6 +7,7 @@ declare module 'vue' {
     AppHeader: typeof import('./components/apps/AppHeader.vue')['default']
     ArrayTagForm: typeof import('./components/reports/ArrayTagForm.vue')['default']
     ConfigDrawer: typeof import('./components/apps/ConfigDrawer.vue')['default']
+    PhraseEditDialog: typeof import('./components/timelines/PhraseEditDialog.vue')['default']
     ReportEditFullSheet: typeof import('./components/reports/sheets/ReportEditFullSheet.vue')['default']
     ReportEditSheet: typeof import('./components/reports/sheets/ReportEditSheet.vue')['default']
     ReportEditSimpleSheet: typeof import('./components/reports/sheets/ReportEditSimpleSheet.vue')['default']

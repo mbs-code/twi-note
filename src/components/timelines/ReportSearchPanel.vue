@@ -20,6 +20,13 @@
       検索
     </n-button>
 
+    <n-button
+      size="small"
+      :disabled="!bufferText.length > 0"
+      @click="openPhraseDialog"
+    >
+      保存
+    </n-button>
 
     <n-tooltip trigger="hover">
       <template #trigger>
@@ -33,6 +40,11 @@
       <div>高度な検索</div>
     </n-tooltip>
   </div>
+
+  <PhraseEditDialog
+    v-model:show="showPhraseDialog"
+    :text="bufferText"
+  />
 
   <ReportSearchDialog
     v-model:show="showSearchDialog"
@@ -54,6 +66,12 @@ const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
 
+const _searchText = computed(() => props.searchText)
+watch(_searchText, (text) => {
+  // 値が変わったらバッファも更新する
+  bufferText.value = text
+})
+
 /// ////////////////////////////////////////////////////////////
 /// ダイアログ管理
 
@@ -62,11 +80,10 @@ const openSearchDialog = () => {
   showSearchDialog.value = true
 }
 
-const _searchText = computed(() => props.searchText)
-watch(_searchText, (text) => {
-  // 値が変わったらバッファも更新する
-  bufferText.value = text
-})
+const showPhraseDialog = ref<boolean>(false)
+const openPhraseDialog = () => {
+  showPhraseDialog.value = true
+}
 
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理

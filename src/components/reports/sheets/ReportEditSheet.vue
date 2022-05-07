@@ -111,11 +111,12 @@ const onSave = async () => {
       ? await reportAPI.update(id, item)
       : await reportAPI.create(item)
 
+    message.success(`レポートを保存しました(${newReport.id})`)
     emit('save:after', newReport)
     resetForm()
   } catch (err) {
     console.log(err)
-    message.error('内部エラーが発生しました。')
+    message.error('内部エラーが発生しました')
   }
 }
 </script>
