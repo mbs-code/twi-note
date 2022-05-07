@@ -18,7 +18,7 @@
           :class="{ 'avatar-block': expand }"
           :color="phrase.color || 'gray'"
         >
-          {{ phrase.text.substring(0, expand ? 12 : 3) }}
+          {{ expand ? expandDisplayName(phrase) : shortDisplayName(phrase) }}
         </n-avatar>
       </n-button>
     </n-el>
@@ -64,10 +64,26 @@ const onSelect = (phrase: Phrase) => {
   }
 }
 
+///
+
 // アクティブタグを判定
 const isActive = (phrase: Phrase) => {
   const text = route.query?.phrase as string // url parameter
   return text === phrase.text
+}
+
+const shortDisplayName = (phrase: Phrase) => {
+  const splitIdx = phrase.name.indexOf(':')
+  return splitIdx >= 0
+    ? phrase.name.substring(0, splitIdx)
+    : phrase.name
+}
+
+const expandDisplayName = (phrase: Phrase) => {
+  const splitIdx = phrase.name.indexOf(':')
+  return splitIdx >= 0
+    ? phrase.name.substring(splitIdx + 1)
+    : phrase.name
 }
 </script>
 

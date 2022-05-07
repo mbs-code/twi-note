@@ -18,8 +18,24 @@
     </template>
 
     <n-space vertical>
-      <n-form-item label="フレーズ">
-        <n-input :value="formText" />
+      <n-form-item label="表示名 * （:で拡縮表示対応）">
+        <n-input v-model:value="formName" />
+      </n-form-item>
+
+      <n-form-item label="フレーズ *">
+        <n-input-group>
+          <n-button @click="textLock = !textLock">
+            <template #icon>
+              <n-icon v-if="textLock" :component="LockIcon" />
+              <n-icon v-else :component="UnockIcon" />
+            </template>
+          </n-button>
+
+          <n-input
+            v-model:value="formText"
+            :disabled="textLock"
+          />
+        </n-input-group>
       </n-form-item>
 
       <n-form-item label="色">
@@ -42,6 +58,7 @@
     <template #action>
       <div class="d-flex">
         <n-button
+          v-if="isEdit"
           type="error"
           size="small"
           @click="onDelete"
@@ -70,7 +87,11 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { BookmarkOutline as DialogIcon } from '@vicons/ionicons5'
+import {
+  BookmarkOutline as DialogIcon,
+  LockClosedOutline as LockIcon,
+  LockOpenOutline as UnockIcon,
+} from '@vicons/ionicons5'
 import { FormPhrase, Phrase, usePhraseAPI } from '../../composables/usePhraseAPI'
 import { useDialog, useMessage } from 'naive-ui'
 
@@ -97,11 +118,18 @@ const dialog = useDialog()
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理
 
+const isEdit = computed(() => (props.phrase?.id ?? 0) > 0)
+const textLock = ref<boolean>(true)
+
+const formName = ref<string>('')
 const formText = ref<string>('')
 const formColor = ref<string>('')
 const formPriority = ref<number>(0)
 
 const init = () => {
+  textLock.value = true
+
+  formName.value = props.phrase?.name || ''
   formText.value = (props.text.trim() || props.phrase?.text.trim()) || ''
   formColor.value = props.phrase?.color || ''
   formPriority.value = props.phrase?.priority ?? 0
@@ -117,6 +145,7 @@ watch(_show, () => {
 
 // バリデーション
 const isValidated = computed(() => {
+  if (!formName.value?.trim())  return false // name は必須
   if (!formText.value?.trim())  return false // text は必須
   return true
 })
@@ -133,6 +162,7 @@ const onSave = async () => {
     // データ成形
     const id = props.phrase?.id
     const item: FormPhrase = {
+      name: formName.value.trim() || '',
       text: formText.value.trim() || '',
       color: formColor.value || undefined,
       priority: formPriority.value ?? 0,

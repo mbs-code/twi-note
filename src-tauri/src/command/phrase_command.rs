@@ -36,10 +36,17 @@ pub fn phrase_create(window: Window, params: PhraseParams) -> Phrase {
     let now = get_time_of_now();
     let _ = &conn.execute(
         "
-            INSERT INTO phrases (text, color, priority, created_at, updated_at)
-            VALUES (?1, ?2, ?3, ?4, ?5)
+            INSERT INTO phrases (name, text, color, priority, created_at, updated_at)
+            VALUES (?1, ?2, ?3, ?4, ?5, ?6)
         ",
-        params![params.text, params.color, params.priority, now.clone(), now],
+        params![
+            params.name,
+            params.text,
+            params.color,
+            params.priority,
+            now.clone(),
+            now
+        ],
     );
 
     // 作成したレコードを取得
@@ -60,10 +67,17 @@ pub fn phrase_update(window: Window, phrase_id: i64, params: PhraseParams) -> Ph
     let now = get_time_of_now();
     let _ = &conn.execute(
         "
-            UPDATE phrases SET text=?1, color=?2, priority=?3, updated_at=?4
-            WHERE id=?5
+            UPDATE phrases SET name=?1, text=?2, color=?3, priority=?4, updated_at=?5
+            WHERE id=?6
         ",
-        params![params.text, params.color, params.priority, now, phrase_id],
+        params![
+            params.name,
+            params.text,
+            params.color,
+            params.priority,
+            now,
+            phrase_id
+        ],
     );
 
     // 更新したレコードを取得

@@ -2,6 +2,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 
 export type Phrase = {
   id: number
+  name: string
   text: string
   color?: string
   priority: number
@@ -10,6 +11,7 @@ export type Phrase = {
 }
 
 export type FormPhrase = {
+  name: string
   text: string
   color?: string
   priority: number

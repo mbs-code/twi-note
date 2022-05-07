@@ -41,6 +41,11 @@ const columns = reactive<DataTableColumns<Phrase>>([
     defaultSortOrder: 'descend', // 初期値降順
   },
   {
+    title: '表示名',
+    key: 'name',
+    sorter: 'default',
+  },
+  {
     title: 'フレーズ',
     key: 'text',
     sorter: 'default',
