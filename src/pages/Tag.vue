@@ -1,13 +1,13 @@
 <template>
   <TagTable
     :tags="tags"
-    @on-edit="onEdit"
+    @edit="onEdit"
   />
 
   <TagEditDialog
     v-model:show="showTagDialog"
     :tag="selectedTag"
-    @on-changed="onUpdated"
+    @save:after="listAdd"
   />
 </template>
 
@@ -16,6 +16,7 @@ import { onMounted, ref } from 'vue'
 import { Tag, useTagAPI } from '../composables/useTagAPI'
 
 const tagAPI = useTagAPI()
+
 const tags = ref<Tag[]>([])
 const fetchTags = async () => {
   const data = await tagAPI.getAll({
@@ -36,10 +37,7 @@ const onEdit = (tag: Tag) => {
 }
 
 // 保持リスト更新処理
-// const onCreated = (report: ReportWithTag) => {
-//   reports.value.unshift(report)
-// }
-const onUpdated = (updTag: Tag) => {
+const listAdd = (updTag: Tag) => {
   const index = tags.value.findIndex((tag) => tag.id === updTag.id)
   if (index >= 0) {
     tags.value.splice(index, 1, updTag)
@@ -48,4 +46,10 @@ const onUpdated = (updTag: Tag) => {
     tags.value.unshift(updTag)
   }
 }
+// const listRemove = (delTag: Tag) => {
+//   const index = tags.value.findIndex((tag) => tag.id === delTag.id)
+//   if (index >= 0) {
+//     tags.value.splice(index, 1)
+//   }
+// }
 </script>

@@ -70,13 +70,13 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { PricetagOutline as DialogIcon } from '@vicons/ionicons5'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { FormTag, Tag, useTagAPI } from '../../composables/useTagAPI'
 
 const props = defineProps<{ show: boolean, tag: Tag | undefined }>()
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void,
-  (e: 'change', tag: Tag): void,
+  (e: 'save:after', value: Tag): void,
 }>()
 
 const _show = computed({
@@ -140,7 +140,7 @@ const onSave = async () => {
       : await tagAPI.create(item)
 
     message.success(`タグを保存しました (${newTag.id})`)
-    emit('change', newTag)
+    emit('save:after', newTag)
     onClose()
   } catch (err) {
     console.log(err)
