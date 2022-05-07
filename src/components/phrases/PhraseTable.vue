@@ -21,7 +21,7 @@ import {
 
 defineProps<{ phrases: Phrase[] }>()
 const emit = defineEmits<{
-  (e: 'onEdit', phrases: Phrase): void,
+  (e: 'edit', phrases: Phrase): void,
 }>()
 
 const columns = reactive<DataTableColumns<Phrase>>([
@@ -87,7 +87,7 @@ const columns = reactive<DataTableColumns<Phrase>>([
         quaternary: true,
         circle: true,
         type: 'primary',
-        onClick: () => emit('onEdit', row)
+        onClick: () => emit('edit', row)
       },
       {
         icon: () => h(

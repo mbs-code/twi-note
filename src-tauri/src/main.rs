@@ -26,6 +26,7 @@ fn main() {
             command::phrase_command::phrase_get_all,
             command::phrase_command::phrase_create,
             command::phrase_command::phrase_update,
+            command::phrase_command::phrase_remove,
             command::config_command::load_config,
             command::config_command::save_config,
             command::storage_command::get_storage_info,

@@ -38,7 +38,7 @@ export const usePhraseAPI = () => {
 
   const remove = async (phraseId: number) => {
     const result: boolean = await invoke('phrase_remove', {
-      tagId: phraseId,
+      phraseId: phraseId,
     })
     return result
   }

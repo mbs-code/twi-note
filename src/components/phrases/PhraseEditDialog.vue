@@ -41,6 +41,14 @@
 
     <template #action>
       <div class="d-flex">
+        <n-button
+          type="error"
+          size="small"
+          @click="onDelete"
+        >
+          削除
+        </n-button>
+
         <n-button size="small" @click="onReset">
           リセット
         </n-button>
@@ -61,10 +69,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { BookmarkOutline as DialogIcon } from '@vicons/ionicons5'
 import { FormPhrase, Phrase, usePhraseAPI } from '../../composables/usePhraseAPI'
-import { useMessage } from 'naive-ui'
+import { useDialog, useMessage } from 'naive-ui'
 
 const props = defineProps<{
   show: boolean,
@@ -73,7 +81,8 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void,
-  (e: 'change', value: Phrase): void,
+  (e: 'save:after', value: Phrase): void,
+  (e: 'delete:after', value: Phrase): void,
 }>()
 
 const _show = computed({
@@ -83,6 +92,7 @@ const _show = computed({
 
 const phraseAPI = usePhraseAPI()
 const message = useMessage()
+const dialog = useDialog()
 
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理
@@ -134,12 +144,37 @@ const onSave = async () => {
       : await phraseAPI.create(item)
 
     message.success(`フレーズを保存しました (${newPhrase.id})`)
-    emit('change', newPhrase)
+    emit('save:after', newPhrase)
     onClose()
   } catch (err) {
     console.log(err)
     message.error('内部エラーが発生しました')
   }
+}
+
+const onDelete = () => {
+  const phrase = props.phrase
+  if (!phrase) return
+
+  dialog.error({
+    title: '確認',
+    content: 'フレーズを削除しますか？',
+    positiveText: 'はい',
+    negativeText: 'いいえ',
+    onPositiveClick: async () => {
+      try {
+        const res = await phraseAPI.remove(phrase.id)
+        if (!res) throw new Error('Failed to delete')
+
+        message.success(`フレーズを削除しました (${phrase.id})`)
+        emit('delete:after', phrase)
+        onClose()
+      } catch (err) {
+        console.log(err)
+        message.error('内部エラーが発生しました。')
+      }
+    },
+  })
 }
 
 const onClose = () => {

@@ -1,10 +1,11 @@
 use rusqlite::params;
 use tauri::Window;
 
+use crate::fire_phrase_changed;
 use crate::models::Phrase;
 use crate::models::PhraseParams;
 use crate::query::phrase_query::fetch_phrase_by_phrase_id;
-use crate::{fire_tag_changed, get_connection, get_time_of_now};
+use crate::{get_connection, get_time_of_now};
 
 #[tauri::command]
 pub fn phrase_get_all() -> Vec<Phrase> {
@@ -46,7 +47,7 @@ pub fn phrase_create(window: Window, params: PhraseParams) -> Phrase {
     let new_phrase = fetch_phrase_by_phrase_id(&conn, &phrase_id).unwrap();
 
     // フレーズ更新イベントを発火
-    fire_tag_changed(&window);
+    fire_phrase_changed(&window);
 
     return new_phrase;
 }
@@ -69,7 +70,25 @@ pub fn phrase_update(window: Window, phrase_id: i64, params: PhraseParams) -> Ph
     let new_phrase = fetch_phrase_by_phrase_id(&conn, &phrase_id).unwrap();
 
     // フレーズ更新イベントを発火
-    fire_tag_changed(&window);
+    fire_phrase_changed(&window);
 
     return new_phrase;
+}
+
+#[tauri::command]
+pub fn phrase_remove(window: Window, phrase_id: i64) -> bool {
+    let conn = get_connection();
+
+    // フレーズ削除
+    let _ = &conn.execute(
+        "
+            DELETE FROM phrases WHERE id=?1
+        ",
+        params![phrase_id],
+    );
+
+    // フレーズ更新イベントを発火
+    fire_phrase_changed(&window);
+
+    return true;
 }
