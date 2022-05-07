@@ -18,7 +18,7 @@ declare module 'vue' {
     ReportSearchDialog: typeof import('./components/timelines/ReportSearchDialog.vue')['default']
     ReportSearchPanel: typeof import('./components/timelines/ReportSearchPanel.vue')['default']
     ReportShowBox: typeof import('./components/reports/ReportShowSheet.vue')['default']
-    ReportShowSheet: typeof import('./components/reports/ReportShowSheet.vue')['default']
+    ReportShowSheet: typeof import('./components/reports/edits/ReportShowSheet.vue')['default']
     ReportTimeline: typeof import('./components/timelines/ReportTimeline.vue')['default']
     SidePanel: typeof import('./components/apps/SidePanel.vue')['default']
     TagEditDialog: typeof import('./components/tags/TagEditDialog.vue')['default']

@@ -58,9 +58,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { TimeOutline as ClockIcon } from '@vicons/ionicons5'
-import { Report } from '../../composables/useReportAPI'
-import { parseLocal, formatString, formatDistance } from '../../utils/DateUtil'
-import { useConfigStore } from '../../stores/config'
+import { Report } from '../../../composables/useReportAPI'
+import { parseLocal, formatString, formatDistance } from '../../../utils/DateUtil'
+import { useConfigStore } from '../../../stores/config'
 
 const props = defineProps<{ report: Report }>()
 const emit = defineEmits<{
