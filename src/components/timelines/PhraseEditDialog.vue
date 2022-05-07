@@ -11,7 +11,7 @@
     <template #header>
       <div class="d-flex">
         <n-icon-wrapper :size="24" color="var(--n-color)">
-          <n-icon :component="SaveIcon" />
+          <n-icon :component="DialogIcon" />
         </n-icon-wrapper>
         <span>検索フレーズの保存</span>
       </div>
@@ -47,7 +47,12 @@
 
         <div class="flex-grow-1" />
 
-        <n-button type="primary" size="small" @click="onSave">
+        <n-button
+          type="primary"
+          size="small"
+          :disabled="!isValidated"
+          @click="onSave"
+        >
           保存
         </n-button>
       </div>
@@ -57,7 +62,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { SaveOutline as SaveIcon } from '@vicons/ionicons5'
+import { BookmarkOutline as DialogIcon } from '@vicons/ionicons5'
 import { FormPhrase, Phrase, usePhraseAPI } from '../../composables/usePhraseAPI'
 import { useMessage } from 'naive-ui'
 
@@ -70,13 +75,13 @@ const emit = defineEmits<{
   (e: 'update:show', value: boolean): void,
 }>()
 
-const phraseAPI = usePhraseAPI()
-const message = useMessage()
-
 const _show = computed({
   get: () => props.show,
   set: (value) => emit('update:show', value),
 })
+
+const phraseAPI = usePhraseAPI()
+const message = useMessage()
 
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理
@@ -86,7 +91,7 @@ const formColor = ref<string>('')
 const formPriority = ref<number>(0)
 
 const init = () => {
-  formText.value = props.text ?? props.phrase?.text ?? ''
+  formText.value = props.text.trim() ?? props.phrase?.text.trim() ?? ''
   formColor.value = props.phrase?.color ?? ''
   formPriority.value = props.phrase?.priority ?? 0
 }
@@ -98,10 +103,20 @@ watch(() => props.text, () => init())
 /// ////////////////////////////////////////////////////////////
 /// フォーム処理
 
+// バリデーション
+const isValidated = computed(() => {
+  if (!formText.value?.trim())  return false // text は必須
+  return true
+})
+
 // 保存処理
 const onSave = async () => {
   try {
-    if (!formText.value?.trim()) return // text は必須
+    // バリデーションを通るか確認
+    if (!isValidated.value) {
+      message.error('入力値エラー')
+      return
+    }
 
     // データ成形
     const id = props.phrase?.id

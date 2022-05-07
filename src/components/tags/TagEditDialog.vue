@@ -1,15 +1,22 @@
 <template>
   <n-modal
-    v-model:show="show"
+    v-model:show="_show"
+    preset="card"
+    style="width: 480px"
+    size="small"
+    segmented
     :mask-closable="false"
-    preset="dialog"
-    title="Dialog"
-    content="Are you sure?"
-    positive-text="保存"
-    negative-text="キャンセル"
-    @positive-click="onSave"
-    @negative-click="onNegativeClick"
+    @keydown.ctrl.enter.exact="onSave"
   >
+    <template #header>
+      <div class="d-flex">
+        <n-icon-wrapper :size="24" color="var(--n-color)">
+          <n-icon :component="DialogIcon" />
+        </n-icon-wrapper>
+        <span>タグの編集</span>
+      </div>
+    </template>
+
     <n-space vertical>
       <n-form-item label="タグ名">
         <n-input
@@ -38,10 +45,31 @@
         />
       </n-form-item>
     </n-space>
+
+    <template #action>
+      <div class="d-flex">
+        <n-button size="small" @click="onReset">
+          リセット
+        </n-button>
+
+        <div class="flex-grow-1" />
+
+        <n-button
+          type="primary"
+          size="small"
+          :disabled="!isValidated"
+          @click="onSave"
+        >
+          保存
+        </n-button>
+      </div>
+    </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { useMessage } from 'naive-ui'
+import { PricetagOutline as DialogIcon } from '@vicons/ionicons5'
 import { computed, onMounted, ref, watch } from 'vue'
 import { FormTag, Tag, useTagAPI } from '../../composables/useTagAPI'
 
@@ -51,15 +79,19 @@ const emit = defineEmits<{
   (e: 'onChanged', tag: Tag): void,
 }>()
 
-const show = computed({
+const _show = computed({
   get: () => props.show,
   set: (value) => emit('update:show', value),
 })
 
-///
+const tagAPI = useTagAPI()
+const message = useMessage()
 
-const formName = ref<string>()
-const formColor = ref<string>()
+/// ////////////////////////////////////////////////////////////
+/// フォーム管理
+
+const formName = ref<string>('')
+const formColor = ref<string>('')
 const formHasPinned = ref<boolean>()
 const formPriority = ref<number>()
 
@@ -70,44 +102,53 @@ const init = () => {
   formPriority.value = props.tag?.priority ?? 0
 }
 onMounted(() => init())
-// const onReset = () => init()
+const onReset = () => init()
 watch(() => props.tag, () => init())
 
-///
+/// ////////////////////////////////////////////////////////////
+/// フォーム処理
+
+// バリデーション
+const isValidated = computed(() => {
+  if (!formName.value?.trim())  return false // name は必須
+  return true
+})
 
 // 保存処理
-const tagAPI = useTagAPI()
 const onSave = async () => {
-  if (!formName.value) return // name は必須
+  try {
+    // バリデーションを通るか確認
+    if (!isValidated.value) {
+      message.error('入力値エラー')
+      return
+    }
 
-  // データ成形
-  const id = props.tag?.id
-  const item: FormTag = {
-    name: formName.value,
-    color: formColor.value,
-    has_pinned: formHasPinned.value ?? false,
-    priority: formPriority.value ?? 0,
+    // データ成形
+    const id = props.tag?.id
+    const item: FormTag = {
+      name: formName.value.trim() || '',
+      color: formColor.value,
+      has_pinned: formHasPinned.value ?? false,
+      priority: formPriority.value ?? 0,
+    }
+
+    // 実行
+    const newTag = id
+      ? await tagAPI.update(id, item)
+      : await tagAPI.create(item)
+
+    message.success(`タグを保存しました (${newTag.id})`)
+    emit('onChanged', newTag)
+    onClose()
+  } catch (err) {
+    console.log(err)
+    message.error('内部エラーが発生しました')
   }
-
-  // 実行
-  const newTag = id
-    ? await tagAPI.update(id, item)
-    : await tagAPI.create(item)
-
-  init()
-  emit('onChanged', newTag)
 }
 
-const onNegativeClick = () => {
-  show.value = false
+const onClose = () => {
+  _show.value = false
 }
-
-// const swatches = [
-//   '#f44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3',
-//   '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39',
-//   '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#eeeeee',
-//   '#9E9E9E', '#607D8B', '#424242',
-// ]
 
 const swatches = [
   '#E57373', '#F06292', '#BA68C8', '#9575CD', '#7986CB', '#64B5F6',
