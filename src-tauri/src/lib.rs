@@ -24,12 +24,17 @@ pub fn establish_connection() -> Connection {
 }
 
 pub fn run_migration(conn: &mut Connection) {
-    let migrations: Migrations = Migrations::new(vec![M::up(include_str!(
-        "../migrations/2022-04-16-021232_init/up.sql"
-    ))
-    .down(include_str!(
-        "../migrations/2022-04-16-021232_init/down.sql"
-    ))]);
+    let migrations: Migrations = Migrations::new(vec![
+        M::up(include_str!("../migrations/2022-04-16-021232_init/up.sql")).down(include_str!(
+            "../migrations/2022-04-16-021232_init/down.sql"
+        )),
+        M::up(include_str!(
+            "../migrations/2022-05-07-134912_create_phrase/up.sql"
+        ))
+        .down(include_str!(
+            "../migrations/2022-05-07-134912_create_phrase/down.sql"
+        )),
+    ]);
 
     migrations.to_latest(conn).unwrap();
 }
@@ -45,11 +50,22 @@ struct Payload {
     message: String,
 }
 
+// TODO: deprecated
 pub fn fire_tag_changed(window: &Window) {
     window
         .emit("tag-changed", {
             Payload {
                 message: "Change tag.".into(),
+            }
+        })
+        .unwrap();
+}
+
+pub fn fire_phrase_changed(window: &Window) {
+    window
+        .emit("phrase-changed", {
+            Payload {
+                message: "Change phrase.".into(),
             }
         })
         .unwrap();

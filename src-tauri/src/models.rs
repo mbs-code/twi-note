@@ -117,3 +117,31 @@ impl ReportTagJoinTag {
         })
     }
 }
+
+/// ////////////////////////////////////////
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Phrase {
+    pub id: i64,
+    pub phrase: String,
+    pub priority: i64,
+    pub created_at: String,
+    pub updated_at: String,
+}
+impl Phrase {
+    pub fn by_row(row: &Row) -> Result<Phrase, Error> {
+        Ok(Phrase {
+            id: row.get(0)?,
+            phrase: row.get(1)?,
+            priority: row.get(2)?,
+            created_at: row.get(3)?,
+            updated_at: row.get(4)?,
+        })
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PhraseParams {
+    pub phrase: String,
+    pub priority: i64,
+}
