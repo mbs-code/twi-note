@@ -4,21 +4,21 @@
     style="padding: 8px 0 8px 8px;"
   >
     <n-el
-      v-for="(tag, _) of pinTags"
+      v-for="(phrase, _) of phrases"
       :key="`a${_}`"
-      class="tag-btn"
-      :class="{ 'tag-btn-active': isActive(tag.name) }"
+      class="phrase-btn"
+      :class="{ 'phrase-btn-active': isActive(phrase) }"
       type="primary"
     >
       <n-button
         style="padding: 0px;"
-        @click="onSelectedTag(tag)"
+        @click="onSelect(phrase)"
       >
         <n-avatar
           :class="{ 'avatar-block': expand }"
-          :color="tag.color || 'gray'"
+          :color="phrase.color || 'gray'"
         >
-          {{ tag.name.substring(0, expand ? 12 : 3) }}
+          {{ phrase.text.substring(0, expand ? 12 : 3) }}
         </n-avatar>
       </n-button>
     </n-el>
@@ -28,45 +28,46 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Tag, useTagAPI } from '../../composables/useTagAPI'
 import { listen } from '@tauri-apps/api/event'
+import { Phrase, usePhraseAPI } from '../../composables/usePhraseAPI'
 
 defineProps<{ expand?: boolean }>()
 
+const router = useRouter()
+const route = useRoute()
+
+/// ////////////////////////////////////////////////////////////
+
 // タグリスト取得
-const tagAPI = useTagAPI()
-const pinTags = ref<Tag[]>([])
-const loadTags = async () => {
-  const data = await tagAPI.getAll({
-    hasPinned: true,
-  })
-  pinTags.value = data
+const phraseAPI = usePhraseAPI()
+const phrases = ref<Phrase[]>([])
+const fetchPhrase = async () => {
+  const data = await phraseAPI.getAll()
+  phrases.value = data
 }
 
 onMounted(async () => {
-  await loadTags()
+  await fetchPhrase()
 
   // tauri event listener
-  await listen('tag-changed', async () => {
-    await loadTags()
+  await listen('phrase-changed', async () => {
+    await fetchPhrase()
   })
 })
 
-const router = useRouter()
-const onSelectedTag = (tag: Tag) => {
-  const name = route.query?.tag as string // url parameter
-  if (name === tag.name) {
+const onSelect = (phrase: Phrase) => {
+  const text = route.query?.phrase as string // url parameter
+  if (text === phrase.text) {
     router.push({ name: 'timeline' })
   } else {
-    router.push({ name: 'timeline', query: { tag: tag.name } })
+    router.push({ name: 'timeline', query: { phrase: phrase.text } })
   }
 }
 
 // アクティブタグを判定
-const route = useRoute()
-const isActive = (tagName: string) => {
-  const name = route.query?.tag as string // url parameter
-  return tagName === name
+const isActive = (phrase: Phrase) => {
+  const text = route.query?.phrase as string // url parameter
+  return text === phrase.text
 }
 </script>
 
@@ -79,10 +80,10 @@ const isActive = (tagName: string) => {
   }
 }
 
-.tag-btn {
+.phrase-btn {
   display: flex;
 
- &.tag-btn-active {
+ &.phrase-btn-active {
     border-right: 4px solid var(--primary-color);
   }
 }
