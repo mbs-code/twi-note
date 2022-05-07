@@ -37,13 +37,11 @@
 
   <n-layout-footer bordered position="absolute">
     <div ref="footerRef">
-      <n-card class="card-dense">
-        <ReportEditBox
-          v-model:expand="configStore.expand_editor"
-          :show-expand="true"
-          @save:after="reportList.add($event)"
-        />
-      </n-card>
+      <ReportEditSheet
+        v-model:expand="configStore.expand_editor"
+        :show-expand="true"
+        @save:after="reportList.add($event)"
+      />
     </div>
   </n-layout-footer>
 </template>

@@ -1,44 +1,52 @@
 <template>
-  <n-card class="card-dense">
+  <n-card class="card-tiny">
     <n-space class="expand-first" :wrap="false">
-      <ReportEditBox
+      <ReportEditSheet
         v-if="isEdit"
         :report="report"
         :expand="true"
         :show-expand="false"
         @save:after="onUpdateAfter"
       />
-      <ReportShowBox
+
+      <ReportShowSheet
         v-else
         :report="report"
         @click:tag="emit('click:tag', $event)"
       />
 
-      <n-space vertical justify="space-between" style="height: 100%">
-        <n-button
-          quaternary
-          circle
-          type="primary"
-          @click="onEdit"
-        >
-          <template #icon>
-            <n-icon v-if="isEdit" :component="CloseIcon" />
-            <n-icon v-else :component="EditIcon" />
-          </template>
-        </n-button>
+      <n-card
+        class="card-dense"
+        embedded
+        :bordered="false"
+        style="height: 100%"
+      >
+        <n-space vertical justify="space-between" style="height: 100%">
+          <n-button
+            quaternary
+            circle
+            type="primary"
+            @click="onEdit"
+          >
+            <template #icon>
+              <n-icon v-if="isEdit" :component="CloseIcon" />
+              <n-icon v-else :component="EditIcon" />
+            </template>
+          </n-button>
 
-        <n-button
-          v-if="isEdit"
-          circle
-          type="error"
-          style="height: 36px"
-          @click="openDeleteDialog"
-        >
-          <template #icon>
-            <n-icon :component="DeleteIcon" />
-          </template>
-        </n-button>
-      </n-space>
+          <n-button
+            v-if="isEdit"
+            circle
+            type="error"
+            style="height: 36px"
+            @click="openDeleteDialog"
+          >
+            <template #icon>
+              <n-icon :component="DeleteIcon" />
+            </template>
+          </n-button>
+        </n-space>
+      </n-card>
     </n-space>
   </n-card>
 </template>

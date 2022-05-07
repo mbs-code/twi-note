@@ -4,8 +4,24 @@
 }
 
 // カードの余白調整
-.card-dense .n-card__content {
-  padding: 8px !important;
+.card-dense {
+  > .n-card__content {
+    padding: 8px !important;
+  }
+
+  > .n-card__action {
+    padding: 8px !important;
+  }
+}
+
+.card-tiny {
+  > .n-card__content {
+    padding: 0px !important;
+  }
+
+  > .n-card__action {
+    padding: 0px !important;
+  }
 }
 
 .no-select {
