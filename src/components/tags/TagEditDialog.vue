@@ -76,7 +76,7 @@ import { FormTag, Tag, useTagAPI } from '../../composables/useTagAPI'
 const props = defineProps<{ show: boolean, tag: Tag | undefined }>()
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void,
-  (e: 'onChanged', tag: Tag): void,
+  (e: 'change', tag: Tag): void,
 }>()
 
 const _show = computed({
@@ -101,9 +101,11 @@ const init = () => {
   formHasPinned.value = props.tag?.is_pinned ? true : false
   formPriority.value = props.tag?.priority ?? 0
 }
-onMounted(() => init())
+
 const onReset = () => init()
-watch(() => props.tag, () => init())
+watch(_show, () => {
+  if (_show.value) init()
+})
 
 /// ////////////////////////////////////////////////////////////
 /// フォーム処理
@@ -138,7 +140,7 @@ const onSave = async () => {
       : await tagAPI.create(item)
 
     message.success(`タグを保存しました (${newTag.id})`)
-    emit('onChanged', newTag)
+    emit('change', newTag)
     onClose()
   } catch (err) {
     console.log(err)

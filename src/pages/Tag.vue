@@ -5,7 +5,7 @@
   />
 
   <TagEditDialog
-    v-model:show="showTagModal"
+    v-model:show="showTagDialog"
     :tag="selectedTag"
     @on-changed="onUpdated"
   />
@@ -17,24 +17,22 @@ import { Tag, useTagAPI } from '../composables/useTagAPI'
 
 const tagAPI = useTagAPI()
 const tags = ref<Tag[]>([])
-const loadTags = async () => {
+const fetchTags = async () => {
   const data = await tagAPI.getAll({
     hasPinned: false
   })
   tags.value = data
 }
 
-onMounted(async () => {
-  await loadTags()
-})
+onMounted(async () => await fetchTags())
 
 ///
 
-const showTagModal = ref(false)
+const showTagDialog = ref(false)
 const selectedTag = ref<Tag>()
 const onEdit = (tag: Tag) => {
   selectedTag.value = tag
-  showTagModal.value = true
+  showTagDialog.value = true
 }
 
 // 保持リスト更新処理

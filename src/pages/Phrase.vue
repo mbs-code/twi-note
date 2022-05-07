@@ -18,12 +18,12 @@ import { Phrase, usePhraseAPI } from '../composables/usePhraseAPI'
 
 const phraseAPI = usePhraseAPI()
 const phrases = ref<Phrase[]>([])
-const loadPhrases = async () => {
+const fetchPhrases = async () => {
   const data = await phraseAPI.getAll()
   phrases.value = data
 }
 
-onMounted(async () => await loadPhrases())
+onMounted(async () => await fetchPhrases())
 
 ///
 

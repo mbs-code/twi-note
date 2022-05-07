@@ -92,14 +92,15 @@ const formColor = ref<string>('')
 const formPriority = ref<number>(0)
 
 const init = () => {
-  formText.value = props.text.trim() ?? props.phrase?.text.trim() ?? ''
-  formColor.value = props.phrase?.color ?? ''
+  formText.value = (props.text.trim() || props.phrase?.text.trim()) || ''
+  formColor.value = props.phrase?.color || ''
   formPriority.value = props.phrase?.priority ?? 0
 }
-onMounted(() => init())
+
 const onReset = () => init()
-watch(() => props.phrase, () => init())
-watch(() => props.text, () => init())
+watch(_show, () => {
+  if (_show.value) init()
+})
 
 /// ////////////////////////////////////////////////////////////
 /// フォーム処理
