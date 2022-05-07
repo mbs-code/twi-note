@@ -66,7 +66,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:body', val: string): void,
   (e: 'save'): void,
-  (e: 'reset'): void,
   (e: 'expand'): void,
 }>()
 
@@ -78,6 +77,5 @@ const formBody = computed({
 ///
 
 const onSave = () => emit('save')
-const onReset = () => emit('reset')
 const onExpandButton = () => emit('expand')
 </script>
