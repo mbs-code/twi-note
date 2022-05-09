@@ -88,21 +88,13 @@ onMounted(() => {
 const onSearch = (text: string) => {
   reportList.search.value = text
   reportList.reload()
-  replaceUrlPhrase()
+  // replaceUrlPhrase()
 }
 
 // タグクリック時に検索文字列に反映、再検索する
 const onTagClick = (name: string) => {
   reportList.pushSearch(`tag:${name}`)
   reportList.reload()
-  replaceUrlPhrase()
-}
-
-// URL の書き換え
-const replaceUrlPhrase = () => {
-  router.replace({
-    name: 'timeline',
-    query: { ...route.query, phrase: reportList.search.value },
-  })
+  // replaceUrlPhrase()
 }
 </script>
