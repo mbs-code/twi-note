@@ -20,6 +20,7 @@
               :width="configStore.expand_side ? 160 : 50"
               :native-scrollbar="false"
             >
+              {{ reportQuery.query }}
               <SidePanel :expand="configStore.expand_side" />
             </n-layout-sider>
 
@@ -35,7 +36,8 @@
 
 <script setup lang="ts">
 import { lightTheme, darkTheme, jaJP, dateJaJP } from 'naive-ui'
-import { onMounted, watch } from 'vue'
+import { onMounted, provide, watch } from 'vue'
+import { injectKey, useReportQuery } from './composables/timelines/useReportQuery'
 import { useAppConfigAPI } from './composables/useAppConfigAPI'
 import { useConfigStore } from './stores/config'
 
@@ -50,4 +52,10 @@ onMounted(async () => {
 watch(configStore.$state, async () => {
   await appConfigAPI.save(configStore.$state)
 })
+
+///
+
+const reportQuery = useReportQuery()
+provide(injectKey, reportQuery)
+
 </script>
