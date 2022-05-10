@@ -8,7 +8,7 @@ export type AppConfig = {
   expand_editor: boolean
 
   timestamp_mode: TimestampMode
-  ref_updated_at: boolean
+  use_updated_at: boolean
   hide_edited: boolean
 
   tl_once_count: number

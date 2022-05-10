@@ -2,6 +2,7 @@ import { LoadAction } from '@ts-pro/vue-eternal-loading'
 import { ref } from 'vue'
 import { useConfigStore } from '../../stores/config'
 import { Report, useReportAPI } from '../useReportAPI'
+import { parse } from 'date-fns'
 
 // NOTE: onMounted は onInfinite で処理される
 // NOTE: 初回取得は行う必要が無い
@@ -42,6 +43,11 @@ export const useReportList = (events?: Events) => {
     tlOnceCountBuffer.value = configStore.tl_once_count
     refUpdatedAtBuffer.value = configStore.use_updated_at
 
+    // TZオフセット計算
+    const date = parse(configStore.start_of_day, 'HH:mm', new Date())
+    const offset = (date.getHours() * 60 + date.getMinutes()) * 60
+    const offsetSec = configStore.timezone_offset_sec - offset
+
     // データ取得
     const items = await reportAPI.getAll({
       text: search.value || undefined,
@@ -49,7 +55,7 @@ export const useReportList = (events?: Events) => {
       count: configStore.tl_once_count,
       latest: true,
       useUpdatedAt: configStore.use_updated_at,
-      timezoneOffsetSec: configStore.offset_sec,
+      timezoneOffsetSec: offsetSec,
     })
 
     reports.value.push(...items)
