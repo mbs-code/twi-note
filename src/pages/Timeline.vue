@@ -24,7 +24,6 @@
         @load="reportList.onInfiniteLoad"
         @update:after="reportList.add($event)"
         @delete:after="reportList.remove($event)"
-        @click:tag="onTagClick"
       />
     </div>
 
@@ -47,16 +46,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
-import { useRoute, useRouter } from 'vue-router'
 import { useReportList } from '../composables/timelines/useReportList'
 import { useHeights } from '../composables/timelines/useHeights'
+import { injectKey, ReportQueryType } from '../composables/timelines/useReportQuery'
 
-const route = useRoute()
-const router = useRouter()
 const configStore = useConfigStore()
+const reportQuery = inject(injectKey) as ReportQueryType
+
+onMounted(() => {
+  // TODO: 設定で自動的に検索させるかがあっても良い
+  reportQuery.onChange.value = onSearch
+})
 
 /// ////////////////////////////////////////////////////////////
 /// 高さ計算機能
@@ -78,23 +81,9 @@ const reportList = useReportList({
   }
 })
 
-onMounted(() => {
-  // URLクエリにフレーズが指定されていたら、検索パラメタに追加する
-  const text = route.query?.phrase as string // url parameter
-  if (text) reportList.pushSearch(text?.trim())
-})
-
 // 再検索する
 const onSearch = (text: string) => {
   reportList.search.value = text
   reportList.reload()
-  // replaceUrlPhrase()
-}
-
-// タグクリック時に検索文字列に反映、再検索する
-const onTagClick = (name: string) => {
-  reportList.pushSearch(`tag:${name}`)
-  reportList.reload()
-  // replaceUrlPhrase()
 }
 </script>

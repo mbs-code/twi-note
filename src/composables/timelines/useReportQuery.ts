@@ -2,6 +2,7 @@ import { ref } from 'vue'
 
 export const useReportQuery = () => {
   const query = ref<string>('')
+  const onChange = ref<(query: string) => void>()
 
   // 同等のクエリか判定する
   const isSame = (diff: string) => {
@@ -20,6 +21,7 @@ export const useReportQuery = () => {
   // クエリを上書きする
   const setQuery = (text: string) => {
     query.value = text
+    if (onChange.value) onChange?.value(query.value)
   }
 
   // クエリワードを追加 or 削除する
@@ -35,10 +37,12 @@ export const useReportQuery = () => {
     }
 
     query.value = queryWords.join(' ')
+    if (onChange.value) onChange?.value(query.value)
   }
 
   return {
     query,
+    onChange,
 
     isSame,
     hasQuery,

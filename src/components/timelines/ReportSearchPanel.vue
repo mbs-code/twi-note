@@ -6,7 +6,6 @@
       placeholder="検索"
       size="small"
       clearable
-      @clear="onClearSearch"
       @keydown.enter.exact="onSearch"
     >
       <template #prefix>
@@ -88,13 +87,13 @@ const onSearch = () => {
   emit('search', reportQuery.query.value)
 }
 
-const onClearSearch = () => {
-  reportQuery.query.value = ''
-  onSearch()
-}
+// const onClearSearch = () => {
+//   reportQuery.query.value = ''
+//   onSearch()
+// }
 
 const onAdvanceSearch = (text: string) => {
   reportQuery.query.value = text
-  onSearch()
+  // onSearch()
 }
 </script>
