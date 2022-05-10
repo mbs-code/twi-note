@@ -12,10 +12,16 @@ export const useReportQuery = () => {
     return diffWords.every((diffWord) => queryWords.includes(diffWord))
   }
 
+  // クエリがあるか確認
+  const hasQuery = () => {
+    return query.value.length && query.value.length > 0
+  }
+
   return {
     query,
 
     isSame,
+    hasQuery,
   }
 }
 

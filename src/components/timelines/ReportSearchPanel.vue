@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-align-center" style="height: 24px">
     <n-input
-      v-model:value="bufferText"
+      v-model:value="reportQuery.query.value"
       class="flex-grow-1"
       placeholder="検索"
       size="small"
@@ -22,7 +22,7 @@
 
     <n-button
       size="small"
-      :disabled="!bufferText.length > 0"
+      :disabled="!reportQuery.hasQuery()"
       @click="openPhraseDialog"
     >
       保存
@@ -43,34 +43,30 @@
 
   <PhraseEditDialog
     v-model:show="showPhraseDialog"
-    :text="bufferText"
+    :text="reportQuery.query.value"
   />
 
   <ReportSearchDialog
     v-model:show="showSearchDialog"
-    :search-text="bufferText"
+    :search-text="reportQuery.query.value"
     @search="onAdvanceSearch"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { inject, ref } from 'vue'
 import {
   Search as SearchIcon,
   EllipsisHorizontal as AdvanceIcon,
 } from '@vicons/ionicons5'
-import { computed } from '@vue/reactivity'
+import { injectKey, ReportQueryType } from '../../composables/timelines/useReportQuery'
 
-const props = defineProps<{ searchText: string }>()
+defineProps<{ searchText: string }>()
 const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
 
-const _searchText = computed(() => props.searchText)
-watch(_searchText, (text) => {
-  // 値が変わったらバッファも更新する
-  bufferText.value = text
-})
+const reportQuery = inject(injectKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 /// ダイアログ管理
@@ -88,17 +84,17 @@ const openPhraseDialog = () => {
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理
 
-const bufferText = ref<string>('')
-
 const onSearch = () => {
-  emit('search', bufferText.value)
+  emit('search', reportQuery.query.value)
 }
 
 const onClearSearch = () => {
-  emit('search', '')
+  reportQuery.query.value = ''
+  onSearch()
 }
 
 const onAdvanceSearch = (text: string) => {
-  emit('search', text)
+  reportQuery.query.value = text
+  onSearch()
 }
 </script>
