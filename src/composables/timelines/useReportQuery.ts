@@ -2,7 +2,6 @@ import { ref } from 'vue'
 
 export const useReportQuery = () => {
   const query = ref<string>('')
-  const onChange = ref<(query: string) => void>()
 
   // 同等のクエリか判定する
   const isSame = (diff: string) => {
@@ -18,10 +17,18 @@ export const useReportQuery = () => {
     return query.value.length && query.value.length > 0
   }
 
+  // クエリ中のタグ名配列を取得する
+  const getTagWords = () => {
+    const queryWords = _splitWords(query.value)
+    return queryWords.filter((word) => word.startsWith('tag:')).map((word) => word.replace('tag:', ''))
+  }
+
+  ///
+
   // クエリを上書きする
   const setQuery = (text: string) => {
     query.value = text
-    if (onChange.value) onChange?.value(query.value)
+    fireChangeEvent()
   }
 
   // クエリワードを追加 or 削除する
@@ -37,15 +44,32 @@ export const useReportQuery = () => {
     }
 
     query.value = queryWords.join(' ')
-    if (onChange.value) onChange?.value(query.value)
+    fireChangeEvent()
+  }
+
+  ///
+
+  const onChanges = ref<((query: string) => void)[]>([])
+
+  // プログラム的に更新した際に実行する
+  const fireChangeEvent = () => {
+    for (const event of onChanges.value) {
+      event(query.value)
+    }
+  }
+
+  // 更新イベントリスナーを追加する
+  const addChangeEvent = (event: (query: string) => void) => {
+    onChanges.value.push(event)
   }
 
   return {
     query,
-    onChange,
+    addChangeEvent,
 
     isSame,
     hasQuery,
+    getTagWords,
 
     setQuery,
     toggleWord,

@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
 import { useReportList } from '../composables/timelines/useReportList'
@@ -56,10 +56,7 @@ import { injectKey, ReportQueryType } from '../composables/timelines/useReportQu
 const configStore = useConfigStore()
 const reportQuery = inject(injectKey) as ReportQueryType
 
-onMounted(() => {
-  // TODO: 設定で自動的に検索させるかがあっても良い
-  reportQuery.onChange.value = onSearch
-})
+reportQuery.addChangeEvent(() => { onSearch })
 
 /// ////////////////////////////////////////////////////////////
 /// 高さ計算機能
