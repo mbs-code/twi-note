@@ -17,11 +17,34 @@ export const useReportQuery = () => {
     return query.value.length && query.value.length > 0
   }
 
+  // クエリを上書きする
+  const setQuery = (text: string) => {
+    query.value = text
+  }
+
+  // クエリワードを追加 or 削除する
+  const toggleWord = (word: string) => {
+    const queryWords = _splitWords(query.value)
+
+    // 既に含まれていたら削除する、それ以外は追加する
+    const index = queryWords.indexOf(word)
+    if (index >= 0) {
+      queryWords.splice(index, 1)
+    } else {
+      queryWords.push(word)
+    }
+
+    query.value = queryWords.join(' ')
+  }
+
   return {
     query,
 
     isSame,
     hasQuery,
+
+    setQuery,
+    toggleWord,
   }
 }
 

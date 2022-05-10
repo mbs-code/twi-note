@@ -19,7 +19,7 @@
           <n-tag
             v-for="(tag, _) of report.tags"
             :key="_"
-            @click="emit('click:tag', tag.name)"
+            @click="onClickTag(tag)"
           >
             <span
               v-if="tag.color"
@@ -56,18 +56,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { TimeOutline as ClockIcon } from '@vicons/ionicons5'
 import { Report } from '../../../composables/useReportAPI'
 import { parseLocal, formatString, formatDistance } from '../../../utils/DateUtil'
 import { useConfigStore } from '../../../stores/config'
+import { injectKey, ReportQueryType } from '../../../composables/timelines/useReportQuery'
+import { Tag } from '../../../composables/useTagAPI'
 
 const props = defineProps<{ report: Report }>()
-const emit = defineEmits<{
-  (e: 'click:tag', name: string): void,
-}>()
 
 const configStore = useConfigStore()
+const reportQuery = inject(injectKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 
@@ -92,4 +92,10 @@ const timestampStr = computed(() => {
       return '-' // 起きないはず
   }
 })
+
+///
+
+const onClickTag = (tag: Tag) => {
+  reportQuery.toggleWord(`tag:${tag.name}`)
+}
 </script>

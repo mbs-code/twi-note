@@ -61,9 +61,8 @@ onMounted(async () => {
 
 const onClickPhrease = (phrase: Phrase) => {
   // 既に選択されていたら削除、それ以外は上書き
-  reportQuery.query.value = reportQuery.isSame(phrase.text)
-    ? ''
-    : phrase.text
+  const isSame = reportQuery.isSame(phrase.text)
+  reportQuery.setQuery(isSame ? '' : phrase.text)
 
   // ページがTLでないなら遷移する
   if (route.name !== 'timeline') {
