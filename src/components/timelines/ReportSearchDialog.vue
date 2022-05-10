@@ -88,7 +88,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { Search as SearchIcon } from '@vicons/ionicons5'
 import { Tag, useTagAPI } from '../../composables/useTagAPI'
-import { useReportSearch } from '../../composables/timelines/useReportSearch'
+import { useReportSearchOld } from '../../composables/timelines/useReportSearchOld'
 
 const props = defineProps<{
   show: boolean,
@@ -100,7 +100,7 @@ const emit = defineEmits<{
 }>()
 
 const tagAPI = useTagAPI()
-const reportSearch = useReportSearch()
+const reportSearch = useReportSearchOld()
 
 const _show = computed({
   get: () => props.show,

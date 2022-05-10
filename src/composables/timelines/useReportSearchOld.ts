@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-export const useReportSearch = () => {
+export const useReportSearchOld = () => {
   const text = ref<string>('')
   const after = ref<string | null>()
   const before = ref<string | null>()
