@@ -20,7 +20,6 @@
               :width="configStore.expand_side ? 160 : 50"
               :native-scrollbar="false"
             >
-              {{ reportQuery.query }}
               <SidePanel :expand="configStore.expand_side" />
             </n-layout-sider>
 
@@ -55,6 +54,7 @@ watch(configStore.$state, async () => {
 
 ///
 
+// 検索クエリ管理 composable
 const reportQuery = useReportQuery()
 provide(injectKey, reportQuery)
 
