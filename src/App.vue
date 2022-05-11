@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { lightTheme, darkTheme, jaJP, dateJaJP } from 'naive-ui'
 import { onMounted, provide, watch } from 'vue'
-import { injectKey, useReportQuery } from './composables/timelines/useReportQuery'
+import { reportQueryKey, useReportQuery } from './composables/timelines/useReportQuery'
 import { useAppConfigAPI } from './composables/useAppConfigAPI'
 import { useConfigStore } from './stores/config'
 
@@ -56,6 +56,6 @@ watch(configStore.$state, async () => {
 
 // 検索クエリ管理 composable
 const reportQuery = useReportQuery()
-provide(injectKey, reportQuery)
+provide(reportQueryKey, reportQuery)
 
 </script>

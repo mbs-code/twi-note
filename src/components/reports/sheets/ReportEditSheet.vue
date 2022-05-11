@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { computed, inject, onMounted, ref } from 'vue'
-import { injectKey, ReportQueryType } from '../../../composables/timelines/useReportQuery'
+import { reportQueryKey, ReportQueryType } from '../../../composables/timelines/useReportQuery'
 import { FormReport, Report, useReportAPI } from '../../../composables/useReportAPI'
 import ArrayTagForm from '../reports/ArrayTagForm.vue'
 
@@ -45,7 +45,7 @@ const emit = defineEmits<{
 
 const message = useMessage()
 const reportAPI = useReportAPI()
-const reportQuery = inject(injectKey) as ReportQueryType
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 reportQuery.addChangeEvent(() => {
   // 検索値が変わった時、追加していないタグがあったら追加する

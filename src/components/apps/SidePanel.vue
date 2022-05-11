@@ -30,14 +30,14 @@ import { inject, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { listen } from '@tauri-apps/api/event'
 import { Phrase, usePhraseAPI } from '../../composables/usePhraseAPI'
-import { ReportQueryType, injectKey } from '../../composables/timelines/useReportQuery'
+import { ReportQueryType, reportQueryKey } from '../../composables/timelines/useReportQuery'
 
 defineProps<{ expand?: boolean }>()
 
 const router = useRouter()
 const route = useRoute()
 const phraseAPI = usePhraseAPI()
-const reportQuery = inject(injectKey) as ReportQueryType
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 

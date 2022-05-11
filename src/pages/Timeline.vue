@@ -51,10 +51,10 @@ import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
 import { useReportList } from '../composables/timelines/useReportList'
 import { useHeights } from '../composables/timelines/useHeights'
-import { injectKey, ReportQueryType } from '../composables/timelines/useReportQuery'
+import { reportQueryKey, ReportQueryType } from '../composables/timelines/useReportQuery'
 
 const configStore = useConfigStore()
-const reportQuery = inject(injectKey) as ReportQueryType
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 reportQuery.addChangeEvent((query: string) => { onSearch(query) })
 

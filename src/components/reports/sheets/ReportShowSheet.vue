@@ -61,13 +61,13 @@ import { TimeOutline as ClockIcon } from '@vicons/ionicons5'
 import { Report } from '../../../composables/useReportAPI'
 import { parseLocal, formatString, formatDistance } from '../../../utils/DateUtil'
 import { useConfigStore } from '../../../stores/config'
-import { injectKey, ReportQueryType } from '../../../composables/timelines/useReportQuery'
+import { reportQueryKey, ReportQueryType } from '../../../composables/timelines/useReportQuery'
 import { Tag } from '../../../composables/useTagAPI'
 
 const props = defineProps<{ report: Report }>()
 
 const configStore = useConfigStore()
-const reportQuery = inject(injectKey) as ReportQueryType
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 

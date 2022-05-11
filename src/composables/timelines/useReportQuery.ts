@@ -1,12 +1,13 @@
 import { ref } from 'vue'
+import { ReportQueryUtil } from '../../utils/ReportQueryUtil'
 
 export const useReportQuery = () => {
   const query = ref<string>('')
 
   // 同等のクエリか判定する
   const isSame = (diff: string) => {
-    const queryWords = _splitWords(query.value)
-    const diffWords = _splitWords(diff)
+    const queryWords = ReportQueryUtil.splitWords(query.value)
+    const diffWords = ReportQueryUtil.splitWords(diff)
 
     // TODO: 片側しか判定してないが良い？
     return diffWords.every((diffWord) => queryWords.includes(diffWord))
@@ -19,7 +20,7 @@ export const useReportQuery = () => {
 
   // クエリ中のタグ名配列を取得する
   const getTagWords = () => {
-    const queryWords = _splitWords(query.value)
+    const queryWords = ReportQueryUtil.splitWords(query.value)
     return queryWords.filter((word) => word.startsWith('tag:')).map((word) => word.replace('tag:', ''))
   }
 
@@ -33,7 +34,7 @@ export const useReportQuery = () => {
 
   // クエリワードを追加 or 削除する
   const toggleWord = (word: string) => {
-    const queryWords = _splitWords(query.value)
+    const queryWords = ReportQueryUtil.splitWords(query.value)
 
     // 既に含まれていたら削除する、それ以外は追加する
     const index = queryWords.indexOf(word)
@@ -76,19 +77,6 @@ export const useReportQuery = () => {
   }
 }
 
-///
-
 export type ReportQueryType = ReturnType<typeof useReportQuery>
 
-export const injectKey = 'reportQuery'
-
-///
-
-// クエリをスペースで分割する
-// TODO: deprecated
-const _splitWords = (query: string) => {
-  return query
-    .replace('　', ' ')
-    .split(' ')
-    .filter((e) => e.trim().length > 0)
-}
+export const reportQueryKey = 'reportQuery'

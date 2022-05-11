@@ -58,14 +58,14 @@ import {
   Search as SearchIcon,
   EllipsisHorizontal as AdvanceIcon,
 } from '@vicons/ionicons5'
-import { injectKey, ReportQueryType } from '../../composables/timelines/useReportQuery'
+import { reportQueryKey, ReportQueryType } from '../../composables/timelines/useReportQuery'
 
 defineProps<{ query: string }>()
 const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
 
-const reportQuery = inject(injectKey) as ReportQueryType
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 /// ダイアログ管理
