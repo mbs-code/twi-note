@@ -16,6 +16,7 @@ export const useReportList = (events?: Events) => {
   const reportAPI = useReportAPI()
 
   const reports = ref<Report[]>([])
+  const query = ref<string>('')
   const isInitial = ref<boolean>(false) // infinite load用
   const _page = ref<number>(0) // load 時に +1 する
 
@@ -50,7 +51,7 @@ export const useReportList = (events?: Events) => {
 
     // データ取得
     const items = await reportAPI.getAll({
-      text: search.value || undefined,
+      text: query.value || undefined,
       page: _page.value || 1,
       count: configStore.tl_once_count,
       latest: true,
@@ -86,27 +87,6 @@ export const useReportList = (events?: Events) => {
   }
 
   /// ////////////////////////////////////////////////////////////
-  /// 検索系
-
-  const search = ref<string>('')
-  const pushSearch = (text: string) => {
-    const words = search.value.replace('　', ' ').split(' ')
-
-    const index = words.indexOf(text)
-    if (index >= 0) {
-      // 検索文字列に含まれていたら削除
-      words.splice(index, 1)
-    } else {
-      // 含まれていないなら追加
-      words.push(text)
-      search.value = [search.value.trim(), text].filter((e) => e).join(' ') + ' '
-      return true
-    }
-
-    search.value = words.join(' ')
-  }
-
-  /// ////////////////////////////////////////////////////////////
   /// 配列更新機能
 
   const add = (add: Report) => {
@@ -134,11 +114,9 @@ export const useReportList = (events?: Events) => {
 
   return {
     reports,
+    query,
     isInitial,
     onInfiniteLoad,
-
-    search,
-    pushSearch,
 
     reload,
     add,

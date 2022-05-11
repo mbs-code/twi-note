@@ -2,7 +2,7 @@
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
       <ReportSearchPanel
-        :search-text="reportList.search.value"
+        :query="reportList.query.value"
         @search="onSearch"
       />
     </div>
@@ -24,7 +24,6 @@
         @load="reportList.onInfiniteLoad"
         @update:after="reportList.add($event)"
         @delete:after="reportList.remove($event)"
-        @click:tag="onTagClick"
       />
     </div>
 
@@ -47,16 +46,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useConfigStore } from '../stores/config'
 import { NLayout } from 'naive-ui/lib/components'
-import { useRoute, useRouter } from 'vue-router'
 import { useReportList } from '../composables/timelines/useReportList'
 import { useHeights } from '../composables/timelines/useHeights'
+import { reportQueryKey, ReportQueryType } from '../composables/timelines/useReportQuery'
 
-const route = useRoute()
-const router = useRouter()
 const configStore = useConfigStore()
+const reportQuery = inject(reportQueryKey) as ReportQueryType
+
+reportQuery.addChangeEvent((query: string) => { onSearch(query) })
 
 /// ////////////////////////////////////////////////////////////
 /// 高さ計算機能
@@ -78,23 +78,9 @@ const reportList = useReportList({
   }
 })
 
-onMounted(() => {
-  // URLクエリにフレーズが指定されていたら、検索パラメタに追加する
-  const text = route.query?.phrase as string // url parameter
-  if (text) reportList.pushSearch(text?.trim())
-})
-
 // 再検索する
-const onSearch = (text: string) => {
-  reportList.search.value = text
+const onSearch = (query: string) => {
+  reportList.query.value = query
   reportList.reload()
-  // replaceUrlPhrase()
-}
-
-// タグクリック時に検索文字列に反映、再検索する
-const onTagClick = (name: string) => {
-  reportList.pushSearch(`tag:${name}`)
-  reportList.reload()
-  // replaceUrlPhrase()
 }
 </script>

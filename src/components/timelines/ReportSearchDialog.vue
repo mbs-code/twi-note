@@ -20,7 +20,7 @@
     <n-space vertical>
       <n-form-item label="文字列（スペースでAND検索）">
         <n-input
-          v-model:value="reportSearch.text.value"
+          v-model:value="text"
           placeholder="Label"
           clearable
         />
@@ -29,7 +29,7 @@
       <n-form-item label="投稿日時">
         <n-space align="center" :wrap="false">
           <n-date-picker
-            v-model:formatted-value="reportSearch.after.value"
+            v-model:formatted-value="after"
             type="date"
             placeholder="Start Date"
             clearable
@@ -42,7 +42,7 @@
           <span>～</span>
 
           <n-date-picker
-            v-model:formatted-value="reportSearch.before.value"
+            v-model:formatted-value="before"
             type="date"
             placeholder="End Date"
             clearable
@@ -56,7 +56,7 @@
 
       <n-form-item label="タグ">
         <n-select
-          v-model:value="reportSearch.selectedTags.value"
+          v-model:value="selectedTags"
           filterable
           multiple
           clearable
@@ -67,7 +67,7 @@
 
     <template #action>
       <div class="d-flex">
-        <n-button size="small" @click="reportSearch.clear">
+        <n-button size="small" @click="onClear">
           クリア
         </n-button>
         <n-button size="small" @click="onReset">
@@ -88,11 +88,11 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { Search as SearchIcon } from '@vicons/ionicons5'
 import { Tag, useTagAPI } from '../../composables/useTagAPI'
-import { useReportSearch } from '../../composables/timelines/useReportSearch'
+import { ReportQueryUtil } from '../../utils/ReportQueryUtil'
 
 const props = defineProps<{
   show: boolean,
-  searchText: string,
+  query: string,
 }>()
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void,
@@ -100,7 +100,6 @@ const emit = defineEmits<{
 }>()
 
 const tagAPI = useTagAPI()
-const reportSearch = useReportSearch()
 
 const _show = computed({
   get: () => props.show,
@@ -130,21 +129,43 @@ const options = computed(() => {
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理
 
+const text = ref<string>('')
+const after = ref<string | null>()
+const before = ref<string | null>()
+const selectedTags = ref<string[]>([])
+
 watch(_show, () => {
   // 開いたときに _search を各フォームにバインドする
-  if (props.searchText) {
-    reportSearch.bind(props.searchText)
-  }
+  onReset()
 })
 
-const onSearch = () => {
-  const searchText = reportSearch.generate()
-  emit('search', searchText)
-  onClose()
+///
+
+const onClear = () => {
+  text.value = ''
+  after.value = undefined
+  before.value = undefined
+  selectedTags.value = []
 }
 
 const onReset = () => {
-  reportSearch.bind(props.searchText)
+  const params = ReportQueryUtil.parse(props.query)
+  text.value = params.text ?? ''
+  after.value = params.after
+  before.value = params.before
+  selectedTags.value = params.tags
+}
+
+const onSearch = () => {
+  const newQuery = ReportQueryUtil.generate({
+    text: text.value,
+    after: after.value ?? undefined,
+    before: before.value ?? undefined,
+    tags: selectedTags.value,
+  })
+
+  emit('search', newQuery)
+  onClose()
 }
 
 const onClose = () => {

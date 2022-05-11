@@ -28,8 +28,8 @@
 
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, inject, onMounted, ref } from 'vue'
+import { reportQueryKey, ReportQueryType } from '../../../composables/timelines/useReportQuery'
 import { FormReport, Report, useReportAPI } from '../../../composables/useReportAPI'
 import ArrayTagForm from '../reports/ArrayTagForm.vue'
 
@@ -43,9 +43,21 @@ const emit = defineEmits<{
   (e: 'update:expand', val: boolean): void,
 }>()
 
-const route = useRoute()
 const message = useMessage()
 const reportAPI = useReportAPI()
+const reportQuery = inject(reportQueryKey) as ReportQueryType
+
+reportQuery.addChangeEvent(() => {
+  // 検索値が変わった時、追加していないタグがあったら追加する
+  const formTags = formTagNames.value
+
+  const tags = defaultTags()
+  for (const tag of tags) {
+    if (!formTags.includes(tag)) {
+      formTags.push(tag)
+    }
+  }
+})
 
 const onExpandButton = () => {
   emit('update:expand', !props.expand)
@@ -61,14 +73,13 @@ const formBody = ref<string>('')
 const formTagNames = ref<string[]>([])
 
 const defaultTags = () => {
-  const tag = route.query?.tag as string // url parameter
-  return tag ? [tag] : []
+  return reportQuery.getTagWords()
 }
 
 const resetForm = () => {
   formTitle.value = props.report?.title ?? ''
   formBody.value = props.report?.body ?? ''
-  formTagNames.value = props.report?.tags.map((tag) => tag.name) ?? defaultTags()
+  formTagNames.value = props.report?.tags.map((tag) => tag.name)?? defaultTags()
 
   // インプットも初期化
   tagNamesRef.value?.onClear()

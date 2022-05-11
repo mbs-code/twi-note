@@ -12,7 +12,7 @@
     >
       <n-button
         style="padding: 0px;"
-        @click="onSelect(phrase)"
+        @click="onClickPhrease(phrase)"
       >
         <n-avatar
           :class="{ 'avatar-block': expand }"
@@ -26,20 +26,22 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { listen } from '@tauri-apps/api/event'
 import { Phrase, usePhraseAPI } from '../../composables/usePhraseAPI'
+import { ReportQueryType, reportQueryKey } from '../../composables/timelines/useReportQuery'
 
 defineProps<{ expand?: boolean }>()
 
 const router = useRouter()
 const route = useRoute()
+const phraseAPI = usePhraseAPI()
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 
 // タグリスト取得
-const phraseAPI = usePhraseAPI()
 const phrases = ref<Phrase[]>([])
 const fetchPhrase = async () => {
   const data = await phraseAPI.getAll()
@@ -55,12 +57,16 @@ onMounted(async () => {
   })
 })
 
-const onSelect = (phrase: Phrase) => {
-  const text = route.query?.phrase as string // url parameter
-  if (text === phrase.text) {
+///
+
+const onClickPhrease = (phrase: Phrase) => {
+  // 既に選択されていたら削除、それ以外は上書き
+  const isSame = reportQuery.isSame(phrase.text)
+  reportQuery.setQuery(isSame ? '' : phrase.text)
+
+  // ページがTLでないなら遷移する
+  if (route.name !== 'timeline') {
     router.push({ name: 'timeline' })
-  } else {
-    router.push({ name: 'timeline', query: { phrase: phrase.text } })
   }
 }
 
@@ -68,10 +74,10 @@ const onSelect = (phrase: Phrase) => {
 
 // アクティブタグを判定
 const isActive = (phrase: Phrase) => {
-  const text = route.query?.phrase as string // url parameter
-  return text?.trim() === phrase.text
+  return reportQuery.isSame(phrase.text)
 }
 
+// ショート名を表示
 const shortDisplayName = (phrase: Phrase) => {
   const splitIdx = phrase.name.indexOf(':')
   return splitIdx >= 0
@@ -79,6 +85,7 @@ const shortDisplayName = (phrase: Phrase) => {
     : phrase.name
 }
 
+// フル名を表示
 const expandDisplayName = (phrase: Phrase) => {
   const splitIdx = phrase.name.indexOf(':')
   return splitIdx >= 0

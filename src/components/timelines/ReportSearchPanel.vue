@@ -1,12 +1,11 @@
 <template>
   <div class="d-flex flex-align-center" style="height: 24px">
     <n-input
-      v-model:value="bufferText"
+      v-model:value="reportQuery.query.value"
       class="flex-grow-1"
       placeholder="検索"
       size="small"
       clearable
-      @clear="onClearSearch"
       @keydown.enter.exact="onSearch"
     >
       <template #prefix>
@@ -22,7 +21,7 @@
 
     <n-button
       size="small"
-      :disabled="!bufferText.length > 0"
+      :disabled="!reportQuery.hasQuery()"
       @click="openPhraseDialog"
     >
       保存
@@ -43,34 +42,30 @@
 
   <PhraseEditDialog
     v-model:show="showPhraseDialog"
-    :text="bufferText"
+    :text="reportQuery.query.value"
   />
 
   <ReportSearchDialog
     v-model:show="showSearchDialog"
-    :search-text="bufferText"
+    :query="reportQuery.query.value"
     @search="onAdvanceSearch"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { inject, ref } from 'vue'
 import {
   Search as SearchIcon,
   EllipsisHorizontal as AdvanceIcon,
 } from '@vicons/ionicons5'
-import { computed } from '@vue/reactivity'
+import { reportQueryKey, ReportQueryType } from '../../composables/timelines/useReportQuery'
 
-const props = defineProps<{ searchText: string }>()
+defineProps<{ query: string }>()
 const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
 
-const _searchText = computed(() => props.searchText)
-watch(_searchText, (text) => {
-  // 値が変わったらバッファも更新する
-  bufferText.value = text
-})
+const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
 /// ダイアログ管理
@@ -88,17 +83,11 @@ const openPhraseDialog = () => {
 /// ////////////////////////////////////////////////////////////
 /// フォーム管理
 
-const bufferText = ref<string>('')
-
 const onSearch = () => {
-  emit('search', bufferText.value)
-}
-
-const onClearSearch = () => {
-  emit('search', '')
+  emit('search', reportQuery.query.value)
 }
 
 const onAdvanceSearch = (text: string) => {
-  emit('search', text)
+  reportQuery.setQuery(text)
 }
 </script>
