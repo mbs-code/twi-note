@@ -106,7 +106,11 @@ const columns = reactive<DataTableColumns<Tag>>([
         icon: () => h(
           NIcon,
           {},
-          { default: h(EditIcon) },
+          {
+            default: () => h(
+              EditIcon,
+            )
+          },
         ),
       },
     )

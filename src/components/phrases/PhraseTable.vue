@@ -98,7 +98,11 @@ const columns = reactive<DataTableColumns<Phrase>>([
         icon: () => h(
           NIcon,
           {},
-          { default: h(EditIcon) },
+          {
+            default: () => h(
+              EditIcon,
+            )
+          },
         ),
       },
     )
