@@ -56,7 +56,7 @@ import { injectKey, ReportQueryType } from '../composables/timelines/useReportQu
 const configStore = useConfigStore()
 const reportQuery = inject(injectKey) as ReportQueryType
 
-reportQuery.addChangeEvent(() => { onSearch })
+reportQuery.addChangeEvent((query: string) => { onSearch(query) })
 
 /// ////////////////////////////////////////////////////////////
 /// 高さ計算機能
