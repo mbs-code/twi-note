@@ -47,7 +47,7 @@
 
   <ReportSearchDialog
     v-model:show="showSearchDialog"
-    :search-text="reportQuery.query.value"
+    :query="reportQuery.query.value"
     @search="onAdvanceSearch"
   />
 </template>
@@ -60,7 +60,7 @@ import {
 } from '@vicons/ionicons5'
 import { injectKey, ReportQueryType } from '../../composables/timelines/useReportQuery'
 
-defineProps<{ searchText: string }>()
+defineProps<{ query: string }>()
 const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
@@ -87,13 +87,7 @@ const onSearch = () => {
   emit('search', reportQuery.query.value)
 }
 
-// const onClearSearch = () => {
-//   reportQuery.query.value = ''
-//   onSearch()
-// }
-
 const onAdvanceSearch = (text: string) => {
-  reportQuery.query.value = text
-  // onSearch()
+  reportQuery.setQuery(text)
 }
 </script>

@@ -2,7 +2,7 @@
   <n-layout-header bordered position="absolute">
     <div ref="headerRef" style="padding: 4px">
       <ReportSearchPanel
-        :search-text="reportList.search.value"
+        :query="reportList.query.value"
         @search="onSearch"
       />
     </div>
@@ -79,8 +79,8 @@ const reportList = useReportList({
 })
 
 // 再検索する
-const onSearch = (text: string) => {
-  reportList.search.value = text
+const onSearch = (query: string) => {
+  reportList.query.value = query
   reportList.reload()
 }
 </script>

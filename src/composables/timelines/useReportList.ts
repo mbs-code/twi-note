@@ -50,7 +50,7 @@ export const useReportList = (events?: Events) => {
 
     // データ取得
     const items = await reportAPI.getAll({
-      text: search.value || undefined,
+      text: query.value || undefined,
       page: _page.value || 1,
       count: configStore.tl_once_count,
       latest: true,
@@ -88,9 +88,9 @@ export const useReportList = (events?: Events) => {
   /// ////////////////////////////////////////////////////////////
   /// 検索系
 
-  const search = ref<string>('')
+  const query = ref<string>('')
   const pushSearch = (text: string) => {
-    const words = search.value.replace('　', ' ').split(' ')
+    const words = query.value.replace('　', ' ').split(' ')
 
     const index = words.indexOf(text)
     if (index >= 0) {
@@ -99,11 +99,11 @@ export const useReportList = (events?: Events) => {
     } else {
       // 含まれていないなら追加
       words.push(text)
-      search.value = [search.value.trim(), text].filter((e) => e).join(' ') + ' '
+      query.value = [query.value.trim(), text].filter((e) => e).join(' ') + ' '
       return true
     }
 
-    search.value = words.join(' ')
+    query.value = words.join(' ')
   }
 
   /// ////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ export const useReportList = (events?: Events) => {
     isInitial,
     onInfiniteLoad,
 
-    search,
+    query,
     pushSearch,
 
     reload,

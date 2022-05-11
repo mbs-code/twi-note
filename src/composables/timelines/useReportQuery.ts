@@ -85,6 +85,7 @@ export const injectKey = 'reportQuery'
 ///
 
 // クエリをスペースで分割する
+// TODO: deprecated
 const _splitWords = (query: string) => {
   return query
     .replace('　', ' ')
