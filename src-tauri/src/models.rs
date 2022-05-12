@@ -117,3 +117,37 @@ impl ReportTagJoinTag {
         })
     }
 }
+
+/// ////////////////////////////////////////
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Phrase {
+    pub id: i64,
+    pub name: String,
+    pub text: String,
+    pub color: Option<String>,
+    pub priority: i64,
+    pub created_at: String,
+    pub updated_at: String,
+}
+impl Phrase {
+    pub fn by_row(row: &Row) -> Result<Phrase, Error> {
+        Ok(Phrase {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            text: row.get(2)?,
+            color: row.get(3)?,
+            priority: row.get(4)?,
+            created_at: row.get(5)?,
+            updated_at: row.get(6)?,
+        })
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PhraseParams {
+    pub name: String,
+    pub text: String,
+    pub color: Option<String>,
+    pub priority: i64,
+}

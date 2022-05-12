@@ -1,7 +1,7 @@
 <template>
   <n-data-table
     :columns="columns"
-    :data="tags"
+    :data="phrases"
     size="small"
     flex-height
     :bordered="false"
@@ -14,17 +14,17 @@
 <script setup lang="ts">
 import { DataTableColumns, NButton, NIcon } from 'naive-ui'
 import { h, reactive } from 'vue'
-import { Tag } from '../../composables/useTagAPI'
+import { Phrase } from '../../composables/usePhraseAPI'
 import {
   CreateOutline as EditIcon,
 } from '@vicons/ionicons5'
 
-defineProps<{ tags: Tag[] }>()
+defineProps<{ phrases: Phrase[] }>()
 const emit = defineEmits<{
-  (e: 'edit', tags: Tag): void,
+  (e: 'edit', phrases: Phrase): void,
 }>()
 
-const columns = reactive<DataTableColumns<Tag>>([
+const columns = reactive<DataTableColumns<Phrase>>([
   {
     title: 'ID',
     key: 'id',
@@ -41,8 +41,13 @@ const columns = reactive<DataTableColumns<Tag>>([
     defaultSortOrder: 'descend', // 初期値降順
   },
   {
-    title: 'タグ名',
+    title: '表示名',
     key: 'name',
+    sorter: 'default',
+  },
+  {
+    title: 'フレーズ',
+    key: 'text',
     sorter: 'default',
   },
   {
@@ -50,7 +55,7 @@ const columns = reactive<DataTableColumns<Tag>>([
     key: 'color',
     align: 'center',
     sorter: 'default',
-    render: (row: Tag) => {
+    render: (row: Phrase) => {
       return h(
         'div',
         {},
@@ -68,19 +73,6 @@ const columns = reactive<DataTableColumns<Tag>>([
     }
   },
   {
-    title: 'ピン留め',
-    key: 'is_pinned',
-    align: 'center',
-    sorter: 'default',
-    render: (row: Tag) => {
-      return h(
-        'span',
-        {},
-        { default: () => row.is_pinned ? '○' : '-' },
-      )
-    },
-  },
-  {
     title: 'created_at',
     key: 'created_at',
     sorter: 'default',
@@ -94,7 +86,7 @@ const columns = reactive<DataTableColumns<Tag>>([
     title: '',
     key: 'actions',
     width: 60,
-    render: (row: Tag) =>  h(
+    render: (row: Phrase) =>  h(
       NButton,
       {
         quaternary: true,

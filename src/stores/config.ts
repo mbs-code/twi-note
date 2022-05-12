@@ -1,6 +1,5 @@
-import { parse } from 'date-fns'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { TimestampMode } from '../composables/useAppConfigAPI'
 
 export const useConfigStore = defineStore('config', () => {
@@ -22,21 +21,11 @@ export const useConfigStore = defineStore('config', () => {
 
   /** タイムゾーン値 */
   const timezone_offset_sec = ref<number>(0)
-  const timezone_offset_hour = computed({
-    get: () => timezone_offset_sec.value / 60 / 60,
-    set: (hour: number) => {
-      timezone_offset_sec.value = hour * 60 * 60
-    },
-  })
   /** 一日の開始時刻 */
   const start_of_day = ref<string>('00:00')
-  /** タイムゾーン + 開始時刻オフセット */
-  const offset_sec = computed(() => {
-    const date = parse(start_of_day.value, 'HH:mm', new Date())
-    const offset = (date.getHours() * 60 + date.getMinutes()) * 60
-    console.log('calc', date, offset)
-    return timezone_offset_sec.value - offset
-  })
+
+  /** フレーズ保存機能を使用するか */
+  const use_phrase = ref<boolean>(false)
 
   return {
     is_dark,
@@ -49,8 +38,8 @@ export const useConfigStore = defineStore('config', () => {
     hide_edited,
 
     timezone_offset_sec,
-    timezone_offset_hour,
     start_of_day,
-    offset_sec,
+
+    use_phrase,
   }
 })

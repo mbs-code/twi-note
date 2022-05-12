@@ -1,6 +1,6 @@
 <template>
   <n-drawer v-model:show="showDrawer" :style="{ width: 'calc(100vw)', maxWidth: '320px' }">
-    <n-drawer-content title="Config" closable>
+    <n-drawer-content title="Config" closable :native-scrollbar="false">
       <n-form-item label="Dark Mode">
         <n-space>
           <n-icon size="24">
@@ -43,7 +43,7 @@
 
       <n-form-item label="Timezone UTC Offset (Hour)">
         <n-input-number
-          v-model:value="configStore.timezone_offset_hour"
+          v-model:value="timezone_offset_hour"
           min="-24"
           max="24"
           step="1"
@@ -59,6 +59,12 @@
           format="HH:mm"
           value-format="HH:mm"
         />
+      </n-form-item>
+
+      <n-form-item :show-label="false">
+        <n-checkbox v-model:checked="configStore.use_phrase">
+          ショートカット検索を使用する
+        </n-checkbox>
       </n-form-item>
 
       <n-form-item label="Storage">
@@ -125,6 +131,13 @@ const timestapOptions = ref([
   { label: '相対時間 [5日前]', value: 'relative' },
   { label: '絶対時間 [2022-04-01 10:00:00]', value: 'absolute' },
 ])
+
+const timezone_offset_hour = computed({
+  get: () => configStore.timezone_offset_sec / 60 / 60,
+  set: (hour: number) => {
+    configStore.timezone_offset_sec = hour * 60 * 60
+  },
+})
 
 const fileSize = computed(() => {
   return filesize(storage.value?.size ?? 0)

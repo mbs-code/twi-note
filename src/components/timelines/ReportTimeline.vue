@@ -8,7 +8,6 @@
       style="margin: 8px"
       @update:after="emit('update:after', $event)"
       @delete:after="emit('delete:after', $event)"
-      @click:tag="emit('click:tag', $event)"
     />
   </transition-group>
 
@@ -60,7 +59,6 @@ const emit = defineEmits<{
   (e: 'load', action: LoadAction): void,
   (e: 'update:after', report: Report): void, // bridge
   (e: 'delete:after', report: Report): void, // bridge
-  (e: 'click:tag', name: string): void, // bridge
 }>()
 
 /// ////////////////////////////////////////////////////////////

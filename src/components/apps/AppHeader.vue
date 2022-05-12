@@ -1,6 +1,7 @@
 <template>
   <div class="d-flex" style="margin: 0 12px">
     <n-button
+      v-if="configStore.use_phrase"
       size="small"
       text
       @click="onExpandButton"
@@ -12,7 +13,11 @@
     </n-button>
 
     <template v-for="(link, _) of links" :key="_">
-      <router-link :to="link.to" class="no-link">
+      <router-link
+        v-if="link?.show ? link.show() : true"
+        :to="link.to"
+        class="no-link"
+      >
         <n-button size="small" text>
           <template #icon>
             <n-icon :component="link.icon" />
@@ -48,6 +53,7 @@ import {
   SettingsSharp as DrawerIcon,
   DocumentText as ReportIcon,
   Pricetag as TagIcon,
+  Bookmark as PhraseIcon
 } from '@vicons/ionicons5'
 import { ref } from 'vue'
 
@@ -57,6 +63,12 @@ const links = [
   { name: 'ホーム', icon: ReportIcon, to: { name: 'home' } },
   { name: 'タイムライン', icon: ReportIcon, to: { name: 'timeline' } },
   { name: 'タグ', icon: TagIcon, to: { name: 'tag' } },
+  {
+    name: 'フレーズ',
+    icon: PhraseIcon,
+    to: { name: 'phrase' },
+    show: () => configStore.use_phrase,
+  },
 ]
 
 const onExpandButton = () => {

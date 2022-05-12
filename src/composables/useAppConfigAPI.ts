@@ -8,12 +8,14 @@ export type AppConfig = {
   expand_editor: boolean
 
   timestamp_mode: TimestampMode
-  ref_updated_at: boolean
+  use_updated_at: boolean
   hide_edited: boolean
 
   tl_once_count: number
   timezone_offset_sec: number
   start_of_day: string
+
+  use_phrase: boolean
 }
 
 export const useAppConfigAPI = () => {

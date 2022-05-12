@@ -15,6 +15,7 @@
           <!-- Contents -->
           <n-layout has-sider position="absolute" style="top: 32px">
             <n-layout-sider
+              v-if="configStore.use_phrase"
               bordered
               collapse-mode="width"
               :width="configStore.expand_side ? 160 : 50"
@@ -35,7 +36,8 @@
 
 <script setup lang="ts">
 import { lightTheme, darkTheme, jaJP, dateJaJP } from 'naive-ui'
-import { onMounted, watch } from 'vue'
+import { onMounted, provide, watch } from 'vue'
+import { reportQueryKey, useReportQuery } from './composables/timelines/useReportQuery'
 import { useAppConfigAPI } from './composables/useAppConfigAPI'
 import { useConfigStore } from './stores/config'
 
@@ -50,4 +52,11 @@ onMounted(async () => {
 watch(configStore.$state, async () => {
   await appConfigAPI.save(configStore.$state)
 })
+
+///
+
+// 検索クエリ管理 composable
+const reportQuery = useReportQuery()
+provide(reportQueryKey, reportQuery)
+
 </script>
