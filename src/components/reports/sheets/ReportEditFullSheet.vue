@@ -21,9 +21,14 @@
         :autosize="{ minRows: 3, maxRows: 10 }"
       />
 
-      <ArrayTagForm
-        ref="tagNamesRef"
+      <n-select
         v-model:value="formTagNames"
+        placeholder="Tags"
+        filterable
+        multiple
+        clearable
+        tag
+        :options="options"
       />
     </n-space>
 
@@ -61,9 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import ArrayTagForm from '../ArrayTagForm.vue'
-
+import { computed, onMounted, ref } from 'vue'
+import { Tag, useTagAPI } from '../../../composables/useTagAPI'
 import {
   FileTrayOutline as CreateIcon,
   ChevronDown as BottomIcon,
@@ -85,6 +89,30 @@ const emit = defineEmits<{
   (e: 'reset'): void,
   (e: 'expand'): void,
 }>()
+
+const tagAPI = useTagAPI()
+
+/// ////////////////////////////////////////////////////////////
+/// タグ管理
+
+const tags = ref<Tag[]>([])
+onMounted(async () => {
+  tags.value = await tagAPI.getAll({
+    hasPinned: false,
+  })
+})
+
+const options = computed(() => {
+  return tags.value
+    .map((tag: Tag) => {
+      return {
+        label: tag.name,
+        value: tag.name,
+      }
+    })
+})
+
+/// ////////////////////////////////////////////////////////////
 
 const formTitle = computed({
   get: () => props.title,
