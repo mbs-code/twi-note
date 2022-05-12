@@ -20,6 +20,7 @@
     </n-button>
 
     <n-button
+      v-if="configStore.use_phrase"
       size="small"
       :disabled="!reportQuery.hasQuery()"
       @click="openPhraseDialog"
@@ -59,12 +60,14 @@ import {
   EllipsisHorizontal as AdvanceIcon,
 } from '@vicons/ionicons5'
 import { reportQueryKey, ReportQueryType } from '../../composables/timelines/useReportQuery'
+import { useConfigStore } from '../../stores/config'
 
 defineProps<{ query: string }>()
 const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
 
+const configStore = useConfigStore()
 const reportQuery = inject(reportQueryKey) as ReportQueryType
 
 /// ////////////////////////////////////////////////////////////
