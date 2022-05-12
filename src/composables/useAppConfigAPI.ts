@@ -14,6 +14,8 @@ export type AppConfig = {
   tl_once_count: number
   timezone_offset_sec: number
   start_of_day: string
+
+  use_phrase: boolean
 }
 
 export const useAppConfigAPI = () => {

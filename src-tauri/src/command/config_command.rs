@@ -23,6 +23,9 @@ pub struct AppConfig {
     pub timezone_offset_sec: i64,
     #[serde(default = "default_as_0_0")]
     pub start_of_day: String,
+
+    #[serde(default = "default_as_false")]
+    pub use_phrase: bool,
 }
 
 fn default_as_false() -> bool {

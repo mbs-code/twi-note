@@ -15,6 +15,7 @@
           <!-- Contents -->
           <n-layout has-sider position="absolute" style="top: 32px">
             <n-layout-sider
+              v-if="configStore.use_phrase"
               bordered
               collapse-mode="width"
               :width="configStore.expand_side ? 160 : 50"

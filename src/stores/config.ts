@@ -21,9 +21,11 @@ export const useConfigStore = defineStore('config', () => {
 
   /** タイムゾーン値 */
   const timezone_offset_sec = ref<number>(0)
-
   /** 一日の開始時刻 */
   const start_of_day = ref<string>('00:00')
+
+  /** フレーズ保存機能を使用するか */
+  const use_phrase = ref<boolean>(false)
 
   return {
     is_dark,
@@ -37,5 +39,7 @@ export const useConfigStore = defineStore('config', () => {
 
     timezone_offset_sec,
     start_of_day,
+
+    use_phrase,
   }
 })

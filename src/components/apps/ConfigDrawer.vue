@@ -61,6 +61,12 @@
         />
       </n-form-item>
 
+      <n-form-item :show-label="false">
+        <n-checkbox v-model:checked="configStore.use_phrase">
+          ショートカット検索を使用する
+        </n-checkbox>
+      </n-form-item>
+
       <n-form-item label="Storage">
         <n-space vertical style="width: 100%">
           <n-input :value="storage?.path" readonly>
