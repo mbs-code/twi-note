@@ -1,6 +1,6 @@
 <template>
   <n-drawer v-model:show="showDrawer" :style="{ width: 'calc(100vw)', maxWidth: '320px' }">
-    <n-drawer-content title="Config" closable>
+    <n-drawer-content title="Config" closable :native-scrollbar="false">
       <n-form-item label="Dark Mode">
         <n-space>
           <n-icon size="24">
