@@ -23,6 +23,7 @@ pub fn tag_get_all(has_pinned: bool) -> Vec<Tag> {
     query.push("ORDER BY priority DESC, id ASC".to_string());
 
     // タグ配列の取得
+    println!("{:?}", &query.join(" "));
     let mut stmt = conn.prepare(&query.join(" ")).unwrap();
     let tags = stmt
         .query_map([], |row| Tag::by_row(row))

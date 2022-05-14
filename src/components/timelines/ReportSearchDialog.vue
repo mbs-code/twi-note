@@ -55,13 +55,7 @@
       </n-form-item>
 
       <n-form-item label="タグ">
-        <n-select
-          v-model:value="selectedTags"
-          filterable
-          multiple
-          clearable
-          :options="options"
-        />
+        <TagSelect v-model:value="selectedTags" />
       </n-form-item>
     </n-space>
 
@@ -85,9 +79,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Search as SearchIcon } from '@vicons/ionicons5'
-import { Tag, useTagAPI } from '../../composables/useTagAPI'
 import { ReportQueryUtil } from '../../utils/ReportQueryUtil'
 
 const props = defineProps<{
@@ -99,31 +92,9 @@ const emit = defineEmits<{
   (e: 'search', text: string): void,
 }>()
 
-const tagAPI = useTagAPI()
-
 const _show = computed({
   get: () => props.show,
   set: (value) => emit('update:show', value),
-})
-
-/// ////////////////////////////////////////////////////////////
-/// タグ管理
-
-const tags = ref<Tag[]>([])
-onMounted(async () => {
-  tags.value = await tagAPI.getAll({
-    hasPinned: false,
-  })
-})
-
-const options = computed(() => {
-  return tags.value
-    .map((tag: Tag) => {
-      return {
-        label: tag.name,
-        value: tag.name,
-      }
-    })
 })
 
 /// ////////////////////////////////////////////////////////////

@@ -5,7 +5,6 @@
 declare module 'vue' {
   export interface GlobalComponents {
     AppHeader: typeof import('./components/apps/AppHeader.vue')['default']
-    ArrayTagForm: typeof import('./components/reports/ArrayTagForm.vue')['default']
     ConfigDrawer: typeof import('./components/apps/ConfigDrawer.vue')['default']
     PhraseEditDialog: typeof import('./components/phrases/PhraseEditDialog.vue')['default']
     PhraseTable: typeof import('./components/phrases/PhraseTable.vue')['default']
@@ -16,9 +15,12 @@ declare module 'vue' {
     ReportSearchDialog: typeof import('./components/timelines/ReportSearchDialog.vue')['default']
     ReportSearchPanel: typeof import('./components/timelines/ReportSearchPanel.vue')['default']
     ReportShowSheet: typeof import('./components/reports/sheets/ReportShowSheet.vue')['default']
+    ReportTag: typeof import('./components/reports/ReportTag.vue')['default']
     ReportTimeline: typeof import('./components/timelines/ReportTimeline.vue')['default']
     SidePanel: typeof import('./components/apps/SidePanel.vue')['default']
     TagEditDialog: typeof import('./components/tags/TagEditDialog.vue')['default']
+    TagPanel: typeof import('./components/reports/TagPanel.vue')['default']
+    TagSelect: typeof import('./components/reports/TagSelect.vue')['default']
     TagTable: typeof import('./components/tags/TagTable.vue')['default']
   }
 }

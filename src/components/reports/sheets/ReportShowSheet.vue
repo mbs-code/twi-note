@@ -21,12 +21,7 @@
             :key="_"
             @click="onClickTag(tag)"
           >
-            <span
-              v-if="tag.color"
-              class="no-select"
-              :style="{ color: tag.color }"
-            >●</span>
-            {{ tag.name }}
+            <TagPanel :tag="tag" />
           </n-tag>
         </n-space>
 
